@@ -18,22 +18,27 @@
  */
 package br.fgv.business;
 
+import static br.fgv.model.Tabela.VOTO_LEGENDA;
+import static br.fgv.model.Tabela.VOTO_NOMINAL;
+import static br.fgv.model.Tabela.VOTO_TOTAL;
 import br.fgv.model.Tabela;
 
 public enum AgregacaoPolitica {
 	
-	PARTIDO(Tabela.CO_FACT_VOTOS_MUN_PARTIDO.getNome(), "Partido", 1), 
-	CANDIDATO(Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK.getNome(), "Candidato", 2);
+	PARTIDO(Tabela.CO_FACT_VOTOS_MUN_PARTIDO.getNome(), "Partido", 1, VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL), 
+	CANDIDATO(Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK.getNome(), "Candidato", 2, Tabela.VOTO_NOMINAL);
 
 	private final String nomeDescritivo;
 	private final int nivel;
 	private final String nome;
+	private String[] colunas;
 	
 
-	private AgregacaoPolitica(String nome, String nomeDescritivo, int nivel) {
+	private AgregacaoPolitica(String nome, String nomeDescritivo, int nivel, String ... colunas) {
 		this.nome = nome;
 		this.nomeDescritivo = nomeDescritivo;
 		this.nivel = nivel;
+		this.colunas = colunas;
 	}
 	
 	public static AgregacaoPolitica fromInt(int nivel) {
@@ -69,4 +74,7 @@ public enum AgregacaoPolitica {
 		return nivel;
 	}
 
+	public String[] getColunas() {
+		return this.colunas;
+	}
 }

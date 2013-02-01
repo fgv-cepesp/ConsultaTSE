@@ -146,6 +146,10 @@ public class QueryBuilder {
 		return this;
 	}
 	
+	public QueryBuilder comma(String... values) {
+		return this.comma((Object[])values);
+	}
+	
 	public QueryBuilder concat(Object... values) {
 		query.append("concat( ").append( COMMA_JOINER.join(values) ).append(")");
 		return this;

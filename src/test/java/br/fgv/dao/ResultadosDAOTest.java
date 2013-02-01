@@ -110,8 +110,8 @@ public class ResultadosDAOTest {
 		ArgumentosBusca args = new ArgumentosBusca();
 		args.setAnoEleicao("2010");
 		args.setFiltroCargo("xxFiltroCargo");
-		args.setNivelAgrecacaoPolitica("1");
-		args.setNivelRegional("1");
+		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt("1"));
+		args.setNivelRegional(AgregacaoRegional.fromInt("1"));
 		
 		args.setFiltroCandidato(empty);
 		args.setFiltroPartido(empty);
@@ -126,7 +126,7 @@ public class ResultadosDAOTest {
 				"WHERE cod_cargo = xxFiltroCargo group by macro, partido order by macro, partido", 
 				dao.getStringQueryFato(args));
 		
-		args.setNivelRegional("2");
+		args.setNivelRegional(AgregacaoRegional.fromInt("2"));
 
 		assertEquals(SELECT_ + "uf, partido, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
@@ -136,20 +136,16 @@ public class ResultadosDAOTest {
 				"WHERE cod_cargo = xxFiltroCargo group by uf, partido order by uf, partido", 
 				dao.getStringQueryFato(args));
 		
-		args.setNivelAgrecacaoPolitica("2");
+		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.CANDIDATO);
 		
 		assertEquals(SELECT_ + "uf, candidato_sk, " +
-				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
-				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda, " +
-				"sum(qnt_votos) as voto_total " +
+				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk order by uf, candidato_sk", 
 				dao.getStringQueryFato(args));
-
+		
 		assertEquals(SELECT_ + "uf, candidato_sk, " +
-				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
-				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda, " +
-				"sum(qnt_votos) as voto_total " +
+				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk order by uf, candidato_sk", 
 				dao.getStringQueryFato(args));
@@ -159,9 +155,7 @@ public class ResultadosDAOTest {
 		args.setFiltroRegional(ab);
 		
 		assertEquals(SELECT_ + "uf, candidato_sk, " +
-				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
-				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda, " +
-				"sum(qnt_votos) as voto_total " +
+				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo " +
 				"AND uf in (aaa, bbb)  AND partido in (ccc, ddd)  AND candidato_sk in (eee, fff)  " +
@@ -170,14 +164,25 @@ public class ResultadosDAOTest {
 	}
 	
 	@Test
-	public void testGetStringQueryDim() {
+	public void testGetStringQueryDimPartido() {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 		
-		assertEquals("SELECT voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoElecicao", empty));
+		assertEquals("SELECT voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoElecicao", empty, AgregacaoPolitica.PARTIDO));
 		assertEquals("SELECT dim_partidos.sigla_Partido, voto_nominal, voto_legenda, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
-				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab));		
+				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.PARTIDO));		
+	}
+	
+	@Test
+	public void testGetStringQueryDimCandidato() {
+		String[] empty = new String[0];
+		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
+		
+		assertEquals("SELECT voto_nominal FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoElecicao", empty, AgregacaoPolitica.CANDIDATO));
+		assertEquals("SELECT dim_partidos.sigla_Partido, voto_nominal " +
+				"FROM ( xxQueryFato ) as r " +
+				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.CANDIDATO));		
 	}
 	
 	@Test

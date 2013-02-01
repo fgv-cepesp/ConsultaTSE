@@ -34,6 +34,8 @@ import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.FileDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.fgv.CepespDataException;
+import br.fgv.business.AgregacaoPolitica;
+import br.fgv.business.AgregacaoRegional;
 import br.fgv.business.BusinessImpl;
 import br.fgv.business.FormResultAux;
 import br.fgv.model.TSEDadosAuxiliares;
@@ -233,9 +235,8 @@ public class ConsultaResultadosController {
 		
 		args.setAnoEleicao(anoEleicao);
 		args.setFiltroCargo(filtroCargo);
-		args.setNivelAgrecacaoPolitica(nivelAgregacaoPolitica);
-		args.setNivelRegional(nivelAgregacaoRegional);
-		args.setNivelAgrecacaoPolitica(nivelAgregacaoPolitica);
+		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt(nivelAgregacaoPolitica));
+		args.setNivelRegional(AgregacaoRegional.fromInt(nivelAgregacaoRegional));
 		args.setCamposEscolhidos(campos);
 		
 

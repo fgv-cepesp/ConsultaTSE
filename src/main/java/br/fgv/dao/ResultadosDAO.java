@@ -188,24 +188,24 @@ public class ResultadosDAO {
 	
 	String getStringQueryFato(ArgumentosBusca args) {
 		
-		String reg = AgregacaoRegional.fromInt(args.getNivelRegional())
-				.getNome();
-		String pol = AgregacaoPolitica.fromInt(args.getNivelAgrecacaoPolitica())
-				.getNome();
+		String reg = args.getNivelRegional().getNome();
+		String pol = args.getNivelAgrecacaoPolitica().getNome();
 		
 		QueryBuilder qb = new QueryBuilder();
 
 		// SELECT
-		qb.select_().comma(reg, pol)
-			.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL)
-			.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA)
-			.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL)
-			._from_().tabela(TB_FACT_VOTOS_MUN);
+		qb.select_().comma(reg, pol);
+		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
+		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica())) {
+			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA)
+				.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
+		}
+		qb._from_().tabela(TB_FACT_VOTOS_MUN);
 
 		// WHERE
 		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo());
 		
-			appendFiltroRegional(qb, AgregacaoRegional.fromInt(args.getNivelRegional()), args.getFiltroRegional());
+			appendFiltroRegional(qb, args.getNivelRegional(), args.getFiltroRegional());
 			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, args.getFiltroPartido());
 			appendFiltroPolitico(qb, AgregacaoPolitica.CANDIDATO, args.getFiltroCandidato());
 		
@@ -216,7 +216,7 @@ public class ResultadosDAO {
 	}
 
 	String getStringQueryDim(String queryFato, String anoEleicao,
-			String[] camposEscolhidos) {
+			String[] camposEscolhidos, AgregacaoPolitica agregacaoPolitica) {
 		
 		Set<String> tabelasARelacionar = new HashSet<String>(camposEscolhidos.length);
 		for (String campo : camposEscolhidos) {
@@ -224,7 +224,7 @@ public class ResultadosDAO {
 		}
 		
 		QueryBuilder qb = new QueryBuilder();
-		qb.select_().commaWithTrailing((Object[])camposEscolhidos).comma(VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL)
+		qb.select_().commaWithTrailing((Object[])camposEscolhidos).comma(agregacaoPolitica.getColunas())
 			._from_().par(queryFato)._as_().valor(REF_FACT);
 		
 		for (String nomeTabela : tabelasARelacionar) {
@@ -253,7 +253,7 @@ public class ResultadosDAO {
 	    
 	    
 		String queryTotal = getStringQueryDim(queryFato, args.getAnoEleicao(),
-				args.getCamposEscolhidos());
+				args.getCamposEscolhidos(), args.getNivelAgrecacaoPolitica());
 
 		ResultSetWork ra = new ResultSetWork();
 

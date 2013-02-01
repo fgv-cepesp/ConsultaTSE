@@ -20,12 +20,15 @@ package br.fgv.util;
 
 import java.util.Arrays;
 
+import br.fgv.business.AgregacaoPolitica;
+import br.fgv.business.AgregacaoRegional;
+
 public class ArgumentosBusca {
 
 	private String anoEleicao;
 	private String filtroCargo;
-	private String nivelRegional;
-	private String nivelAgrecacaoPolitica;
+	private AgregacaoRegional nivelRegional;
+	private AgregacaoPolitica nivelAgrecacaoPolitica;
 	private String[] camposEscolhidos;
 	private String[] filtroPartido;
 	private String[] filtroCandidato;
@@ -55,19 +58,19 @@ public class ArgumentosBusca {
 		this.filtroCargo = filtroCargo;
 	}
 
-	public String getNivelRegional() {
+	public AgregacaoRegional getNivelRegional() {
 		return nivelRegional;
 	}
 
-	public void setNivelRegional(String nivelRegional) {
+	public void setNivelRegional(AgregacaoRegional nivelRegional) {
 		this.nivelRegional = nivelRegional;
 	}
 
-	public String getNivelAgrecacaoPolitica() {
+	public AgregacaoPolitica getNivelAgrecacaoPolitica() {
 		return nivelAgrecacaoPolitica;
 	}
 
-	public void setNivelAgrecacaoPolitica(String nivelAgrecacaoPolitica) {
+	public void setNivelAgrecacaoPolitica(AgregacaoPolitica nivelAgrecacaoPolitica) {
 		this.nivelAgrecacaoPolitica = nivelAgrecacaoPolitica;
 	}
 
