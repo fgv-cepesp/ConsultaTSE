@@ -234,7 +234,7 @@ public class ResultadosDAO {
 	        }
 		}
 		
-		String ret = qb.toString();
+		String ret = qb.toString(anoEleicao);
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Query DIM:\t" + ret);
