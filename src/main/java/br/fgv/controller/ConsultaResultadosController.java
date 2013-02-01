@@ -257,7 +257,7 @@ public class ConsultaResultadosController {
 		String nameFile = business.getSugestaoNomeArquivo(anoEleicao,
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
-		return new FileDownload(retFile, "text/csv", nameFile);
+		return new FileDownload(retFile, "text/csv", nameFile, true);
 	}
 
 }
