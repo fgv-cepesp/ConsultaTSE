@@ -148,7 +148,7 @@
 	            <groupId>org.apache.tomcat.maven</groupId>
         		<artifactId>tomcat6-maven-plugin</artifactId>
 	            <configuration>
-	                     <server>cepesp</server>
+	                     <server>cepesp-dev</server>
 	                     <path>/${project.artifactId}-TESTES</path>
 	                     <url>http://localhost:80/manager</url>
 	            </configuration>
