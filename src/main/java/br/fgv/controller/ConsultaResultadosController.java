@@ -65,36 +65,11 @@ public class ConsultaResultadosController {
 		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares
 				.getNivelAgregacaoPolitica());
 		result.include("filtroCargoList", new ArrayList<Par>());
+		
+		// XXX Porque? Deveria bloquear busca por partidos se um ano não estiver
+		// selecionado
 		result.include("filtroPartidoList", business.getPartidos("2002"));
 	}
-
-
-	@Get
-	@Path("/consulta/camposDisponiveiss")
-	public void camposDisponiveisListt() {
-		
-		List<Par> camposOpcionais = new ArrayList<Par>();
-		camposOpcionais.add(new Par("aux_macroregiao.nome_Macro", "macro-região: Nome"));
-		
-		List<Par> camposFixos = new ArrayList<Par>();
-		camposFixos.add(new Par("aux_macroregiao.cod_Macro", "macro-região: Código"));
-		
-						
-		final FormResultAux f = new FormResultAux(camposOpcionais, camposFixos);
-		
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug(
-					" Campos disponíveis:\n" + f);
-		}
-		
-		result.use(Results.json()).from(f)
-			.recursive()
-			//.include("camposOpcionais")
-			//.include("camposFixos")
-			.serialize();
-		
-	}
-
 
 	@Get
 	@Path("/consulta/camposDisponiveis")
@@ -103,16 +78,6 @@ public class ConsultaResultadosController {
 		
 		final FormResultAux f = business.getCamposDisponiveis(nivelAgregacaoRegional,
 				nivelAgregacaoPolitica);
-		
-		
-//		List<Par> camposOpcionais = new ArrayList<Par>();
-//		camposOpcionais.add(new Par("aux_macroregiao.nome_Macro", "macro-região: Nome"));
-//		
-//		List<Par> camposFixos = new ArrayList<Par>();
-//		camposFixos.add(new Par("aux_macroregiao.cod_Macro", "macro-região: Código"));
-//		
-//						
-//		final FormResultAux f = new FormResultAux(camposOpcionais, camposFixos);
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Nivel regional: " + nivelAgregacaoRegional +
