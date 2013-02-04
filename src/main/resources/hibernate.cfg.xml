@@ -30,8 +30,9 @@
 		<property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
 
 
-		<property name="hibernate.connection.username">root</property>
-		<property name="hibernate.connection.password"></property>
+		<!-- Para configurar isto, use o settings.xml do maven -->
+		<property name="hibernate.connection.username">${cepesp.db.user}</property>
+		<property name="hibernate.connection.password">${cepesp.db.passwd}</property>
 
 
 		<!-- Configuracao da manutenção da conexao -->

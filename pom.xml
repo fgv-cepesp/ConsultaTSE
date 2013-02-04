@@ -12,6 +12,7 @@
 		<buildTime>${maven.build.timestamp}</buildTime>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    	<dbpasswd>abc</dbpasswd>
 	</properties>
 
 
@@ -134,7 +135,7 @@
 	</repositories>
 
 	<build>
-		<finalName>cepespdata-TESTES</finalName>
+		<finalName>cepespdata</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -146,7 +147,6 @@
 	        <plugin>
 	            <groupId>org.apache.tomcat.maven</groupId>
         		<artifactId>tomcat6-maven-plugin</artifactId>
-        		<version>2.0</version>
 	            <configuration>
 	                     <server>cepesp</server>
 	                     <path>/${project.artifactId}-TESTES</path>
@@ -233,6 +233,11 @@
 						<manifest> ${basedir}/src/main/resources/META-INF/MANIFEST.MF
 						</manifest>
 					</configuration>
+				</plugin>
+				<plugin>
+	            	<groupId>org.apache.tomcat.maven</groupId>
+        			<artifactId>tomcat6-maven-plugin</artifactId>
+        			<version>2.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
