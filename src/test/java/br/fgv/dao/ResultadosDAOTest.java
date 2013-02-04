@@ -252,10 +252,27 @@ public class ResultadosDAOTest {
 	@Test
 	public void testCandidatosPorAnoList() {
 		List<Par> l = dao.getCandidatosPorAnoList("A", "2010");
-		assertTrue(l.size() > 22000);
-		assertTrue(l.size() < 25000);
+		assertTrue(l.size() > 20000);
+		assertTrue(l.size() < 22000);
 		Par p = l.get(0);
 		assertTrue(p.getChave().matches("^\\d+$"));
 		assertTrue(p.getValor().matches("^.+$"));
+		
+
+		p = l.get(500);
+		assertTrue(p.getChave().matches("^\\d+$"));
+		assertTrue(p.getValor().matches("^.+$"));
+		assertTrue(p.getValor().contains(p.getChave()));
+	}
+	
+	@Test
+	public void testApplicarFiltro() {
+		ArgumentosBusca args = new ArgumentosBusca();
+		
+		assertEquals("abc", dao.aplicarFiltros("abc", args));
+		
+		String[] filtroCandidato = {"c1", "c2"};
+		args.setFiltroCandidato(filtroCandidato);
+		assertEquals("SELECT  *  FROM (abc) T WHERE T.titulo in (c1, c2) ", dao.aplicarFiltros("abc", args));
 	}
 }

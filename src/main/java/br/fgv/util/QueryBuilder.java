@@ -35,7 +35,9 @@ public class QueryBuilder {
 	public static final String s = "s";
 	
 	public static final String SELECT_ = "SELECT ";
+	public static final String _STAR_ = " * ";
 	public static final String _FROM_ = " FROM ";
+	public static final String _DISTINCT_ = " DISTINCT ";
 	public static final String _WHERE_ = " WHERE ";
 	public static final String _AND_ = " AND ";
 	public static final String COMMA_ = ", ";
@@ -49,6 +51,16 @@ public class QueryBuilder {
 	
 	public QueryBuilder select_() {
 		query.append(SELECT_);
+		return this;
+	}
+	
+	public QueryBuilder _distinct_() {
+		query.append(_DISTINCT_);
+		return this;
+	}
+
+	public QueryBuilder _star_() {
+		query.append(_STAR_);
 		return this;
 	}
 	
@@ -167,6 +179,11 @@ public class QueryBuilder {
 		query.append(table.getNome()).append(" ").append(ref);
 		return this;
 	}
+	
+	public QueryBuilder declareRef(String table, String ref) {
+		query.append("(").append(table).append(") ").append(ref);
+		return this;
+	}
 
 	public static String REF(Coluna col, String ref) {
 		return ref + "." + col;
@@ -188,6 +205,10 @@ public class QueryBuilder {
 	
 	public static String EQ(Object a, Object b) {
 		return a + " = " + b;
+	}
+	
+	public static String SQuote(String val) {
+		return "'" + val + "'";
 	}
 	
 	public QueryBuilder eq(Object a, Object b) {
