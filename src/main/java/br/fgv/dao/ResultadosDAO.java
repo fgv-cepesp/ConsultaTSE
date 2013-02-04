@@ -19,7 +19,7 @@
 package br.fgv.dao;
 
 import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_NOME;
-import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_SURROGATEKEY;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_TITULO;
 import static br.fgv.model.Tabela.CO_DIM_CARGO_CD;
 import static br.fgv.model.Tabela.CO_DIM_CARGO_DS;
 import static br.fgv.model.Tabela.CO_DIM_ESTADOS_ID;
@@ -207,7 +207,7 @@ public class ResultadosDAO {
 		
 			appendFiltroRegional(qb, args.getNivelRegional(), args.getFiltroRegional());
 			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, args.getFiltroPartido());
-			appendFiltroPolitico(qb, AgregacaoPolitica.CANDIDATO, args.getFiltroCandidato());
+			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 		
 		// GROUP BY
 		qb._group_by_().comma(reg, pol)._order_by_().comma(reg, pol);
@@ -254,18 +254,36 @@ public class ResultadosDAO {
 	    
 		String queryTotal = getStringQueryDim(queryFato, args.getAnoEleicao(),
 				args.getCamposEscolhidos(), args.getNivelAgrecacaoPolitica());
+		
+		String queryFinal = aplicarFiltros(queryTotal, args);
 
 		ResultSetWork ra = new ResultSetWork();
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Query fato:\t" + queryFato);
 			LOGGER.debug("Query total:\t" + queryTotal);
+			LOGGER.debug("Query total:\t" + queryFinal);
 		}
 
-		ra.setQuery(queryTotal);
+		ra.setQuery(queryFinal);
 		session.doWork(ra);
 		
 		return ra;
+	}
+
+	String aplicarFiltros(String queryTotal, ArgumentosBusca args) {
+		// por agora, apenas filtro de candidato... os outros podem ser feito
+		// direto na fato.
+		QueryBuilder qb = new QueryBuilder();
+		String[] filtroCandidato = args.getFiltroCandidato(); 
+		if(filtroCandidato != null && filtroCandidato.length > 0) {
+			qb.select_()._star_()._from_().declareRef(queryTotal, "T")
+				._where_().ref(CO_DIM_CANDIDATOS_TITULO, "T").in(filtroCandidato);
+		} else {
+			return queryTotal;
+		}
+		
+		return qb.toString();
 	}
 
 	public File doWorkResult(ArgumentosBusca args) throws CepespDataException {
@@ -373,7 +391,7 @@ public class ResultadosDAO {
 	private List<Par> getParList(Query query) {
 		List<Par> pares = new ArrayList<Par>();
 		List<Object[]> list = null;
-
+		
 		try {
 			list = (List<Object[]>) query.list();
 
@@ -382,6 +400,28 @@ public class ResultadosDAO {
 				String valor = String.valueOf(item[1] );
 
 				pares.add(new Par(chave, valor));
+			}
+
+		} catch (RuntimeException e) {
+			LOGGER.error("Exception ao tentar executar query!", e);
+		}
+
+		return pares;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Par> getParChaveList(Query query) {
+		List<Par> pares = new ArrayList<Par>();
+		List<Object[]> list = null;
+		
+		try {
+			list = (List<Object[]>) query.list();
+
+			for (Object[] item : list) {
+				String chave = String.valueOf(item[0]);
+				String valor = String.valueOf(item[1]);
+
+				pares.add(new Par(chave, valor + " (" + chave + ")"));
 			}
 
 		} catch (RuntimeException e) {
@@ -448,19 +488,29 @@ public class ResultadosDAO {
 		return getParList(query);
 	}
 
+//	public List<Par> getCandidatosPorAnoList(String filtro, String ano) {
+//
+//		QueryBuilder qb = new QueryBuilder();
+//		
+//		qb.select_().colunas(CO_DIM_CANDIDATOS_SURROGATEKEY, CO_DIM_CANDIDATOS_NOME)
+//			._from_().tabela(TB_DIM_CANDIDATOS)
+//			._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro);
+//		
+//		
+//		Query query = getSession().createSQLQuery(qb.toString(ano));
+//		return getParList(query);
+//	}
+
 	public List<Par> getCandidatosPorAnoList(String filtro, String ano) {
-		// XXX: nao usa ano!
+
 		QueryBuilder qb = new QueryBuilder();
 		
-		qb.select_().colunas(CO_DIM_CANDIDATOS_SURROGATEKEY, CO_DIM_CANDIDATOS_NOME)
+		qb.select_()._distinct_().colunas(CO_DIM_CANDIDATOS_TITULO, CO_DIM_CANDIDATOS_NOME)
 			._from_().tabela(TB_DIM_CANDIDATOS)
 			._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro);
 		
 		
 		Query query = getSession().createSQLQuery(qb.toString(ano));
-		return getParList(query);
+		return getParChaveList(query);
 	}
-
-
-
 }
