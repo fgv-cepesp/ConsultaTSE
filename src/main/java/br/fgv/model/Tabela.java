@@ -20,10 +20,7 @@ package br.fgv.model;
 
 import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
-import static br.fgv.util.QueryBuilder.EQ;
-import static br.fgv.util.QueryBuilder.REF;
-import static br.fgv.util.QueryBuilder.TB_CO;
-import static br.fgv.util.QueryBuilder._AND_;
+import static br.fgv.util.QueryBuilder.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +35,7 @@ import br.fgv.util.Par;
 
 public class Tabela {
 	
-	public static final String HOLDER_ANO_ELEICAO = ":ANO_ELEICAO:";
+	public static final String HOLDER_ANO_ELEICAO = "#ANO_ELEICAO#";
 
 	/* 
 	 * Tabela fact (votos) 
@@ -218,7 +215,7 @@ public class Tabela {
 		final String dim_partidos = "dim_partidos";
 		TB_DIM_PARTIDOS = new Tabela(dim_partidos, "partido", c,
 				EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_COD), REF(CO_FACT_VOTOS_MUN_PARTIDO, REF_FACT))
-				+ _AND_ + EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_ANO), "':ANO_ELEICAO:'"));
+				+ _AND_ + EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_ANO), SQuote(HOLDER_ANO_ELEICAO)));
 
 		/* Colunas da tabela DIM CANDIDATOS */
 		CO_DIM_CANDIDATOS_SURROGATEKEY = new Coluna("surrogatekey");
@@ -267,7 +264,7 @@ public class Tabela {
 		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD);
 
 		final String dim_candidatos = "aux_candidatos_" + HOLDER_ANO_ELEICAO;
-		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, c,
+		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, "candidatos", c,
 				EQ(TB_CO(dim_candidatos, CO_DIM_CANDIDATOS_SURROGATEKEY), REF(CO_FACT_VOTOS_MUN_CANDIDATO_SK, REF_FACT)));
 
 		/* Colunas da tabela DIM CARGO */

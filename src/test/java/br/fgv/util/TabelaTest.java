@@ -62,10 +62,10 @@ public class TabelaTest {
 	@Test
 	public void testRelacionamento() {
 		assertEquals(
-				"dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = ':ANO_ELEICAO:'",
+				"dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = '#ANO_ELEICAO#'",
 				Tabela.TB_DIM_PARTIDOS.getRelacao());
 		assertEquals(
-				"aux_candidatos_:ANO_ELEICAO:.surrogatekey = r.candidato_sk",
+				"aux_candidatos_#ANO_ELEICAO#.surrogatekey = r.candidato_sk",
 				Tabela.TB_DIM_CANDIDATOS.getRelacao());
 		assertEquals(
 				"aux_macroregiao.cod_Macro = r.macro",
