@@ -134,33 +134,13 @@
 	</repositories>
 
 	<build>
-		<finalName>cepespdata</finalName>
+		<finalName>cepespdata-TESTES</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-
-		<!-- add Eclipse WTP support -->
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<configuration>
-						<wtpversion>2.0</wtpversion>
-						<wtpapplicationxml>true</wtpapplicationxml>
-						<wtpmanifest>true</wtpmanifest>
-						<downloadSources>true</downloadSources>
-						<downloadJavadocs>true</downloadJavadocs>
-						<projectNameTemplate> [artifactId]-[version] 
-						</projectNameTemplate>
-						<manifest> ${basedir}/src/main/resources/META-INF/MANIFEST.MF
-						</manifest>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 
 		<plugins>
 	        <plugin>
@@ -234,6 +214,28 @@
 				<configuration></configuration>
 			</plugin>
 		</plugins>
+	
+			<!-- add Eclipse WTP support -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<configuration>
+						<wtpversion>2.0</wtpversion>
+						<wtpapplicationxml>true</wtpapplicationxml>
+						<wtpmanifest>true</wtpmanifest>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>true</downloadJavadocs>
+						<projectNameTemplate> [artifactId]-[version] 
+						</projectNameTemplate>
+						<manifest> ${basedir}/src/main/resources/META-INF/MANIFEST.MF
+						</manifest>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	
+	
 	</build>
 	<reporting>
 		<plugins>
