@@ -158,7 +158,7 @@ public class ResultadosDAOTest {
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo " +
-				"AND uf in (aaa, bbb)  AND partido in (ccc, ddd)  AND candidato_sk in (eee, fff)  " +
+				"AND uf in (aaa, bbb)  AND partido in (ccc, ddd)  " +
 				"group by uf, candidato_sk order by uf, candidato_sk", 
 				dao.getStringQueryFato(args));
 	}
