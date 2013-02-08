@@ -1,7 +1,8 @@
       <hr>
 
       <div class="footer">
-        <p>&copy; Company 2012</p>
+        <p>&copy; FGV CEPESP 2013</p>
+        <img src="/images/logoFapesp.jpg">
       </div>
 
     </div> <!-- /container -->
