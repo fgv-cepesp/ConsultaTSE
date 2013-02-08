@@ -134,15 +134,29 @@ public class BusinessImpl {
 
 	public List<Par> getAnosDisponiveis() {
 		List<Par> l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.addAll(daoFactory.getResultadosDAO().getAnosDisponiveisList());
 		return Collections.unmodifiableList(l);
 	}
 
-	public Object getCargosPorAno(String ano) {
+	public List<Par> getCargosPorAno(String ano) {
 		List<Par> l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.addAll(daoFactory.getResultadosDAO().getCargosPorAnoList(ano));
+		return Collections.unmodifiableList(l);
+	}
+	
+	public Object getAnosParaCargo(String cargo) {
+		List<Par> l = new ArrayList<Par>();
+//		l.add(new Par("", "--Selecionar---"));
+		l.addAll(daoFactory.getResultadosDAO().getAnosParaCargoList(cargo));
+		return Collections.unmodifiableList(l);
+	}
+	
+	public List<Par> getCargosDisponiveis() {
+		List<Par> l = new ArrayList<Par>();
+		l.add(new Par("", "--Selecionar---"));
+		l.addAll(daoFactory.getResultadosDAO().getCargosList());
 		return Collections.unmodifiableList(l);
 	}
 	
@@ -232,6 +246,11 @@ public class BusinessImpl {
 		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
 				.getPartidosPorAnoList(string));
 	}
+	
+	public List<Par> getPartidos(String[] anosList) {
+		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
+				.getPartidosPorAnoList(anosList));
+	}
 
 
 	public Object getFiltroRegional(String q, String nivelRegional) {
@@ -254,6 +273,11 @@ public class BusinessImpl {
 	public List<Par> getCandidatos(String query, String ano) {
 		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
 				.getCandidatosPorAnoList(query, ano));
+	}
+
+	public List<Par> getCandidatos(String query, String[] anos, String cargo) {
+		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
+				.getCandidatosPorAnoList(query, anos, cargo));
 	}
 
 }

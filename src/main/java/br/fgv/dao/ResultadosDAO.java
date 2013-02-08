@@ -18,58 +18,15 @@
  */
 package br.fgv.dao;
 
-import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_NOME;
-import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_TITULO;
-import static br.fgv.model.Tabela.CO_DIM_CARGO_CD;
-import static br.fgv.model.Tabela.CO_DIM_CARGO_DS;
-import static br.fgv.model.Tabela.CO_DIM_ESTADOS_ID;
-import static br.fgv.model.Tabela.CO_DIM_ESTADOS_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_COD;
-import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_ID;
-import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_ID;
-import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_COD;
-import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_SIGLA_UF;
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_ANO;
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_COD;
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_SIGLA;
-import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_COD_CARGO;
-import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_QNT_VOTOS;
-import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_TIPO_VOTAVEL;
-import static br.fgv.model.Tabela.CO_SIS_ANOS_ANO;
-import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_ANO;
-import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_COD_CARGO;
-import static br.fgv.model.Tabela.REF_FACT;
-import static br.fgv.model.Tabela.TB_DIM_CANDIDATOS;
-import static br.fgv.model.Tabela.TB_DIM_CARGO;
-import static br.fgv.model.Tabela.TB_DIM_ESTADOS;
-import static br.fgv.model.Tabela.TB_DIM_MACROREGIAO;
-import static br.fgv.model.Tabela.TB_DIM_MESOREGIAO;
-import static br.fgv.model.Tabela.TB_DIM_MICROREGIAO;
-import static br.fgv.model.Tabela.TB_DIM_MUNICIPIO;
-import static br.fgv.model.Tabela.TB_DIM_PARTIDOS;
-import static br.fgv.model.Tabela.TB_FACT_VOTOS_MUN;
-import static br.fgv.model.Tabela.TB_SIS_ANOS;
-import static br.fgv.model.Tabela.TB_SIS_ANO_CARGO;
-import static br.fgv.model.Tabela.VOTO_LEGENDA;
-import static br.fgv.model.Tabela.VOTO_LEGENDA_COD;
-import static br.fgv.model.Tabela.VOTO_NOMINAL;
-import static br.fgv.model.Tabela.VOTO_NOMINAL_COD;
-import static br.fgv.model.Tabela.VOTO_TOTAL;
-import static br.fgv.util.QueryBuilder.EQ;
-import static br.fgv.util.QueryBuilder.IFF;
-import static br.fgv.util.QueryBuilder.a;
-import static br.fgv.util.QueryBuilder.p;
-import static br.fgv.util.QueryBuilder.s;
+import static br.fgv.model.Tabela.*;
+import static br.fgv.util.QueryBuilder.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -100,10 +57,9 @@ public class ResultadosDAO {
 	private Session getSession() {
 		return session;
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public List<Par> getAnosDisponiveisList() {
-		List<Par> pares = new ArrayList<Par>();
+	private List<Integer> getAnosDisponiveis() {
 		List<Integer> list = null;
 
 		try {
@@ -117,38 +73,117 @@ public class ResultadosDAO {
 
 			list = (List<Integer>) query.list();
 
-			for (Integer item : list) {
-				String i = String.valueOf(item);
-				pares.add(new Par(i, i));
-			}
-
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter anos disponiveis.", e);
 		}
 
-		return pares;
+		return list;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Par> getCargosPorAnoList(String ano) {
+	public List<Par> getAnosDisponiveisList() {
+		List<Par> pares = new ArrayList<Par>();
+		List<Integer> list = null;
+
+		list = getAnosDisponiveis();
+
+		for (Integer item : list) {
+			String i = String.valueOf(item);
+			pares.add(new Par(i, i));
+		}
+
+		return pares;
+	}
+	
+	public List<Par> getCargosList() {
+		List<Integer> anos = getAnosDisponiveis();
+		
+		List<String> queries = new ArrayList<String>();
+		
+		for (Integer ano : anos) {
+			queries.add(getQueryCargosPorAnoList(Integer.toString(ano)));
+		}
+		
+		String completeQuery = QueryBuilder.unionDistinct(queries);
+		
 		List<Par> pares = new ArrayList<Par>();
 		List<Object[]> list = null;
-
+		
 		try {
-			QueryBuilder qb = new QueryBuilder();
 			
-			qb.select_().colunas(CO_SIS_ANO_CARGO_COD_CARGO, CO_DIM_CARGO_DS)
-				._from_().declareRef(TB_SIS_ANO_CARGO, s).comma_().declareRef(TB_DIM_CARGO, a)
-				._where_().ref(CO_SIS_ANO_CARGO_COD_CARGO, s)._eq_().ref(CO_DIM_CARGO_CD, a)
-					._and_().ref(CO_SIS_ANO_CARGO_ANO, s)._eq_().valor(ano);
-			
-			Query query = getSession().createSQLQuery(qb.toString());
+			Query query = getSession().createSQLQuery(completeQuery);
 
 			list = (List<Object[]>) query.list();
 
 			for (Object[] item : list) {
 				String chave = String.valueOf(item[0]);
 				String valor = String.valueOf(item[1]);
+
+				pares.add(new Par(chave, valor));
+			}
+		} catch (RuntimeException e) {
+			LOGGER.error("Falhou ao tentar obter cargos disponiveis.", e);
+		}
+		
+		return pares;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Par> getCargosPorAnoList(String ano) {
+		List<Par> pares = new ArrayList<Par>();
+		List<Object[]> list = null;
+
+		try {
+			String queryString = getQueryCargosPorAnoList(ano);
+			
+			Query query = getSession().createSQLQuery(queryString);
+
+			list = (List<Object[]>) query.list();
+
+			for (Object[] item : list) {
+				String chave = String.valueOf(item[0]);
+				String valor = String.valueOf(item[1]);
+
+				pares.add(new Par(chave, valor));
+			}
+
+		} catch (RuntimeException e) {
+			LOGGER.error("Falhou ao tentar obter cargos disponiveis por ano.", e);
+		}
+
+		return pares;
+	}
+	
+	public String getQueryCargosPorAnoList(String ano) {
+		QueryBuilder qb = new QueryBuilder();
+		
+		qb.select_().colunas(CO_SIS_ANO_CARGO_COD_CARGO, CO_DIM_CARGO_DS)
+			._from_().declareRef(TB_SIS_ANO_CARGO, s).comma_().declareRef(TB_DIM_CARGO, a)
+			._where_().ref(CO_SIS_ANO_CARGO_COD_CARGO, s)._eq_().ref(CO_DIM_CARGO_CD, a)
+				._and_().ref(CO_SIS_ANO_CARGO_ANO, s)._eq_().valor(ano);
+		
+		return qb.toString();
+	}
+
+	public List<Par> getAnosParaCargoList(String cargo) {
+		List<Par> pares = new ArrayList<Par>();
+		List<Integer> list = null;
+
+		try {
+			QueryBuilder qb = new QueryBuilder();
+		
+			qb.select_()._distinct_().colunas(CO_SIS_ANO_CARGO_ANO)
+				._from_().tabela(TB_SIS_ANO_CARGO)
+				._where_().coluna(CO_SIS_ANO_CARGO_COD_CARGO)._eq_().valor(cargo)
+				._order_by_().coluna(CO_SIS_ANO_CARGO_ANO);
+			
+			
+			Query query = getSession().createSQLQuery(qb.toString());
+
+			list = (List<Integer>) query.list();
+
+			for (Integer item : list) {
+				String chave = String.valueOf(item);
+				String valor = String.valueOf(item);
 
 				pares.add(new Par(chave, valor));
 			}
@@ -357,30 +392,46 @@ public class ResultadosDAO {
 		return ret;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Par> getPartidosPorAnoList(String ano) {
+		String[] anos = {ano};
+		return getPartidosPorAnoList(anos);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Par> getPartidosPorAnoList(String[] anosList) {
 		List<Par> pares = new ArrayList<Par>();
 		List<Object[]> list = null;
 
-		try {
+		List<String> partialQueries = new ArrayList<String>(anosList.length);
+		
+		for (String ano : anosList) {
 			QueryBuilder qb = new QueryBuilder();
 			qb.select_().colunas(CO_DIM_PARTIDOS_COD, CO_DIM_PARTIDOS_SIGLA)
 				._from_().declareRef(TB_DIM_PARTIDOS, p)
 				._where_().ref(CO_DIM_PARTIDOS_ANO, p)._eq_().valor(ano);
 			
-			Query query = getSession().createSQLQuery(qb.toString());
+			partialQueries.add(qb.toString());
+		}
+		
+		String queryStr = QueryBuilder.unionDistinct(partialQueries)
+				+ _ORDER_BY_ + CO_DIM_PARTIDOS_COD;
+		
+		try {
+			
+			
+			Query query = getSession().createSQLQuery(queryStr);
 
 			list = (List<Object[]>) query.list();
 
 			for (Object[] item : list) {
 				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1] );
+				String valor = String.valueOf(item[1] + " (" + item[0] + ")");
 
 				pares.add(new Par(chave, valor));
 			}
 
 		} catch (RuntimeException e) {
-			LOGGER.error("Exception ao tentar obter partidos por: " + ano, e);
+			LOGGER.error("Exception ao tentar obter partidos por: " + Arrays.toString(anosList), e);
 		}
 
 		return pares;
@@ -502,15 +553,31 @@ public class ResultadosDAO {
 //	}
 
 	public List<Par> getCandidatosPorAnoList(String filtro, String ano) {
+		String[] anos = {ano};
+		return getCandidatosPorAnoList(filtro, anos, null);
+	}
 
-		QueryBuilder qb = new QueryBuilder();
+	public List<Par> getCandidatosPorAnoList(String filtro, String[] anos, String codCargo) {
 		
-		qb.select_()._distinct_().colunas(CO_DIM_CANDIDATOS_TITULO, CO_DIM_CANDIDATOS_NOME)
-			._from_().tabela(TB_DIM_CANDIDATOS)
-			._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro);
+		List<String> partialQueries = new ArrayList<String>(anos.length);
+		
+		for (String ano : anos) {
+			QueryBuilder qb = new QueryBuilder();
+			
+			qb.select_()._distinct_().colunas(CO_DIM_CANDIDATOS_TITULO, CO_DIM_CANDIDATOS_NOME)
+				._from_().tabela(TB_DIM_CANDIDATOS)
+				._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro);
+			if(codCargo != null && codCargo.length() > 0) {
+				qb._and_().coluna(CO_DIM_CANDIDATOS_CARGO_COD)._eq_().valor(codCargo);
+			}
+			partialQueries.add(qb.toString(ano));
+		}
+		
+
+		String queryStr = QueryBuilder.unionDistinct(partialQueries);
 		
 		
-		Query query = getSession().createSQLQuery(qb.toString(ano));
+		Query query = getSession().createSQLQuery(queryStr);
 		return getParChaveList(query);
 	}
 }

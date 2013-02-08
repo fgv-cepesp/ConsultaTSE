@@ -196,7 +196,7 @@ public class ResultadosDAOTest {
 		assertEquals(30,l.size());
 		Par p = l.get(0);
 		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^\\w+$"));
+		assertTrue(p.getValor().matches("^\\w+ \\(\\d+\\)$"));
 	}
 	
 	@Test
@@ -266,6 +266,23 @@ public class ResultadosDAOTest {
 	}
 	
 	@Test
+	public void testCandidatosPorAnoListCargo() {
+		String[] anos = {"2002", "2006"};
+		List<Par> l = dao.getCandidatosPorAnoList("LUI", anos, "1");
+		assertTrue(l.size() > 20000);
+		assertTrue(l.size() < 22000);
+		Par p = l.get(0);
+		assertTrue(p.getChave().matches("^\\d+$"));
+		assertTrue(p.getValor().matches("^.+$"));
+		
+
+		p = l.get(500);
+		assertTrue(p.getChave().matches("^\\d+$"));
+		assertTrue(p.getValor().matches("^.+$"));
+		assertTrue(p.getValor().contains(p.getChave()));
+	}
+	
+	@Test
 	public void testApplicarFiltro() {
 		ArgumentosBusca args = new ArgumentosBusca();
 		
@@ -274,5 +291,15 @@ public class ResultadosDAOTest {
 		String[] filtroCandidato = {"c1", "c2"};
 		args.setFiltroCandidato(filtroCandidato);
 		assertEquals("SELECT  *  FROM (abc) T WHERE T.titulo in (c1, c2) ", dao.aplicarFiltros("abc", args));
+	}
+	
+	@Test
+	public void testGetCargosPorAnoList() {
+		assertTrue(dao.getCargosPorAnoList("2010").size() > 4);
+	}
+	
+	@Test
+	public void testGetAnos() {
+		assertTrue(dao.getAnosParaCargoList("1").size() > 4);
 	}
 }

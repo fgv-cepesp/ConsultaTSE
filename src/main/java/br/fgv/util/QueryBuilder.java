@@ -19,6 +19,8 @@
 package br.fgv.util;
 
 
+import java.util.List;
+
 import br.fgv.model.Coluna;
 import br.fgv.model.Tabela;
 
@@ -29,7 +31,7 @@ public class QueryBuilder {
 	private final StringBuilder query = new StringBuilder();
 	
 	private static final Joiner COMMA_JOINER = Joiner.on(", ").skipNulls();
-
+	
 	public static final String a = "a";
 	public static final String p = "p";
 	public static final String s = "s";
@@ -47,6 +49,10 @@ public class QueryBuilder {
 	public static final String _GROUP_BY_ = " group by ";
 	public static final String _ORDER_BY_ = " order by ";
 	public static final String _LEFT_JOIN_ = " left join ";
+	
+	public static final String _UNION_DISTINCT_ = " UNION DISTINCT ";
+	
+	private static final Joiner UNION_DISTINCT_JOINER = Joiner.on(") " + _UNION_DISTINCT_ + " (").skipNulls();
 	
 	
 	public QueryBuilder select_() {
@@ -283,5 +289,10 @@ public class QueryBuilder {
 	@Override
 	public String toString() {
 		return query.toString();
+	}
+	
+	public static String unionDistinct(List<String> queries) {
+		
+		return "(" + UNION_DISTINCT_JOINER.join(queries) + ")";
 	}
 }

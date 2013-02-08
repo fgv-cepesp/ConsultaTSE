@@ -33,7 +33,7 @@ public abstract class TSEDadosAuxiliares {
 
 	static {
 		List<Par> l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par(Integer.toString(AgregacaoRegional.MACRO_REGIAO.getNivel()), AgregacaoRegional.MACRO_REGIAO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.UF.getNivel()), AgregacaoRegional.UF.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.UF_ZONA.getNivel()), AgregacaoRegional.UF_ZONA.getNomeDescritivo()));
@@ -45,7 +45,7 @@ public abstract class TSEDadosAuxiliares {
 
 		///////////////////////////////
         l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par(Integer.toString(AgregacaoPolitica.PARTIDO.getNivel()), AgregacaoPolitica.PARTIDO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoPolitica.CANDIDATO.getNivel()), AgregacaoPolitica.CANDIDATO.getNomeDescritivo()));
 		

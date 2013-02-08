@@ -20,6 +20,7 @@ package br.fgv.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,12 +60,12 @@ public class ConsultaResultadosController {
 	@Path(priority = 1, value = "/consultaResultados")
 	public void inicial() {
 
-		result.include("anoEleicaoList", business.getAnosDisponiveis());
+//		result.include("anoEleicaoList", business.getAnosDisponiveis());
 		result.include("nivelAgregacaoRegionalList", TSEDadosAuxiliares
 				.getNivelAgregacaoRegional());
 		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares
 				.getNivelAgregacaoPolitica());
-		result.include("filtroCargoList", new ArrayList<Par>());
+		result.include("filtroCargoList", business.getCargosDisponiveis());
 		
 		// XXX Porque? Deveria bloquear busca por partidos se um ano não estiver
 		// selecionado
@@ -100,6 +101,16 @@ public class ConsultaResultadosController {
 		result.use(Results.json()).from(business.getCargosPorAno(ano))
 				.serialize();
 	}
+	
+	@Get
+	@Path("/consulta/anos")
+	public void anosParaCargo(String cargo) {
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Anos para o cargo: " + cargo);
+		}
+		result.use(Results.json()).from(business.getAnosParaCargo(cargo))
+				.serialize();
+	}
 
 	@Get
 	@Path("/consulta/partidos")
@@ -108,6 +119,16 @@ public class ConsultaResultadosController {
 			LOGGER.debug("Partidos para o ano.: " + ano);
 		}
 		result.use(Results.json()).from(business.getPartidos(ano))
+				.serialize();
+	}
+
+	@Get
+	@Path("/consulta/partidosAnos")
+	public void partidosPorAno(String[] anosList) {
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Partidos para o ano.: " + Arrays.toString(anosList));
+		}
+		result.use(Results.json()).from(business.getPartidos(anosList))
 				.serialize();
 	}
 
@@ -121,6 +142,15 @@ public class ConsultaResultadosController {
 				.serialize();
 	}
 
+	@Get
+	@Path("/consulta/candidatosAnosCargo")
+	public void candidatosPorAno(String q, String[] anosList, String cargo) {
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Candidatos para o ano. Anos: " + Arrays.toString(anosList) + "; Filtro: " + q + "; Cargo: " + cargo);
+		}
+		result.use(Results.json()).from(business.getCandidatos(q, anosList, cargo))
+				.serialize();
+	}
 
 	@Get
 	@Path("/consulta/filtroRegionalQuery")

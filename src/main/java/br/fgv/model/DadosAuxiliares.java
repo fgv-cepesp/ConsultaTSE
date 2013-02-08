@@ -35,7 +35,7 @@ public abstract class DadosAuxiliares {
 
 		List<Par> l = new ArrayList<Par>();
 
-		l.add(new Par("  ", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par("AC", "Acre"));
 		l.add(new Par("AL", "Alagoas"));
 		l.add(new Par("AP", "Amapá"));
@@ -68,7 +68,7 @@ public abstract class DadosAuxiliares {
 
 		// ////////////////////////////////////////
 		l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par("1", "Primeiro Incompleto"));
 		l.add(new Par("2", "Primeiro Completo"));
 		l.add(new Par("3", "Segundo Incompleto"));
@@ -84,7 +84,7 @@ public abstract class DadosAuxiliares {
 
 		// ////////////////////////////////////////
 		l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par("nenhum", "Não ocupava cargo político"));
 		l.add(new Par("veread", "Vereador(a)"));
 		l.add(new Par("depest", "Deputado(a) Estadual"));
@@ -95,7 +95,7 @@ public abstract class DadosAuxiliares {
 
 		// ////////////////////////////////////////
 		l = new ArrayList<Par>();
-		l.add(new Par("0", "--Selecionar---"));
+		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par("1", "Janeiro"));
 		l.add(new Par("2", "Fevereiro"));
 		l.add(new Par("3", "Março"));
