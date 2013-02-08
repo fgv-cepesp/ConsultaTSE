@@ -131,6 +131,12 @@ function selectedAsMultipleParameter(select, paramName)
 //************************************************************************
 
 function limparAnos() {
+	$('#anosDisponiveisUneditable').text('');
+	$('#anosDisponiveisUneditable').hide();
+	
+	$('#anosContinuar').button('reset');
+	$('#anosEditar').button('reset');
+	
 	$('#anosDisponiveisForm').hide();
 	$('#anosDisponiveisInfo').show();
 }
@@ -170,6 +176,7 @@ function popularAnos(codCargo) {
 	
 	$('#anosDisponiveisInfo').hide();
 	$('#anosDisponiveisForm').show();
+	$('#anosDisponiveisPlaceholder').show();
 }
 
 function validarAnosAlerta()
@@ -422,6 +429,8 @@ function limparSelectFiltroRegional() {
 function configuraAutoComplete() {
 	
 	// colocar inputs
+	$('#filtroPartidoHolder').empty();
+	$('#filtroCandidatoHolder').empty();
 	
 	$('#filtroPartidoHolder').append( '<input type="text" id="filtroPartidoNovo" name="filtroPartido"></input>' );
 	$('#filtroCandidatoHolder').append( '<input type="text" id="filtroCandidato" name="filtroCandidato"></input>' );
@@ -533,11 +542,6 @@ $(function(){
     	} else {
     		btnCont.button('reset');
     		btnEdit.addClass('disabled');
-    		
-    		limparAnos();
-    		limparColunas();
-    		limparSelectFiltroRegional();
-    		limparConsulta();
     	}
     	
     });
@@ -554,6 +558,11 @@ $(function(){
     	}
     	
     	// apagar outros filtros!!
+    	    limparAnos();
+    		limparColunas();
+    		limparSelectFiltroRegional();
+    		limparConsulta();
+    		limparFiltrosOpcionais();
     	
     	
     	var selCargo = $('select[name="filtroCargo"]');
@@ -790,37 +799,13 @@ $(function(){
 			</div>
 			
 			<div id="colunasForm" style="display: none;">
-	      		<div class="accordion" id="accordion2">
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-				        Colunas Fixas
-				      </a>
-				    </div>
-				    <div id="collapseOne" class="accordion-body collapse">
-				      <div class="accordion-inner">
-				        
+				        <h3>Colunas Fixas</h3>
 				        	<div class="row-fluid  show-grid" id="colunasFixasContainer"></div>
 							<select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
+						<hr>				        
+				        <h3>Colunas Opcionais</h3>
+				        <div class="control-group" id="colunasOpcionaisContainer"></div>
 				        
-				      </div>
-				    </div>
-				  </div>
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-				        Colunas Opcionais
-				      </a>
-				    </div>
-				    <div id="collapseTwo" class="accordion-body collapse in">
-				      <div class="accordion-inner">
-				        
-				        <div class="row-fluid  show-grid" id="colunasOpcionaisContainer"></div>
-				        
-				      </div>
-				    </div>
-				  </div>
-				</div>
 	      		<div class="control-group">
 				  	<button class="btn btn-primary" id="colunasContinuar">Continuar</button>
 				</div>
