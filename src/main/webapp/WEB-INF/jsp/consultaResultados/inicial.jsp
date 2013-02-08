@@ -22,218 +22,606 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+	<link type="text/css" rel="stylesheet" href="css/autoSuggest.css"/>
 
-<link type="text/css" rel="stylesheet" href="css/common.css"/>
-<link type="text/css" rel="stylesheet" href="css/form.css"/>
-<link type="text/css" rel="stylesheet" href="css/ui.multiselect.css"/>
-<link type="text/css" rel="stylesheet" href="css/autoSuggest.css"/>
-<link type="text/css" rel="stylesheet" href="css/jquery.tooltip.css"/>
-
-<script type="text/javascript" src="js/plugins/localisation/jquery.localisation-min.js"></script>
-<script type="text/javascript" src="js/plugins/scrollTo/jquery.scrollTo-min.js"></script>
-<script type="text/javascript" src="js/ui.multiselect.js"></script>
-<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
-<script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
-<script type="text/javascript" src="js/spin.js"></script>
-<script type="text/javascript" src="js/jquery.spin.js"></script>
-<script src="<c:url value='/js/jquery.fileDownload.js' />"         type="text/javascript" ></script>
-
-
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+	<script src="js/jquery.scrollTo-min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+	<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
+		
 <script type="text/javascript">
 jQuery.fn.log = function (msg) {
   console.log("%s: %o", msg, this);
   return this;
 };
 
-$(function(){
+//************************************************************************
+//
+//  Inicia multiselect
+//
+//************************************************************************
 
-    $.localise('ui-multiselect', {language: 'pt', path: 'js/locale/'});
-    $('#camposDisponiveis').multiselect();
-    $('#butQuery').attr('disabled', 'disabled');
-    $('#butQuery').attr("title","Para fazer o download, escolha o Ano, Cargo e Agregacoes desejadas").tooltip();
-    $('#grupoFiltroRegional').hide();
-
-    //.attr('title', 'Informe o ano da Eleicao pretendida e o nivel de agrupamento dos votos')
-     $('#helpAgregacao').tooltip({
-    	opacity: 1,
-        showURL: false,
-        //showBody: " - ",
-        bodyHandler: function() { 
-                return "<h3>Ano e agrega&ccedil;&otilde;es</h3>" + 
-                "Informe o ano da Elei&ccedil;&atilde;o pretendida, o cargo  e a forma na qual a quantidade de votos devem ser agrupadas.";
-        }
-     });
-
-     $('#helpCampos').tooltip({
-        opacity: 1,
-        showURL: false,
-        bodyHandler: function() { 
-                return "<ul><li><b>Fixos:</b> Campos que identificam a unicidade de cada informa&ccedil;&atilde;o</li>" +
-                "<li><b>Opcionais</b> Campos extras, podem ser escolhidos de acordo com a necessidade de sua pesquisa. A disponibilidade varia de acordo com o tipo de agrega&ccedil;&atilde;o escolhida</li></ul>"; 
-        }
-     });
-
-     $('#helpFiltros').tooltip({
-        showURL: false,
-        bodyHandler: function() { 
-                return "<h3>Filtros</h3>"+
-                "<ul><li><b>Partidos:</b> Aqui é possível filtrar um ou mais partidos;</li>" +
-                "<li><b>Candidatos</b> Aqui é possível filtrar um ou mais candidatos;</li>" + 
-                "<li><b>Regional:</b> Aqui é possível filtrar uma ou mais unidade de agregação regional.</li></ul>" +
-                "<br>Para não haver filtro dos dados, basta deixar os campos em branco.";
-        }
-    });
-
-     
-     $('#helpAgregacaoRegional').click(function() {
-    	 $("#dialog-helpAgregacaoRegional").dialog({ 
-        	 modal: true,
-        	 draggable: true,
-        	 width: 700,
-        	 height: 450,
-        	 buttons: {
-                 "Fechar": function() { $(this).dialog("close"); }
-             }
-    	 });
-     });
-
-    
-    var updateQueryButton = function(){
-        var nivelRegional = $('select[name="nivelAgregacaoRegional"]').children('option:selected').val();
-        var nivelPolitico = $('select[name="nivelAgregacaoPolitica"]').children('option:selected').val();
-        var ano = $('#anoEleicao').children('option:selected').val();
-        var cargo = $('#filtroCargoList').children('option:selected').val();
-        
-       if(nivelRegional * nivelPolitico * ano * cargo > 0){
-    	   $('#pButQuery').attr("title","Clique para baixar o arquivo.").tooltip();
-           $('#butQuery').removeAttr("disabled");
-       } else{
-           $('#pButQuery').attr("title","Para fazer o download, escolha o Ano, Cargo e Agregacoes desejadas.").tooltip();
-    	   $('#butQuery').attr('disabled', 'disabled');
-       };
-    };
-
-    
-    $('#butQuery').click(function() {
-    	try {
-
-    		var preparingFileModal = $("#preparing-file-modal");    		 
-            preparingFileModal.dialog({ modal: true });
+function initMultiselect(sel) {
+	sel.multiselect({
+	      buttonClass: 'btn',
+	      buttonWidth: 'auto',
+	      buttonText: function(options) {
+	        if (options.length == 0) {
+	          return 'Nada selecionado <b class="caret"></b>';
+	        }
+	        else if (options.length > 3) {
+	          return options.length + ' itens selecionados  <b class="caret"></b>';
+	        }
+	        else {
+	          var selected = '';
+	          options.each(function() {
+	            selected += $(this).text() + ', ';
+	          });
+	          return selected.substr(0, selected.length -2) + ' <b class="caret"></b>';
+	        }
+	      }
+	    });
 	
-	        $.fileDownload('<c:url value="/resultados.csv"/>', {
-				httpMethod: "POST",
-				data: $('#form').serialize()
-	//			preparingMessageHtml: "Estamos gerando seu arquivo, por favor aguarde...",
-	//			failMessageHtml: "Houve algum problema ao gerar seu arquivo, por favor tente novamente.",
-	//			successCallback: function (url) {
-	//	            alert("xxx"); 
-	//              $preparingFileModal.dialog('close');
-	//	        },
-	        });
-//	        preparingFileModal.dialog('close');
-	        return false;
-    	}
-        catch (err) {
-            alert("Houve algum erro na geracao do arquivo.");
-            return;
-        }
-    });
-
-      
-
-    var updateForm = function( formResult ){
-	        var l = $('#camposDisponiveis').multiselect( 'destroy' );
-	        l.children('option').remove();
-	        $.each(formResult.camposOpcionais, function(indice, par) {
-	             $("<option/>").text(par.valor).val(par.chave).appendTo(l);
-	        });
-	        l.multiselect();
+		
+	$('.multiselect-all').on('click', function(e) {
+		var s = $(this).parent().children('.multiselect');
+		
+		$('option', s).each(function(element) {
+			$(this).prop('selected', 'selected');
+		});
+		s.multiselect('refresh');
+	});
 	
-	        var l = $('#camposFixos');
-	        var fakeList = $('#camposFixosFake');
-	        fakeList.children('li').remove();
-	        l.children('option').remove();
+	$('.multiselect-clean').on('click', function() {
+		var s = $(this).parent().children('.multiselect');
+		$('option', s).each(function(element) {
+			$(this).removeAttr('selected');
+		});
+		s.multiselect('refresh');
+	});
+}
+
+//************************************************************************
+//
+//  Auxiliares em geral
+//
+//************************************************************************
+
+function validateAndGetSelection(select)
+{
+	var value = select.children('option:selected').val();
+	if(value == "") {
+		// é invalido
+		select.closest('.control-group').addClass('error');
+	} else {
+		select.closest('.control-group').removeClass('error');
+	}
 	
-	        $.each(formResult.camposFixos, 
-	            function(indice, par) {
-	                $("<option/>").attr('selected', 'selected' ).text(par.valor).val(par.chave).appendTo(l);
-	                $("<li/>").text(par.valor).appendTo(fakeList);
-	            }
-	        );
-	    };
+	return value;
+}
 
+function commaJoin(strArr) {
+	
+	return strArr.join(', ');
+}
 
-    $('select[name^="nivelAgregacao"]').change(function (){
-    	
-    	$("#spinCampos").spin();
-    	
-        var nivelRegional = $('select[name="nivelAgregacaoRegional"]').children('option:selected').val();
-        var nivelPolitico = $('select[name="nivelAgregacaoPolitica"]').children('option:selected').val();
+function btnResetAndDisable(btn) {
+	btn.button('reset');
+	setTimeout(function() { btn.attr('disabled', 'disabled').addClass('disabled'); }, 200);
+}
 
-        $.getJSON('<c:url value="/consulta/camposDisponiveis"/>',
-            { nivelAgregacaoRegional: nivelRegional ,
-              nivelAgregacaoPolitica: nivelPolitico },
-            function(data) {
-                     updateForm(data.formResultAux);
-            }
-        );
+function getSelectionText(select)
+{
+	var value = select.children('option:selected').text();
+	return value;
+}
 
-        var filtroRegional = $("#nivelFiltroRegional");
-        filtroRegional.children('option').remove();
-        $('select[name="nivelAgregacaoRegional"] option').each(function(i) {
-            var child = $(this).clone();
-            if(child.val() <= nivelRegional){
-                child.appendTo( filtroRegional );
-            }
-        });
-        
-        updateQueryButton();
-        
-        $("#spinCampos").spin(false);
-    });
+function selectedAsMultipleParameter(select, paramName)
+{
+	var value = select.val();
+	paramName = paramName + '=';
+	return paramName + value.join('&' + paramName);
+}
 
-    $('#anoEleicao').change(function (){
-    	// inicia spin dos campo cargos
-    	
-    	$("#spinAnoAgre").spin("large");
-    	
-        var anoSelecionado = $(this).children('option:selected').val();
-        var l = $('#filtroCargoList');
-        l.children('option').remove();
+//************************************************************************
+//
+//  Auxiliares dos Anos
+//
+//************************************************************************
 
-        $.getJSON('<c:url value="/consulta/cargos"/>',
-            { ano: anoSelecionado },
+function limparAnos() {
+	$('#anosDisponiveisForm').hide();
+	$('#anosDisponiveisInfo').show();
+}
+
+function popularAnos(codCargo) {
+	$('#anosDisponiveisPlaceholder').empty();
+	$('#anosDisponiveisForm').hide();
+	
+	// criando elementos usando o template
+	var clone = $('#anosTemplate').clone();
+	clone.show();
+	clone.removeAttr('id');
+	
+	var l = clone.children('.multiselect');
+	l.attr('id', 'anosDisponiveis');
+	l.attr('name', 'anosEscolhidos[]');
+	
+	
+	$('#anosDisponiveisPlaceholder').append(clone);
+	
+	//id="anosDisponiveis" name="anosEscolhidos[]" 
+	
+	
+	//var l = $('#anosDisponiveis');
+	//l.children('option').remove().multiselect('destroy');
+	//l.multiselect('destroy');
+	
+	$.getJSON('<c:url value="/consulta/anos"/>',
+            { cargo: codCargo },
             function(data) {
                 $.each(data.list, function(indice, par) {
-                    l.append( $("<option/>").text(par.valor).val(par.chave) );
+                	l.append( $("<option/>").text(par.valor).val(par.chave) );
                 });
+                initMultiselect(l);
             }
         );
-        updateQueryButton();
-        $("#spinAnoAgre").spin(false);
+	
+	$('#anosDisponiveisInfo').hide();
+	$('#anosDisponiveisForm').show();
+}
+
+function validarAnosAlerta()
+{
+	$('#anosDisponiveisError').hide();
+	var anos = $('#anosDisponiveis').val();
+	
+	if (anos != null && anos.length > 1) {
+		var alert = $('#anosDisponiveisAlert');
+		var form = $('#anosDisponiveisForm');
+		
+		$('#anosDisponiveisAlertNao').on('click', function (e) {
+			// fechar este alerta e sai
+			alert.hide();
+			form.show();
+			
+			return;
+		});
+		
+		$('#anosDisponiveisAlertSim').on('click', function (e) {
+			// fecha este alerta e valida o resto
+			alert.hide();
+			form.show();
+			
+			validarAnosSemAlerta();
+		});
+		
+		alert.bind('closed', function () {
+			alert.hide();
+			$('#anosDisponiveisForm').show();
+		});
+		
+		form.hide();
+		alert.show();
+		
+	} else {
+		validarAnosSemAlerta();
+	}
+}
+
+function validarAnosSemAlerta()
+{
+	var btnCont = $('#anosContinuar');
+	if(btnCont.hasClass('disabled')) {
+		return;
+	}
+	
+	var btnEdit = $('#anosEditar');
+	
+	var select = $('#anosDisponiveis'); 
+	
+	var anos = select.val();
+	
+	var valid = true;
+	// loading enquanto validamos
+	btnCont.button('loading');
+	
+	if(anos == null || anos.length == 0) {
+		valid = false;
+		$('#anosDisponiveisError').alert();
+		$('#anosDisponiveisError').show();
+	} else {
+		$('#anosDisponiveisError').hide();
+	}
+	
+	if(valid) {
+		btnResetAndDisable(btnCont);
+		
+		// bloquear edição
+		$('#anosDisponiveisPlaceholder').hide();
+		$('#anosDisponiveisUneditable').text( commaJoin(anos) ).show();
+		
+		// configurar botoes
+		
+		btnEdit.removeAttr('disabled', 'disabled').removeClass('disabled');
+		
+		// Abrir filtros opcionais...
+		$('#filtrosOpcionaisInfo').hide();
+		$('#filtrosOpcionaisForm').show();
+		
+		$('#consultaInfo').hide();
+		$('#consultaForm').show();
+		
+		
+		$.scrollTo($('#colunas'), 800);
+	} else {
+		btnCont.button('reset');
+		btnEdit.addClass('disabled');
+	}
+	
+}
+
+function popularColunas(nivelRegional, nivelPolitica) {
+
+	
+    $.getJSON('<c:url value="/consulta/camposDisponiveis"/>',
+        { nivelAgregacaoRegional: nivelRegional ,
+          nivelAgregacaoPolitica: nivelPolitica },
+        function(data) {
+             popularColunasFixas(data.formResultAux.camposFixos);
+             popularColunasOpcionais(data.formResultAux.camposOpcionais);
+        }
+    );
+	
+	$('#colunasInfo').hide();
+	$('#colunasForm').show();
+}
+
+//************************************************************************
+//
+//  Auxiliares das Colunas
+//
+//************************************************************************
+
+function limparColunas() {
+	$('#colunasForm').hide();
+	$('#colunasInfo').show();
+}
+
+function popularColunasFixas(campos) {
+	$('#colunasFixasContainer').empty();
+	
+	var l = $('#camposFixos');
+    l.children('option').remove();
+	
+	$.each(campos, function(indice, par) {
+        
+        // verifica se já aninhamento da coluna
+        var chaveParts = par.chave.split('.');
+        var grupo = chaveParts[0];
+        //var elemento = indiceParts[1];
+        
+        var valorParts = par.valor.split(':');
+        var nomeGrupo = valorParts[0];
+        var nomeCol = valorParts[1];
+        
+        var dl;
+        
+        if($('#' + grupo + 'Fixed').length == 0) {
+        	// nao existe, tem que criar!
+        	
+        	// criando elementos usando o template
+    		var clone = $('#colunasDefTemplate').clone();
+    		clone.show();
+    		clone.removeAttr('id');
+    		dl = clone.children('dl');
+    		
+    		clone.appendTo($('#colunasFixasContainer'));
+    		
+    		dl.attr('id', grupo + 'Fixed');
+    		$("<dt/>").text(nomeGrupo).appendTo(dl);
+    		
+    		// fake
+    		$("<option/>").attr('selected', 'selected' ).text(par.valor).val(par.chave).appendTo(l);
+        } else {
+        	dl = $('#' + grupo + 'Fixed');
+        }
+        
+        $("<dd/>").text(nomeCol).appendTo(dl);
+   });
+}
+
+function popularColunasOpcionais(campos) {
+	var container = $('#colunasOpcionaisContainer');
+	container.empty();
+
+	$.each(campos, function(indice, par) {
+		
+        // verifica se já aninhamento da coluna
+        var chaveParts = par.chave.split('.');
+        var grupo = chaveParts[0];
+        //var elemento = indiceParts[1];
+        
+        var valorParts = par.valor.split(':');
+        var nomeGrupo = valorParts[0];
+        var nomeCol = valorParts[1].trim();
+        grupo = grupo.replace("#", "").replace("#", "");
+        var id = '#' + grupo + 'Opcionais'; 
+        
+        var l;
+		
+        if($(id).length == 0) {
+        	$("<h4/>").text(nomeGrupo).appendTo(container);
+        	
+        	// criando elementos usando o template
+        	var clone = $('#anosTemplate').clone();
+        	clone.show();
+        	clone.removeAttr('id');
+        	
+        	l = clone.children('.multiselect');
+        	l.attr('id', grupo + 'Opcionais');
+        	l.attr('name', grupo + 'OpcionaisSelecionados[]');
+        	l.addClass('multiselectOpcionais');
+        	
+        	clone.appendTo(container);
+        } else {
+        	l = $(id);
+        }
+        
+        l.append( $("<option/>").text(nomeCol).val(par.chave) );
+        
+	});
+	$.each($('.multiselectOpcionais'), function() {
+		initMultiselect($(this));
+	});
+	
+}
+
+//************************************************************************
+//
+//  Auxiliares dos Filtros Opcionais
+//
+//************************************************************************
+
+function limparFiltrosOpcionais() {
+	$("#filtrosOpcionaisForm").children('option').remove();
+	$('#filtroPartidoHolder').empty();
+	$('#filtroCandidatoHolder').empty();
+	
+	configuraAutoComplete();
+	
+
+	$('#filtrosOpcionaisForm').hide();
+	$('#filtrosOpcionaisInfo').show();
+}
+
+function popularFiltrosOpcionais(nivelRegional) {
+	configuraAutoComplete();
+	popularSelectFiltroRegional(nivelRegional);
+}
+
+function popularSelectFiltroRegional(nivelRegional) {
+
+    var filtroRegional = $("#nivelFiltroRegional");
+    filtroRegional.children('option').remove();
+    $('select[name="nivelAgregacaoRegional"] option').each(function(i) {
+        var child = $(this).clone();
+        if(child.val() <= nivelRegional){
+            child.appendTo( filtroRegional );
+        }
     });
 
+}
+
+function limparSelectFiltroRegional() {
+	var filtroRegional = $("#nivelFiltroRegional");
+    filtroRegional.children('option').remove();	
+}
+
+function configuraAutoComplete() {
+	
+	// colocar inputs
+	
+	$('#filtroPartidoHolder').append( '<input type="text" id="filtroPartidoNovo" name="filtroPartido"></input>' );
+	$('#filtroCandidatoHolder').append( '<input type="text" id="filtroCandidato" name="filtroCandidato"></input>' );
+	
+	
+    $('#filtroPartidoNovo').autoSuggest('<c:url value="/consulta/partidosAnos"/>',
+            {
+                startText: "Escolha o partido para filtro",
+                emptyText: "Não existem resultados",
+                extraParamsDynamic: function(string){  return "&" + selectedAsMultipleParameter($('#anosDisponiveis'), 'anosList');},
+                selectedItemProp: "valor",
+                searchObjProps:   "valor",
+                selectedValuesProp: "chave",
+                asHtmlID: "partidos",
+                retrieveComplete: function(data){ return data.list; },
+            }
+        );
     
-    $('#filtroCargoList').change(function (){
-        updateQueryButton();
+    $('#filtroCandidato').autoSuggest('<c:url value="/consulta/candidatosAnosCargo"/>',
+            {
+                startText: "Escolha os candidatos para filtro",
+                emptyText: "Não existem resultados",
+                extraParamsDynamic: function(string){  
+                	return "&" + selectedAsMultipleParameter($('#anosDisponiveis'), 'anosList')
+                			+ "&cargo=" + $('#filtroCargo').val();},
+                selectedItemProp: "valor",
+                searchObjProps:   "valor",
+                selectedValuesProp: "chave",
+                asHtmlID: "candidatos",
+                retrieveComplete: function(data){ return data.list; },
+            }
+        );
+}
+
+
+function limparConsulta() {
+	$('#consultaForm').hide();
+	$('#consultaInfo').show();
+	
+}
+
+$(function(){
+	
+    //************************************************************************
+    //
+    //  Binds dos filtros obrigatorios
+    //
+    //************************************************************************
+	
+    $('#filtrosObrigatoriosContinuar').on('click', function (e) {
+    	
+    	e.preventDefault();
+    	
+    	var btnCont = $('#filtrosObrigatoriosContinuar');
+    	if(btnCont.hasClass('disabled')) {
+    		return;
+    	}
+    	
+    	var btnEdit = $('#filtrosObrigatoriosEditar');
+    	
+    	var selCargo = $('select[name="filtroCargo"]');
+    	var selRegional = $('select[name="nivelAgregacaoRegional"]');
+    	var selPolitico = $('select[name="nivelAgregacaoPolitica"]');
+    	
+    	var valid = true;
+    	// loading enquanto validamos
+    	btnCont.button('loading');
+    	
+    	// validando selects
+    	var cargo = validateAndGetSelection(selCargo);
+    	if(cargo == "") {
+    		valid = false;
+    	}
+    	
+    	var nivelRegional = validateAndGetSelection(selRegional);
+    	if(nivelRegional == "") {
+    		valid = false;
+    	}
+    	
+    	var nivelPolitico = validateAndGetSelection(selPolitico);
+    	if(nivelPolitico == "") {
+    		valid = false;
+    	}
+    	
+    	
+    	if(valid) {
+    		btnResetAndDisable(btnCont);
+    		
+    		// bloquear edição
+    		selCargo.hide();
+    		$('#filtroCargoText').text( getSelectionText(selCargo) ).show();
+    		
+    		selRegional.hide();
+    		$('#nivelAgregacaoRegionalText').text( getSelectionText(selRegional) ).show();
+    		
+    		selPolitico.hide();
+    		$('#nivelAgregacaoPoliticaText').text( getSelectionText(selPolitico) ).show();
+    		
+    		// configurar botoes
+			
+			btnEdit.removeAttr('disabled', 'disabled').removeClass('disabled');
+			
+			// iniciar proximo passo
+			popularAnos(cargo);
+			popularColunas(nivelRegional, nivelPolitico);
+			popularFiltrosOpcionais(nivelRegional);
+    		
+    		$.scrollTo($('#eleicoes'), 800);
+    	} else {
+    		btnCont.button('reset');
+    		btnEdit.addClass('disabled');
+    		
+    		limparAnos();
+    		limparColunas();
+    		limparSelectFiltroRegional();
+    		limparConsulta();
+    	}
+    	
     });
-
-
-    var applyFiltroRegional = function( descricaoFiltro ){
-	    $('#filtroRegional').autoSuggest('<c:url value="/consulta/filtroRegionalQuery"/>',
-	        {
-	            startText: "Escolha " + descricaoFiltro,
-	            emptyText: "Não existem resultados",
-	            extraParamsDynamic: function(string){  return "&nivelRegional=" + $("#nivelFiltroRegional").val();},
-	            selectedItemProp: "valor",
-	            searchObjProps: "valor",
-	            selectedValuesProp: "chave",
-	            asHtmlID: "regional",
-	            retrieveComplete: function(data){ /*alert(data.list[0].chave); */ return data.list; },
-	        }
-	    );
-    };
-
+    
+    $('#filtrosObrigatoriosEditar').on('click', function (e) {
+		e.preventDefault();
+    	
+		var btnEdit = $('#filtrosObrigatoriosEditar');
+		var btnCont = $('#filtrosObrigatoriosContinuar');
+		btnCont.removeAttr('disabled', 'disabled').removeClass('disabled');
+		
+    	if(btnEdit.hasClass('disabled')) {
+    		return;
+    	}
+    	
+    	// apagar outros filtros!!
+    	
+    	
+    	var selCargo = $('select[name="filtroCargo"]');
+    	var selRegional = $('select[name="nivelAgregacaoRegional"]');
+    	var selPolitico = $('select[name="nivelAgregacaoPolitica"]');
+    	
+    	selCargo.show();
+		$('#filtroCargoText').hide();
+		
+		selRegional.show();
+		$('#nivelAgregacaoRegionalText').hide();
+		
+		selPolitico.show();
+		$('#nivelAgregacaoPoliticaText').hide();
+		
+		btnEdit.addClass('disabled');
+		
+    });
+    
+    //************************************************************************
+    //
+    //  Binds dos anos
+    //
+    //************************************************************************
+    
+    $('#anosContinuar').on('click', function (e) {
+    	e.preventDefault();
+    	validarAnosAlerta();
+    });
+    
+    $('#anosEditar').on('click', function (e) {
+		e.preventDefault();
+    	
+		var btnEdit = $('#anosEditar');
+		var btnCont = $('#anosContinuar');
+		btnCont.removeAttr('disabled', 'disabled').removeClass('disabled');
+		
+    	if(btnEdit.hasClass('disabled')) {
+    		return;
+    	}
+    	
+    	// apagar outros filtros!!
+		limparFiltrosOpcionais();
+    	limparConsulta();
+    	
+    	$('#anosDisponiveisUneditable').hide();
+    	$('#anosDisponiveisPlaceholder').show();
+    	
+    	btnEdit.addClass('disabled');
+    });
+    
+    //************************************************************************
+    //
+    //  Binds das colunas
+    //
+    //************************************************************************
+    
+    $('#colunasContinuar').on('click', function (e) {
+    	e.preventDefault();
+    	
+    	$.scrollTo($('#filtrosOpcionais'), 800);
+    });
+    
+    //************************************************************************
+    //
+    //  Binds dos filtros opcionais
+    //
+    //************************************************************************
     
     $('#nivelFiltroRegional').change(function () {
     	
@@ -248,184 +636,278 @@ $(function(){
         };
         
     });
-
     
-    $('#filtroPartidoNovo').autoSuggest('<c:url value="/consulta/partidos"/>',
-        {
-            startText: "Escolha o partido para filtro",
-            emptyText: "Não existem resultados",
-            extraParamsDynamic: function(string){  return "&ano=" + $('#anoEleicao').children('option:selected').val();},
-            selectedItemProp: "valor",
-            searchObjProps:   "valor",
-            selectedValuesProp: "chave",
-            asHtmlID: "partidos",
-            retrieveComplete: function(data){ return data.list; },
-        }
-    );
-
-    $('#filtroCandidato').autoSuggest('<c:url value="/consulta/candidatos"/>',
-        {
-            startText: "Escolha os candidatos para filtro",
-            emptyText: "Não existem resultados",
-            extraParamsDynamic: function(string){  return "&ano=" + $('#anoEleicao').children('option:selected').val();},
-            selectedItemProp: "valor",
-            searchObjProps:   "valor",
-            selectedValuesProp: "chave",
-            asHtmlID: "candidatos",
-            retrieveComplete: function(data){ return data.list; },
-        }
-    );
-
-
-       // http://harvesthq.github.com/chosen/
-       // http://www.senamion.com/blog/jmultiselect2side.html
-       // http://quasipartikel.at/2009/05/10/jqueryui-multiselect/
-       // http://quasipartikel.at/multiselect_next/
-       // http://labs.abeautifulsite.net/jquery-selectBox/
-//    <h1>Consulta Resultados TSE</h1>
-//    <p>Consulta de resultados de eleições.</p>
-        
-
+    
+    var applyFiltroRegional = function( descricaoFiltro ){
+	    $('#filtroRegional').autoSuggest('<c:url value="/consulta/filtroRegionalQuery"/>',
+	        {
+	            startText: "Escolha " + descricaoFiltro,
+	            emptyText: "Não existem resultados",
+	            extraParamsDynamic: function(string){  return "&nivelRegional=" + $("#nivelFiltroRegional").val();},
+	            selectedItemProp: "valor",
+	            searchObjProps: "valor",
+	            selectedValuesProp: "chave",
+	            asHtmlID: "regional",
+	            retrieveComplete: function(data){ /*alert(data.list[0].chave); */ return data.list; },
+	        }
+	    );
+    };
+    
+    
+    $('#filtrosOpcionaisContinuar').on('click', function (e) {
+    	e.preventDefault();
+    	$.scrollTo($('#consulta'), 800);
+    });
 });
 </script>
 
-</head>
-<body>
-
-<div id="wrapper">
-<div id="header">
-<p class="left">
-<img src="<c:url value="/images/logo.png"/>"></img>
-<h1>Consulta Resultados TSE</h1>
-Consulta de resultados de eleições.
-</p>
-<p class="right"><img src="<c:url value="/images/logoFapesp.jpg"/>"></p>
-<br class="clear" />
-
-
-</div>
-<c:if test="${not empty errors}">
-    <div id="error">
-        <ul>
-        <c:forEach items="${errors }" var="error">
-            <li>${error.category } - ${error.message }</li>
-        </c:forEach>
-        </ul>
-    </div>
-</c:if>
-<c:if test="${not empty notice}">
-    <div id="notice">
-        <p>${notice }</p>
-    </div>
-</c:if>
-
-    <div id="content">
-        <form id="form" action="<c:url value="/resultados.csv"/>" method="post">
-			
-            <h2>Ano e agregações <img id="helpAgregacao" src="<c:url value="/images/help_icon.gif"/>"></img></h2>
-            <div id="spinAnoAgre" class="formLayout">
-            <label for="anoEleicao">Ano da Eleição:</label>
-                <select id="anoEleicao" name="anoEleicao">
-                    <c:forEach items="${anoEleicaoList}" var="ano" varStatus="s">
-                        <option value="${ano.chave}">${ano.valor}</option>
-                    </c:forEach>
-                </select><br>
-                <label for="filtroCargoList">Cargo:</label> 
-                <select id="filtroCargoList" name="filtroCargo"></select><br>
-                <label for="nivelAgregacaoRegional">Nível de Agregação Regional:</label>
-                <select name="nivelAgregacaoRegional">
-                    <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
-                        <option value="${nar.chave}">${nar.valor}</option>
-                    </c:forEach>
-                </select>
-                (<a href="#" id="helpAgregacaoRegional">saiba mais...</a>)<br>
-                <label for="nivelAgregacaoPolitica">Nível de Agregação Política:</label>
-                <select name="nivelAgregacaoPolitica">
-                    <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
-                        <option value="${nap.chave}">${nap.valor}</option>
-                    </c:forEach>
-                </select>
+      <div class="hero-unit">
+        <h2>Consulta de resultados de eleições</h2>
+        <p>Use este formulário para fazer consultas às bases de dados relativas as eleições.</p>
+        <p><a class="btn btn-primary btn-large" href="#filtrosObrigatorios">Começar &raquo;</a></p>
+      </div>
+      
+      <div class="row">
+      
+      	<form class="form-horizontal">
+      	<!-- Filtros Obrigatorios
+        ================================================== -->
+      	<section id="filtrosObrigatorios">
+      		<div class="page-header">
+      			<h1>Filtros obrigatórios</h1>
+      		</div>
+      		<p>Neste modo de consulta, você deve primeiro escolher um cargo 
+      		e os níveis de agregação regional e política.</p>
+      		
+      		<div id="controlFiltrosObrigatorios">
+      		  <div class="control-group">
+			    <label class="control-label" for="filtroCargo">Cargo</label>
+			    <div class="controls">
+			      <select id="filtroCargo" name="filtroCargo" required title="Cargo é um campo obrigatório.">
+	                    <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
+	                        <option value="${cargo.chave}">${cargo.valor}</option>
+	                    </c:forEach>
+                	</select>
+                	<span class="input-large uneditable-input" id="filtroCargoText" style="display: none;"></span>
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional</label>
+			    <div class="controls">
+			        <select name="nivelAgregacaoRegional" required>
+	                    <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
+	                        <option value="${nar.chave}">${nar.valor}</option>
+	                    </c:forEach>
+                	</select>
+                	<span class="input-large uneditable-input" id="nivelAgregacaoRegionalText" style="display: none;"></span>
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="nivelAgregacaoPolitica">Agregação regional</label>
+			    <div class="controls">
+			      <select name="nivelAgregacaoPolitica" required>
+	                    <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
+	                        <option value="${nap.chave}">${nap.valor}</option>
+	                    </c:forEach>
+                	</select>
+                	<span class="input-large uneditable-input" id="nivelAgregacaoPoliticaText" style="display: none;"></span>
+			    </div>
+			  </div>
 			</div>
-            <h2>Campos <img id="helpCampos" src="<c:url value="/images/help_icon.gif"/>"></img></h2>
-            <div id="spinCampos">
-	            <h3>Fixos</h3>
-	            <p>
-	                <ul id="camposFixosFake"></ul>
-	                <select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
-	            </p>
-	
-	            <h3>Opcionais</h3>
-	            <p>
-	                <select id="camposDisponiveis" name="camposEscolhidos[]"  class="multiselect" multiple="multiple">
-	                </select>
-	            </p>
+      		<div class="control-group">
+      			<div class="controls">
+			  		<button class="btn btn-primary" id="filtrosObrigatoriosContinuar" data-loading-text="Validando...">Continuar</button>
+			  		<button class="btn btn-danger disabled" id="filtrosObrigatoriosEditar" title="Este botão limpa os próximos!">Editar</button>
+			  	</div>
 			</div>
-	            <h2>Filtros  <img id="helpFiltros" src="<c:url value="/images/help_icon.gif"/>"></img></h2>
-	            <div>
-	                <ul id="filters"></ul>
-	                <p>
-	                    <label for="filtroPartido">Partidos:</label>
-	                    <input type="text" id="filtroPartidoNovo" name="filtroPartido"></input>
-	                </p>
-	                <p>
-	                    <label for="filtroCandidato">Candidatos:</label>
-	                    <input type="text" id="filtroCandidato" name="filtroCandidato"></input>
-	                </p>
-	
-	                <p>
-	                    <label for="nivelFiltroRegional">Filtro Regional:</label>
-	                    <select name="nivelFiltroRegional" id="nivelFiltroRegional" class="formLayout"></select>
-	                
-	                </p>
-	                <p id="grupoFiltroRegional"></p>
-	            </div>
+      	
+      	</section>
+      	<!-- Eleições
+        ================================================== -->
+      	<section id="eleicoes">
+      		<div class="page-header">
+      			<h1>Eleições</h1>
+      		</div>
+			<p>Abaixo estão listadas as eleições disponíveis para o cargo
+				escolhido. Para continuar escolha ao menos um ano. Note que escolher
+				vários anos pode tornar a consulta bastante demorada.</p>
+
+			<div id="anosDisponiveisInfo">
+				<div class="alert alert-info">
+  					<strong>Nota:</strong> Esta parte do formulário estará disponível quando preencher os <a href="#filtrosObrigatorios">filtros obrigatórios</a>.
+				</div>
+			</div>
 			
+			<div id="anosDisponiveisAlert" class="alert alert-block alert-warning fade in" style="display: none;">
+            	<h4 class="alert-heading">Você escolheu muitos anos!</h4>
+	            <p>A consulta pode levar mais do que o esperado. Deseja continuar assim mesmo?<p>
+              	<button class="btn btn-warning" id="anosDisponiveisAlertSim">Sim, quero continuar</button> <button class="btn" id="anosDisponiveisAlertNao">Não, vou alterar minha escolha</button>
+             </div>
+			
+			<div id="anosDisponiveisError" class="alert alert-block alert-error fade in" style="display: none;">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+            	<h4 class="alert-heading">Você deve escolher ao menos um ano!</h4>
+	            <p>Para efetuar a consulta você deve selecionar ao menos um ano.<p>
+            </div>
 
+			<div id="anosDisponiveisForm" style="display: none;">
+	      		<div class="control-group" >
+	      				<span class="input-xlarge uneditable-input" id="anosDisponiveisUneditable" style="display: none;"></span>
+				  		<div id="anosDisponiveisPlaceholder"></div>
+				</div>
+	      		<div class="control-group">
+				  		<button class="btn btn-primary" id="anosContinuar" data-loading-text="Validando...">Continuar</button>
+				  		<button class="btn btn-danger disabled" id="anosEditar" title="Este botão limpa os próximos!">Editar</button>
+				</div>		
+			</div>
+			
+			<!-- Multiselect template -->
+	   		<div class="btn-group multiselect-group" id="anosTemplate" style="display: none;">
+				<select multiple="multiple" class="multiselect" required title="Este campo é obrigatório.">
+				</select>
+				<button class="btn multiselect-all">Selecionar todos</button>
+				<button class="btn multiselect-clean">Limpar seleção</button>
+			</div>
+					    
+	</section>
+      
+      	<!-- Colunas
+        ================================================== -->
+      	<section id="colunas">
+      		<div class="page-header">
+      			<h1>Colunas fixas e opcionais</h1>
+      		</div>
+      	
 
-            <br />
-            <hr />
+			<p>Dependendo das agregações ecolhidas anteriormente a consulta
+				pode trazer diferentes colunas. Algumas colunas são fixas e outras
+				opcionais. Aqui você pode escolher as colunas opicionais desejadas.</p>
+	
+			<div id="colunasInfo">
+				<div class="alert alert-info">
+	 				<strong>Nota:</strong> Esta parte do formulário estará disponível quando preencher os <a href="#filtrosObrigatorios">filtros obrigatórios</a>.
+				</div>
+			</div>
+			
+			<div id="colunasForm" style="display: none;">
+	      		<div class="accordion" id="accordion2">
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				        Colunas Fixas
+				      </a>
+				    </div>
+				    <div id="collapseOne" class="accordion-body collapse">
+				      <div class="accordion-inner">
+				        
+				        	<div class="row-fluid  show-grid" id="colunasFixasContainer"></div>
+							<select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
+				        
+				      </div>
+				    </div>
+				  </div>
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+				        Colunas Opcionais
+				      </a>
+				    </div>
+				    <div id="collapseTwo" class="accordion-body collapse in">
+				      <div class="accordion-inner">
+				        
+				        <div class="row-fluid  show-grid" id="colunasOpcionaisContainer"></div>
+				        
+				      </div>
+				    </div>
+				  </div>
+				</div>
+	      		<div class="control-group">
+				  	<button class="btn btn-primary" id="colunasContinuar">Continuar</button>
+				</div>
+			</div>
+	      	
+	      	<!-- templates -->
+	      	<div class="span3" id="colunasDefTemplate" style="display: none; ">
+				<dl>
+				</dl>
+			</div>   
+      
+		</section>
+		
+		<!-- Filtros opcionais
+        ================================================== -->
+      	<section id="filtrosOpcionais">
+      		<div class="page-header">
+      			<h1>Filtros opcionais</h1>
+      		</div>
 
-        </form>
-        </div>
-        <p id="pButQuery" class="right">
-            <button id="butQuery">Executar Consulta</button>
-        </p>
-		<br/>
+			<p>
+				Aqui você pode selecionar filtros opcionais, como partido político,
+				candidato e região. No campo partidos, além das siglas, é possível
+				buscar por <strong>Branco</strong>, <strong>Nulo</strong> e <strong>Anulado</strong>.
+			</p>
 
-    </div>
+			<div id="filtrosOpcionaisInfo">
+				<div class="alert alert-info">
+	 				<strong>Nota:</strong> Esta parte do formulário estará disponível quando escolher as <a href="#eleicoes">eleições</a>.
+				</div>
+			</div>
+	      
+	      	<div id="filtrosOpcionaisForm" style="display: none;">
+	      		<h3>Partido político</h3>
+	      			<div class="control-group" id="filtroPartidoHolder">
+	            	</div>
+	      		<h3>Candidato</h3>
+	      			<div class="control-group" id="filtroCandidatoHolder">
+	      			</div>
+	      		<h3>Região</h3>
+	      			<h4>Tipo de região</h4>
+	      			<div class="control-group">
+	      				<select name="nivelFiltroRegional" id="nivelFiltroRegional" class="formLayout"></select>
+	      			</div>
+	      			<div class="control-group">
+	      				<div id="grupoFiltroRegional"></div>
+	      			</div>
+	      		
+	      		<div class="control-group">
+				  	<button class="btn btn-primary" id="filtrosOpcionaisContinuar">Continuar</button>
+				</div>
+			</div>
+      
+		</section>
+		
+		<!-- Efetuar consulta
+        ================================================== -->
+      	<section id=consulta>
+      		<div class="page-header">
+      			<h1>Resultado</h1>
+      		</div>
 
+			<p>
+				O botão abaixo efetuará a consulta. Isto pode demorar de acordo com
+				os filtros selecionados. O arquivo
+				<strong>.csv</strong> pode ser aberto com editores de planilhas
+				eletrônicas, como MS Excel ou OpenOffice Calc.
+			</p>
 
-    <div id="footer">
-        <p class="left"></p>
-        <p class="right">.</p>
-        <br class="clear" />
-    </div>
-    
-	<div id="preparing-file-modal" title="Gerando Arquivo..." style="display: none;">
-	   Gerando arquivo, por favor aguarde...	 
-	<!--Throw what you'd like for a progress indicator below-->
-	<div class="ui-progressbar-value ui-corner-left ui-corner-right" style="width: 100%; height:22px; margin-top: 20px;"></div>
-	</div>	 
-	<div id="error-modal" title="Erro" style="display: none;">
-	    Houve algum problema ao gerar seu arquivo, por favor tente novamente.
-	</div>
-
-    <div id="dialog-helpAgregacaoRegional" title="Sobre agrega&ccedil;&atilde;o Regional" style="display: none;">
-Com exce&ccedil;&atilde;o das Unidades da Federa&ccedil;&atilde;o (tamb&eacute;m conhecidas como "Estados") e os munic&iacute;pios que s&atilde;o classifica&ccedil;&otilde;es administrativas definidas pelos respectivos legislativos e homologadas pelo TSE, o &oacute;rg&atilde;o respons&aacute;vel pela divis&atilde;o regional do Brasil &eacute; o Instituto Brasileiro de Geografia e Estat&iacute;stica (IBGE). 
-(<a href="http://www.ibge.gov.br/home/geociencias/geografia/default_div_int.shtm" target="blank" >mais...</a>) 
-<br/>O IBGE define atualmente 3 categorias:
-<ul>
-<li>
-<b>Macroregi&atilde;o:</b> Divide o pa&iacute;s em grandes blocos em fun&ccedil;&atilde;o de sua posi&ccedil;&atilde;o geogr&aacute;fica - Sul, Sudeste, Centro-Oeste, Norte e Nordeste. Essa classifica&ccedil;&atilde;o existe desde 1970 e substitui classifica&ccedil;&otilde;es anteriores (1913 e 1945). Consiste em um agrupamento de UFs;
-</li>
-<li>
-<b>Microregi&atilde;o:</b> Um agrupamento de munic&iacute;pios lim&iacute;trofes. Para fins estat&iacute;sticos e com base em similaridades econômicas e sociais, o IBGE divide os diversos estados da federa&ccedil;&atilde;o brasileira em microrregi&otilde;es.
-</li>
-<li>
-<b>Mesoregi&atilde;o:</b> A Divis&atilde;o Regional do Brasil em mesorregi&otilde;es, partindo de determina&ccedil;&otilde;es mais amplas a n&iacute;vel conjuntural, buscou identificar &aacute;reas individualizadas em cada uma das Unidades Federadas, tomadas como universo de an&aacute;lise e definiu as mesorregi&otilde;es com base nas seguintes dimens&otilde;es: o processo social como determinante, o quadro natural como condicionante e a rede de comunica&ccedil;&atilde;o e de lugares como elemento da articula&ccedil;&atilde;o espacial. Um exemplo t&iacute;pico de mesoregi&atilde;o s&atilde;o as regi&otilde;es metropolitanas. A mesoregi&atilde;o &eacute; um agrupamento de microregi&otilde;es.
-</li>
-</ul>
-    </div>
-
-    
-</div>
+			<div id="consultaInfo">
+				<div class="alert alert-info">
+	 				<strong>Nota:</strong> Alguns campos obrigatórios ainda não foram selecionados.
+				</div>
+			</div>
+	      
+	      	<div id="consultaForm" style="display: none;">
+	      		<p>
+				  <button class="btn btn-large btn-primary" type="button">Efetuar consulta</button>
+				</p>
+			</div>
+			
+			
+      
+		</section>
+		
+		</form>
+	  </div>
+	  
+	  
+      <!-- Page End -->

@@ -1,19 +1,10 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-  
-<!-- Fim do corpo da pagina -->
-</div>
+      <hr>
 
-<!-- Inicio Rodape -->
-<div id="footer">
-	<br/><br/><br/><br/>
-	<p>Versão: ${appData.version}</p>
-	<p>Publicado em <fmt:formatDate type="both" dateStyle="long" value="${appData.dataPublicacao}" /></p>
+      <div class="footer">
+        <p>&copy; Company 2012</p>
+      </div>
 
-</div>
-<!-- Fim do Rodape -->
+    </div> <!-- /container -->
 
-</div>
-
-</body>
+  </body>
 </html>
