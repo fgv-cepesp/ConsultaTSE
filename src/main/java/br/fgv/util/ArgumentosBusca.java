@@ -25,7 +25,7 @@ import br.fgv.business.AgregacaoRegional;
 
 public class ArgumentosBusca {
 
-	private String anoEleicao;
+	private String[] anos;
 	private String filtroCargo;
 	private AgregacaoRegional nivelRegional;
 	private AgregacaoPolitica nivelAgrecacaoPolitica;
@@ -42,12 +42,12 @@ public class ArgumentosBusca {
 		this.filtroRegional = filtroRegional;
 	}
 
-	public String getAnoEleicao() {
-		return anoEleicao;
+	public String[] getAnoEleicao() {
+		return anos;
 	}
 
-	public void setAnoEleicao(String anoEleicao) {
-		this.anoEleicao = anoEleicao;
+	public void setAnoEleicao(String[] anos) {
+		this.anos = anos;
 	}
 
 	public String getFiltroCargo() {
@@ -102,7 +102,7 @@ public class ArgumentosBusca {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ArgumentosBusca[")
-			.append( "\nanoEleicao: " ).append( anoEleicao )
+			.append( "\nanoEleicao: " ).append( anos )
 			.append( "\nfiltroCargo: " ).append( filtroCargo )
 			.append( "\nnivelRegional: " ).append( nivelRegional )
 			.append( "\nnivelAgrecacaoPolitica: " ).append( nivelAgrecacaoPolitica )

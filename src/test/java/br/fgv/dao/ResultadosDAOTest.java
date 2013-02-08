@@ -107,8 +107,9 @@ public class ResultadosDAOTest {
 		String[] cd = {"ccc", "ddd"};
 		String[] ef = {"eee", "fff"};
 		
+		String [] anos = {"2010"};
 		ArgumentosBusca args = new ArgumentosBusca();
-		args.setAnoEleicao("2010");
+		args.setAnoEleicao(anos);
 		args.setFiltroCargo("xxFiltroCargo");
 		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt("1"));
 		args.setNivelRegional(AgregacaoRegional.fromInt("1"));
@@ -124,7 +125,7 @@ public class ResultadosDAOTest {
 				"sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo group by macro, partido order by macro, partido", 
-				dao.getStringQueryFato(args));
+				dao.getStringQueryFato(args, "2010"));
 		
 		args.setNivelRegional(AgregacaoRegional.fromInt("2"));
 
@@ -134,7 +135,7 @@ public class ResultadosDAOTest {
 				"sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo group by uf, partido order by uf, partido", 
-				dao.getStringQueryFato(args));
+				dao.getStringQueryFato(args, "2010"));
 		
 		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.CANDIDATO);
 		
@@ -142,13 +143,13 @@ public class ResultadosDAOTest {
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk order by uf, candidato_sk", 
-				dao.getStringQueryFato(args));
+				dao.getStringQueryFato(args, "2010"));
 		
 		assertEquals(SELECT_ + "uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk order by uf, candidato_sk", 
-				dao.getStringQueryFato(args));
+				dao.getStringQueryFato(args, "2010"));
 		
 		args.setFiltroCandidato(ef);
 		args.setFiltroPartido(cd);
@@ -160,7 +161,7 @@ public class ResultadosDAOTest {
 				"WHERE cod_cargo = xxFiltroCargo " +
 				"AND uf in (aaa, bbb)  AND partido in (ccc, ddd)  " +
 				"group by uf, candidato_sk order by uf, candidato_sk", 
-				dao.getStringQueryFato(args));
+				dao.getStringQueryFato(args, "2010"));
 	}
 	
 	@Test
@@ -168,8 +169,8 @@ public class ResultadosDAOTest {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 		
-		assertEquals("SELECT voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoElecicao", empty, AgregacaoPolitica.PARTIDO));
-		assertEquals("SELECT dim_partidos.sigla_Partido, voto_nominal, voto_legenda, voto_total " +
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.PARTIDO));
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", dim_partidos.sigla_Partido, voto_nominal, voto_legenda, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
 				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.PARTIDO));		
 	}
@@ -179,8 +180,8 @@ public class ResultadosDAOTest {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 		
-		assertEquals("SELECT voto_nominal FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoElecicao", empty, AgregacaoPolitica.CANDIDATO));
-		assertEquals("SELECT dim_partidos.sigla_Partido, voto_nominal " +
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", voto_nominal FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.CANDIDATO));
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", dim_partidos.sigla_Partido, voto_nominal " +
 				"FROM ( xxQueryFato ) as r " +
 				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.CANDIDATO));		
 	}
@@ -269,17 +270,7 @@ public class ResultadosDAOTest {
 	public void testCandidatosPorAnoListCargo() {
 		String[] anos = {"2002", "2006"};
 		List<Par> l = dao.getCandidatosPorAnoList("LUI", anos, "1");
-		assertTrue(l.size() > 20000);
-		assertTrue(l.size() < 22000);
-		Par p = l.get(0);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
-		
-
-		p = l.get(500);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
-		assertTrue(p.getValor().contains(p.getChave()));
+		assertTrue(l.size() == 1);
 	}
 	
 	@Test

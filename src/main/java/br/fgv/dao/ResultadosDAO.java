@@ -221,7 +221,7 @@ public class ResultadosDAO {
 	}
 	
 	
-	String getStringQueryFato(ArgumentosBusca args) {
+	String getStringQueryFato(ArgumentosBusca args, String ano) {
 		
 		String reg = args.getNivelRegional().getNome();
 		String pol = args.getNivelAgrecacaoPolitica().getNome();
@@ -247,7 +247,7 @@ public class ResultadosDAO {
 		// GROUP BY
 		qb._group_by_().comma(reg, pol)._order_by_().comma(reg, pol);
 
-		return qb.toString(args.getAnoEleicao());
+		return qb.toString(ano);
 	}
 
 	String getStringQueryDim(String queryFato, String anoEleicao,
@@ -259,7 +259,7 @@ public class ResultadosDAO {
 		}
 		
 		QueryBuilder qb = new QueryBuilder();
-		qb.select_().commaWithTrailing((Object[])camposEscolhidos).comma(agregacaoPolitica.getColunas())
+		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").commaWithTrailing((Object[])camposEscolhidos).comma(agregacaoPolitica.getColunas())
 			._from_().par(queryFato)._as_().valor(REF_FACT);
 		
 		for (String nomeTabela : tabelasARelacionar) {
@@ -284,23 +284,31 @@ public class ResultadosDAO {
 
 	public ResultSetWork queryFato(ArgumentosBusca args) {
 
-	    String queryFato = getStringQueryFato(args);
-	    
-	    
-		String queryTotal = getStringQueryDim(queryFato, args.getAnoEleicao(),
-				args.getCamposEscolhidos(), args.getNivelAgrecacaoPolitica());
+		String[] anos = args.getAnoEleicao();
 		
-		String queryFinal = aplicarFiltros(queryTotal, args);
+		List<String> queries = new ArrayList<String>();
+		
+		for (String ano : anos) {
+		    String queryFato = getStringQueryFato(args, ano);
+			String queryTotal = getStringQueryDim(queryFato, ano,
+					args.getCamposEscolhidos(), args.getNivelAgrecacaoPolitica());
+			String queryFinal = aplicarFiltros(queryTotal, args);
+			
+			queries.add(queryFinal);
+			
+			if(LOGGER.isDebugEnabled()) {
+				LOGGER.debug("Query para ano:\t" + ano);
+				LOGGER.debug("Query fato:\t" + queryFato);
+				LOGGER.debug("Query total:\t" + queryTotal);
+				LOGGER.debug("Query total:\t" + queryFinal);
+			}
+		}
+		
+		String union = QueryBuilder.unionAll(queries);
 
 		ResultSetWork ra = new ResultSetWork();
 
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Query fato:\t" + queryFato);
-			LOGGER.debug("Query total:\t" + queryTotal);
-			LOGGER.debug("Query total:\t" + queryFinal);
-		}
-
-		ra.setQuery(queryFinal);
+		ra.setQuery(union);
 		session.doWork(ra);
 		
 		return ra;
@@ -335,16 +343,13 @@ public class ResultadosDAO {
 		
 		try {
 			int colCount = rs.getMetaData().getColumnCount();
-			String ano = args.getAnoEleicao();
 			
 			CSVBuilder csv = CSVBuilder.createTemp();
 			
-			csv.elemento("anoEleicao")
-				.elemento(ra.getColumnsName())
+			csv.elemento(ra.getColumnsName())
 				.linha();
 			
 			while (rs.next()) {
-				csv.elemento(ano);
 				for (int i = 0; i < colCount; i++) {
 					csv.elemento(rs.getString(i + 1));
 				}

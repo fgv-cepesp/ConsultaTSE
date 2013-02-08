@@ -51,8 +51,11 @@ public class QueryBuilder {
 	public static final String _LEFT_JOIN_ = " left join ";
 	
 	public static final String _UNION_DISTINCT_ = " UNION DISTINCT ";
+	public static final String _UNION_ALL_ = " UNION ALL ";
 	
 	private static final Joiner UNION_DISTINCT_JOINER = Joiner.on(") " + _UNION_DISTINCT_ + " (").skipNulls();
+	
+	private static final Joiner UNION_ALL_JOINER = Joiner.on(") " + _UNION_ALL_ + " (").skipNulls();
 	
 	
 	public QueryBuilder select_() {
@@ -294,5 +297,10 @@ public class QueryBuilder {
 	public static String unionDistinct(List<String> queries) {
 		
 		return "(" + UNION_DISTINCT_JOINER.join(queries) + ")";
+	}
+	
+	public static String unionAll(List<String> queries) {
+		
+		return "(" + UNION_ALL_JOINER.join(queries) + ")";
 	}
 }

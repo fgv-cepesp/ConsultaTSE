@@ -42,6 +42,7 @@ import br.fgv.business.FormResultAux;
 import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.Par;
+import br.fgv.util.QueryBuilder;
 
 @Resource
 public class ConsultaResultadosController {
@@ -165,7 +166,7 @@ public class ConsultaResultadosController {
 
 	@Post
 	@Path("/resultados.csv")
-	public Download resultadosCSVEntrada(String anoEleicao, String filtroCargo,
+	public Download resultadosCSVEntrada(String[] anoEleicao, String filtroCargo,
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, String as_values_regional,
@@ -204,7 +205,7 @@ public class ConsultaResultadosController {
 
 	// @Post
 	// @Path("/resultados.csv")
-	public Download resultadosCSV(String anoEleicao, String filtroCargo,
+	public Download resultadosCSV(String[] anoEleicao, String filtroCargo,
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, List<String> filtroRegional,
@@ -250,7 +251,8 @@ public class ConsultaResultadosController {
 		
 		File retFile = business.getLinkResult(args);
 
-		String nameFile = business.getSugestaoNomeArquivo(anoEleicao,
+		
+		String nameFile = business.getSugestaoNomeArquivo(QueryBuilder.COMMA((Object[])anoEleicao),
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
 		return new FileDownload(retFile, "text/csv", nameFile, true);
