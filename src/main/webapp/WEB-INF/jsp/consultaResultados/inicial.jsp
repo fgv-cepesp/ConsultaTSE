@@ -66,6 +66,7 @@ function initMultiselect(sel) {
 	
 		
 	$('.multiselect-all').on('click', function(e) {
+		e.preventDefault();
 		var s = $(this).parent().children('.multiselect');
 		
 		$('option', s).each(function(element) {
@@ -74,7 +75,8 @@ function initMultiselect(sel) {
 		s.multiselect('refresh');
 	});
 	
-	$('.multiselect-clean').on('click', function() {
+	$('.multiselect-clean').on('click', function(e) {
+		e.preventDefault();
 		var s = $(this).parent().children('.multiselect');
 		$('option', s).each(function(element) {
 			$(this).removeAttr('selected');
@@ -192,6 +194,8 @@ function validarAnosAlerta()
 		var form = $('#anosDisponiveisForm');
 		
 		$('#anosDisponiveisAlertNao').on('click', function (e) {
+			e.preventDefault();
+			
 			// fechar este alerta e sai
 			alert.hide();
 			form.show();
@@ -200,6 +204,8 @@ function validarAnosAlerta()
 		});
 		
 		$('#anosDisponiveisAlertSim').on('click', function (e) {
+			e.preventDefault();
+			
 			// fecha este alerta e valida o resto
 			alert.hide();
 			form.show();
