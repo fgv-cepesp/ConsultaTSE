@@ -29,18 +29,12 @@ public class ArgumentosBusca {
 	private String filtroCargo;
 	private AgregacaoRegional nivelRegional;
 	private AgregacaoPolitica nivelAgrecacaoPolitica;
+	
 	private String[] camposEscolhidos;
 	private String[] filtroPartido;
 	private String[] filtroCandidato;
 	private String[] filtroRegional;
-
-	public String[] getFiltroRegional() {
-		return filtroRegional;
-	}
-
-	public void setFiltroRegional(String[] filtroRegional) {
-		this.filtroRegional = filtroRegional;
-	}
+	private AgregacaoRegional nivelFiltroRegional;
 
 	public String[] getAnoEleicao() {
 		return anos;
@@ -98,18 +92,39 @@ public class ArgumentosBusca {
 		this.filtroCandidato = filtroCandidato;
 	}
 	
+	public AgregacaoRegional getNivelFiltroRegional() {
+		return nivelFiltroRegional;
+	}
+
+	public void setNivelFiltroRegional(AgregacaoRegional nivelFiltroRegional) {
+		this.nivelFiltroRegional = nivelFiltroRegional;
+	}
+
+	public String[] getFiltroRegional() {
+		return filtroRegional;
+	}
+
+	public void setFiltroRegional(String[] filtroRegional) {
+		this.filtroRegional = filtroRegional;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("ArgumentosBusca[")
-			.append( "\nanoEleicao: " ).append( Arrays.toString(anos) )
-			.append( "\nfiltroCargo: " ).append( filtroCargo )
-			.append( "\nnivelRegional: " ).append( nivelRegional )
-			.append( "\nnivelAgrecacaoPolitica: " ).append( nivelAgrecacaoPolitica )
-			.append( "\ncamposEscolhidos: " ).append( Arrays.toString(camposEscolhidos) )
-			.append( "\nfiltroPartido: " ).append( Arrays.toString(filtroPartido) )
-			.append( "\nfiltroCandidato: " ).append( Arrays.toString(filtroCandidato) )
-			.append( "\nfiltroRegional: " ).append( Arrays.toString(filtroRegional) )
+		sb.append("ArgumentosBusca[\n")
+			.append( "  Filtros obrigatórios:")
+			.append( "\n    - cargo: " ).append( filtroCargo )
+			.append( "\n    - nivelRegional: " ).append( nivelRegional )
+			.append( "\n    - nivelAgrecacaoPolitica: " ).append( nivelAgrecacaoPolitica )
+			.append( "\n Eleicoes: ")
+			.append( "\n    - anos: " ).append( Arrays.toString(anos) )
+			.append( "\n Colunas: ")
+			.append( "\n    - camposEscolhidos: " ).append( Arrays.toString(camposEscolhidos) )
+			.append( "\n Filtros: ")
+			.append( "\n    - partido: " ).append( Arrays.toString(filtroPartido) )
+			.append( "\n    - candidato: " ).append( Arrays.toString(filtroCandidato) )
+			.append( "\n    - nivelRegional: " ).append( nivelFiltroRegional )
+			.append( "\n    - regiao: " ).append( Arrays.toString(filtroRegional) )
 			.append("]\n");
 		
 		return sb.toString();

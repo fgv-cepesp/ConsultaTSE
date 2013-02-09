@@ -154,12 +154,13 @@ public class ResultadosDAOTest {
 		args.setFiltroCandidato(ef);
 		args.setFiltroPartido(cd);
 		args.setFiltroRegional(ab);
+		args.setNivelFiltroRegional(AgregacaoRegional.MICRO_REGIAO);
 		
 		assertEquals(SELECT_ + "uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo " +
-				"AND uf in (aaa, bbb)  AND partido in (ccc, ddd)  " +
+				"AND micro in (aaa, bbb)  AND partido in (ccc, ddd)  " +
 				"group by uf, candidato_sk order by uf, candidato_sk", 
 				dao.getStringQueryFato(args, "2010"));
 	}

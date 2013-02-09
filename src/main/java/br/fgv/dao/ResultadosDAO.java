@@ -103,7 +103,8 @@ public class ResultadosDAO {
 			queries.add(getQueryCargosPorAnoList(Integer.toString(ano)));
 		}
 		
-		String completeQuery = QueryBuilder.unionDistinct(queries);
+		String completeQuery = QueryBuilder.unionDistinct(queries)
+				+ _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
 		
 		List<Par> pares = new ArrayList<Par>();
 		List<Object[]> list = null;
@@ -240,7 +241,7 @@ public class ResultadosDAO {
 		// WHERE
 		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo());
 		
-			appendFiltroRegional(qb, args.getNivelRegional(), args.getFiltroRegional());
+			appendFiltroRegional(qb, args.getNivelFiltroRegional(), args.getFiltroRegional());
 			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, args.getFiltroPartido());
 			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 		

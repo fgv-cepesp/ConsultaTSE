@@ -242,6 +242,9 @@ public class ConsultaResultadosController {
 		args.setNivelRegional(AgregacaoRegional.fromInt(nivelAgregacaoRegional));
 		args.setCamposEscolhidos(campos);
 		
+		
+		args.setNivelFiltroRegional(AgregacaoRegional.fromInt(nivelFiltroRegional));
+		
 
 		String[] fr = filtroRegional.toArray(new String[filtroRegional.size()]);
 		String[] fp = filtroPartido.toArray(new String[filtroPartido.size()]);
