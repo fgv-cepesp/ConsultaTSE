@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import br.com.caelum.vraptor.ioc.Component;
 import br.fgv.CepespDataException;
 import br.fgv.dao.DaoFactory;
@@ -38,6 +40,8 @@ import br.fgv.util.Par;
 
 @Component
 public class BusinessImpl {
+	
+	private static final Logger LOGGER = Logger.getLogger(BusinessImpl.class);
 
 	private static final Map<AgregacaoRegional, List<Par>> CAMPOS_DISPONIVEIS_REGIONAL;
 	private static final Map<AgregacaoRegional, List<Par>> CAMPOS_FIXOS_REGIONAL;
@@ -238,6 +242,10 @@ public class BusinessImpl {
 
 		String nameFile = anoEleicao + "_" + cargo + "_" + agregacaoRegional
 				+ "_" + agregacaoPolitica + ".csv";
+		
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Nome sugerido: " + nameFile);
+		}
 
 		return nameFile;
 	}

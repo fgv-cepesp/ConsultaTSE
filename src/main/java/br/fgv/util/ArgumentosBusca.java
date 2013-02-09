@@ -102,7 +102,7 @@ public class ArgumentosBusca {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ArgumentosBusca[")
-			.append( "\nanoEleicao: " ).append( anos )
+			.append( "\nanoEleicao: " ).append( Arrays.toString(anos) )
 			.append( "\nfiltroCargo: " ).append( filtroCargo )
 			.append( "\nnivelRegional: " ).append( nivelRegional )
 			.append( "\nnivelAgrecacaoPolitica: " ).append( nivelAgrecacaoPolitica )

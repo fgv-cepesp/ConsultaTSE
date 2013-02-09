@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Joiner;
+
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -41,8 +43,6 @@ import br.fgv.business.BusinessImpl;
 import br.fgv.business.FormResultAux;
 import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.util.ArgumentosBusca;
-import br.fgv.util.Par;
-import br.fgv.util.QueryBuilder;
 
 @Resource
 public class ConsultaResultadosController {
@@ -166,7 +166,7 @@ public class ConsultaResultadosController {
 
 	@Post
 	@Path("/resultados.csv")
-	public Download resultadosCSVEntrada(String[] anoEleicao, String filtroCargo,
+	public Download resultadosCSVEntrada(List<String> anosEscolhidos, String filtroCargo,
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, String as_values_regional,
@@ -184,7 +184,7 @@ public class ConsultaResultadosController {
 		List<String> fc = trataLista(as_values_candidatos);
 		
 
-		return resultadosCSV(anoEleicao, filtroCargo, nivelAgregacaoRegional,
+		return resultadosCSV(anosEscolhidos, filtroCargo, nivelAgregacaoRegional,
 				nivelAgregacaoPolitica, camposEscolhidos, camposFixos,
 				nivelFiltroRegional, fr, fp, fc);
 	}
@@ -205,11 +205,18 @@ public class ConsultaResultadosController {
 
 	// @Post
 	// @Path("/resultados.csv")
-	public Download resultadosCSV(String[] anoEleicao, String filtroCargo,
+	public Download resultadosCSV(List<String> anosEscolhidos, String filtroCargo,
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, List<String> filtroRegional,
 			List<String> filtroPartido, List<String> filtroCandidato) throws CepespDataException {
+		
+		long start = -1;
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug(">>> resultadosCSV " + Arrays.toString(camposEscolhidos.toArray()));
+			start = System.currentTimeMillis();
+		}
+		
 		
 		camposFixos = camposFixos == null ? Collections.<String>emptyList()
 				: camposFixos;
@@ -228,8 +235,8 @@ public class ConsultaResultadosController {
 		String[] campos = c.toArray(new String[c.size()]);
 		
 		ArgumentosBusca args = new ArgumentosBusca();
-		
-		args.setAnoEleicao(anoEleicao);
+		Collections.sort(anosEscolhidos);
+		args.setAnoEleicao(anosEscolhidos.toArray(new String[anosEscolhidos.size()]));
 		args.setFiltroCargo(filtroCargo);
 		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt(nivelAgregacaoPolitica));
 		args.setNivelRegional(AgregacaoRegional.fromInt(nivelAgregacaoRegional));
@@ -252,9 +259,15 @@ public class ConsultaResultadosController {
 		File retFile = business.getLinkResult(args);
 
 		
-		String nameFile = business.getSugestaoNomeArquivo(QueryBuilder.COMMA((Object[])anoEleicao),
+		String nameFile = business.getSugestaoNomeArquivo(Joiner.on("-").join(anosEscolhidos),
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
+		if(LOGGER.isDebugEnabled()) {
+			
+			LOGGER.debug("<<< resultadosCSV. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
+			
+		}		
+		
 		return new FileDownload(retFile, "text/csv", nameFile, true);
 	}
 

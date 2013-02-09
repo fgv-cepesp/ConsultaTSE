@@ -29,6 +29,7 @@
 	<script src="js/jquery.scrollTo-min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 	<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
+	<script src="<c:url value='/js/jquery.fileDownload.js' />" type="text/javascript" ></script>
 		
 <script type="text/javascript">
 jQuery.fn.log = function (msg) {
@@ -174,9 +175,11 @@ function popularAnos(codCargo) {
             }
         );
 	
-	$('#anosDisponiveisInfo').hide();
-	$('#anosDisponiveisForm').show();
-	$('#anosDisponiveisPlaceholder').show();
+	setTimeout(function() { 
+			$('#anosDisponiveisInfo').hide();
+			$('#anosDisponiveisForm').show();
+			$('#anosDisponiveisPlaceholder').show(); 
+		}, 900);
 }
 
 function validarAnosAlerta()
@@ -339,6 +342,19 @@ function popularColunasFixas(campos) {
    });
 }
 
+function popularColunasOpcionaisFake() {
+	var l = $('#camposEscolhidos');
+    l.children('option').remove();
+    
+    // pegar os campos
+	$.each($('.multiselectOpcionais'), function() {
+		$.each($(this).val(), function(index, value){
+			$("<option/>").attr('selected', 'selected' ).text(value).val(value).appendTo(l);
+		});
+	});
+    
+}
+
 function popularColunasOpcionais(campos) {
 	var container = $('#colunasOpcionaisContainer');
 	container.empty();
@@ -367,8 +383,7 @@ function popularColunasOpcionais(campos) {
         	clone.removeAttr('id');
         	
         	l = clone.children('.multiselect');
-        	l.attr('id', grupo + 'Opcionais');
-        	l.attr('name', grupo + 'OpcionaisSelecionados[]');
+         	l.attr('id', grupo + 'Opcionais');
         	l.addClass('multiselectOpcionais');
         	
         	clone.appendTo(container);
@@ -376,7 +391,7 @@ function popularColunasOpcionais(campos) {
         	l = $(id);
         }
         
-        l.append( $("<option/>").text(nomeCol).val(par.chave) );
+        l.append( $("<option />").text(nomeCol).val(par.chave) );
         
 	});
 	$.each($('.multiselectOpcionais'), function() {
@@ -667,6 +682,46 @@ $(function(){
     	e.preventDefault();
     	$.scrollTo($('#consulta'), 800);
     });
+    
+    //************************************************************************
+    //
+    //  Binds da consulta
+    //
+    //************************************************************************
+    
+    
+    $('#butQuery').click(function(e) {
+    	e.preventDefault();
+    	
+    	$('#butQuery').button('loading');
+    	
+    	setTimeout(function() { $('#butQuery').button('reset'); }, 10000);
+    	
+    	popularColunasOpcionaisFake();
+    	try {
+
+    		//var preparingFileModal = $("#preparing-file-modal");    		 
+            //preparingFileModal.dialog({ modal: true });
+	
+	        $.fileDownload('<c:url value="/resultados.csv"/>', {
+				httpMethod: "POST",
+				data: $('#formConsulta').serialize(),
+				dataType: 'text/csv',
+			    successCallback: function (url) {
+			    	$('#butQuery').button('complete');
+			    },
+			    failCallback: function (html, url) {
+			        alert('O download falhou.');
+			        $('#butQuery').button('complete');
+			    }
+	        });
+	        return false;
+    	}
+        catch (err) {
+            alert("Houve algum erro na geracao do arquivo.");
+            return;
+        }
+    });
 });
 </script>
 
@@ -678,7 +733,7 @@ $(function(){
       
       <div class="row">
       
-      	<form class="form-horizontal">
+      	<form class="form-horizontal" id="formConsulta">
       	<!-- Filtros Obrigatorios
         ================================================== -->
       	<section id="filtrosObrigatorios">
@@ -805,6 +860,7 @@ $(function(){
 						<hr>				        
 				        <h3>Colunas Opcionais</h3>
 				        <div class="control-group" id="colunasOpcionaisContainer"></div>
+				        	<select id="camposEscolhidos" name="camposEscolhidos[]"  class="multiselect" multiple="multiple" style="display: none;"></select>
 				        
 	      		<div class="control-group">
 				  	<button class="btn btn-primary" id="colunasContinuar">Continuar</button>
@@ -883,7 +939,7 @@ $(function(){
 	      
 	      	<div id="consultaForm" style="display: none;">
 	      		<p>
-				  <button class="btn btn-large btn-primary" type="button">Efetuar consulta</button>
+				  <button class="btn btn-large btn-primary" type="submit" id="butQuery" data-loading-text="Consultando...">Efetuar consulta</button>
 				</p>
 			</div>
 			
