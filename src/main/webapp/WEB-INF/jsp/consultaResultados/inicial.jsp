@@ -31,6 +31,7 @@
 	<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js' />" type="text/javascript" ></script>
 		
+		
 <script type="text/javascript">
 jQuery.fn.log = function (msg) {
   console.log("%s: %o", msg, this);
@@ -102,6 +103,14 @@ function validateAndGetSelection(select)
 	}
 	
 	return value;
+}
+
+function refreshScroll() {
+	
+	$('[data-spy="scroll"]').each(function () {
+		  $(this).scrollspy('refresh');
+	});
+	
 }
 
 function commaJoin(strArr) {
@@ -565,6 +574,7 @@ $(function(){
     		btnEdit.addClass('disabled');
     	}
     	
+    	refreshScroll();
     });
     
     $('#filtrosObrigatoriosEditar').on('click', function (e) {
@@ -601,6 +611,7 @@ $(function(){
 		
 		btnEdit.addClass('disabled');
 		
+		refreshScroll();
     });
     
     //************************************************************************
@@ -612,6 +623,8 @@ $(function(){
     $('#anosContinuar').on('click', function (e) {
     	e.preventDefault();
     	validarAnosAlerta();
+    	
+    	refreshScroll();
     });
     
     $('#anosEditar').on('click', function (e) {
@@ -633,6 +646,8 @@ $(function(){
     	$('#anosDisponiveisPlaceholder').show();
     	
     	btnEdit.addClass('disabled');
+    	
+    	refreshScroll();
     });
     
     //************************************************************************
@@ -645,6 +660,8 @@ $(function(){
     	e.preventDefault();
     	
     	$.scrollTo($('#filtrosOpcionais'), 800);
+    	
+    	refreshScroll();
     });
     
     //************************************************************************
@@ -665,6 +682,7 @@ $(function(){
             $('#grupoFiltroRegional').hide();
         };
         
+        refreshScroll();
     });
     
     
@@ -681,12 +699,16 @@ $(function(){
 	            retrieveComplete: function(data){ /*alert(data.list[0].chave); */ return data.list; },
 	        }
 	    );
+	    
+	    refreshScroll();
     };
     
     
     $('#filtrosOpcionaisContinuar').on('click', function (e) {
     	e.preventDefault();
     	$.scrollTo($('#consulta'), 800);
+    	
+    	refreshScroll();
     });
     
     //************************************************************************
@@ -728,16 +750,34 @@ $(function(){
             return;
         }
     });
+    refreshScroll();
+    setTimeout(function() { $('body').scrollspy(); }, 800);
+    
 });
 </script>
-
-      <div class="hero-unit">
-        <h2>Consulta de resultados de eleições</h2>
-        <p>Use este formulário para fazer consultas às bases de dados relativas as eleições.</p>
-        <p><a class="btn btn-primary btn-large" href="#filtrosObrigatorios">Começar &raquo;</a></p>
+  <div class="row-fluid">
+    <!-- Docs nav
+    ================================================== -->
+      <div class="span3 well sidebar-nav" data-spy="affix" id="sidebar">
+        <ul class="nav nav-list scroll-sidebar">
+          <li class="active"><a href="#inicio"><i class="icon-chevron-right"></i> Início</a></li>
+          <li><a href="#filtrosObrigatorios"><i class="icon-chevron-right"></i> Filtros obrigatórios</a></li>
+          <li><a href="#eleicoes"><i class="icon-chevron-right"></i> Eleições</a></li>
+          <li><a href="#colunas"><i class="icon-chevron-right"></i> Colunas fixas e opcionais</a></li>
+          <li><a href="#filtrosOpcionais"><i class="icon-chevron-right"></i> Filtros opcionais</a></li>
+          <li><a href="#consulta"><i class="icon-chevron-right"></i> Resultado</a></li>
+        </ul>
       </div>
+
+	 <div class="offset3 span8">
+		  <section id="inicio">
+		      <div class="hero-unit">
+		        <h2>Consulta de resultados de eleições</h2>
+		        <p>Use este formulário para fazer consultas às bases de dados relativas as eleições.</p>
+		        <p><a class="btn btn-primary btn-large" href="#filtrosObrigatorios">Começar &raquo;</a></p>
+		      </div>
+	      </section>
       
-      <div class="row">
       
       	<form class="form-horizontal" id="formConsulta">
       	<!-- Filtros Obrigatorios
@@ -773,7 +813,7 @@ $(function(){
 			    </div>
 			  </div>
 			  <div class="control-group">
-			    <label class="control-label" for="nivelAgregacaoPolitica">Agregação regional</label>
+			    <label class="control-label" for="nivelAgregacaoPolitica">Agregação política</label>
 			    <div class="controls">
 			      <select name="nivelAgregacaoPolitica" required>
 	                    <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
@@ -954,7 +994,7 @@ $(function(){
 		</section>
 		
 		</form>
-	  </div>
 	  
-	  
+	</div>	
+  </div> 
       <!-- Page End -->
