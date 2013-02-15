@@ -27,6 +27,10 @@
       .container-narrow > hr {
         margin: 30px 0;
       }
+      
+     .sidebar-nav {
+        padding: 9px 0;
+      }
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
@@ -43,10 +47,8 @@
                                    <link rel="shortcut icon" href="bootstrap/ico/favicon.png">
   </head>
 
-  <body>
-
-    <div class="container-narrow">
-
+  <body data-target="#sidebar" >
+	<div class="container">
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a href="#">Consulta TSE</a></li>
@@ -56,5 +58,8 @@
         <a href="/" class="nav brand"><img src="images/logoCepespData.png" alt="FGV - CEPESP Data" /></a>
         
       </div>
+    </div>
+
+    <div class="container">
 
       <hr>
