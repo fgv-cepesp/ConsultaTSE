@@ -46,12 +46,19 @@
                     <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="bootstrap/ico/favicon.png">
   </head>
-
+  
   <body data-target="#sidebar" >
 	<div class="container">
       <div class="masthead">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Consulta TSE</a></li>
+        <ul class="nav nav-pills pull-right" role="navigation" id="topmenu">
+          <li><a href="<c:url value="/"/>">Início</a></li>
+          <li class="dropdown">
+                      <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Eleições <b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<c:url value="/consultaResultados"/>">Eleições por cargo</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Eleições por candidato (Breve!)</a></li>
+                      </ul>
+          </li>
           <li class="disabled"><a href="#">Sobre</a></li>
           <li class="disabled"><a href="#">Contato</a></li>
         </ul>

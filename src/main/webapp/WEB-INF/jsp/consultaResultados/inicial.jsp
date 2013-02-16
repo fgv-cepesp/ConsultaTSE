@@ -772,8 +772,9 @@ $(function(){
 	 <div class="offset3 span8">
 		  <section id="inicio">
 		      <div class="hero-unit">
-		        <h2>Consulta de resultados de eleições</h2>
-		        <p>Use este formulário para fazer consultas às bases de dados relativas as eleições.</p>
+		        <h2>Resultados de eleições por cargo</h2>
+		        <p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um cargo eletivo. As consultas podem ser
+		       também agregadas por partido e nível regional.</p>
 		        <p><a class="btn btn-primary btn-large" href="#filtrosObrigatorios">Começar &raquo;</a></p>
 		      </div>
 	      </section>

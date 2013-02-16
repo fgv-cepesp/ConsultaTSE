@@ -35,7 +35,7 @@ public class IndexController {
 	@Get
 	@Path("/")
 	public void index() {
-		result.redirectTo(ConsultaResultadosController.class).inicial();
+		//result.;
 	}
 
 
