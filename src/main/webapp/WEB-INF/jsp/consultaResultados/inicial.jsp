@@ -751,7 +751,7 @@ $(function(){
         }
     });
     refreshScroll();
-    setTimeout(function() { $('body').scrollspy(); }, 800);
+    setTimeout(function() { $('body').scrollspy(); }, 2000);
     
 });
 </script>
