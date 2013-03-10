@@ -22,6 +22,7 @@ import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
 
 import java.io.File;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -223,22 +224,12 @@ public class BusinessImpl {
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			String filtroCargo) {
 
-		String[] nivelRegional = new String[7];
-		nivelRegional[1] = "MacroRegiao";
-		nivelRegional[2] = "Estados";
-		nivelRegional[3] = "UF-Zona";
-		nivelRegional[4] = "MesoRegiao";
-		nivelRegional[5] = "MicroRegiao";
-        nivelRegional[6] = "Municipio";
-		String[] nivelPolitico = new String[3];
-		nivelPolitico[1] = "Partido";
-		nivelPolitico[2] = "Candidato";
-
-		String cargo = getCargoByID(filtroCargo);
-		String agregacaoRegional = nivelRegional[Integer
-				.parseInt(nivelAgregacaoRegional)];
-		String agregacaoPolitica = nivelPolitico[Integer
-				.parseInt(nivelAgregacaoPolitica)];
+		String cargo = preprocessarParaNome(getCargoByID(filtroCargo));
+		String agregacaoRegional = preprocessarParaNome(
+				AgregacaoRegional.fromInt(nivelAgregacaoRegional).getNomeDescritivo());
+		
+		String agregacaoPolitica = preprocessarParaNome(
+				AgregacaoPolitica.fromInt(nivelAgregacaoPolitica).getNomeDescritivo());
 
 		String nameFile = anoEleicao + "_" + cargo + "_" + agregacaoRegional
 				+ "_" + agregacaoPolitica + ".csv";
@@ -248,6 +239,16 @@ public class BusinessImpl {
 		}
 
 		return nameFile;
+	}
+	
+	private String preprocessarParaNome(String str) {
+		str = str.replace("/", "");
+		str = str.replace("-", "");
+		str = str.replace(" ", "");
+		str = Normalizer.normalize(str, Normalizer.Form.NFD);
+		str = str.replaceAll("[^\\p{ASCII}]", "");
+		
+		return str;
 	}
 
 	public List<Par> getPartidos(String string) {
