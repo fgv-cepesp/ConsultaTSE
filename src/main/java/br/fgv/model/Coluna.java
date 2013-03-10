@@ -65,7 +65,8 @@ public class Coluna {
 	public static enum Disponibilidade {
 		DESCONHECIDA,
 		FIXO,
-		DISPONIVEL
+		DISPONIVEL,
+		OCULTA
 	}
 	
 	@Override

@@ -20,15 +20,14 @@ package br.fgv.model;
 
 import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
+import static br.fgv.model.Coluna.Disponibilidade.OCULTA;
 import static br.fgv.util.QueryBuilder.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import br.fgv.model.Coluna.Disponibilidade;
 import br.fgv.util.Par;
@@ -158,7 +157,7 @@ public class Tabela {
 	
 	private final String nome;
 	private final String nomeDescritivo;
-	private final Set<Coluna> colunas;
+	private final List<Coluna> colunas;
 	private final String relacao;
 
 	/*
@@ -182,7 +181,7 @@ public class Tabela {
 		CO_FACT_VOTOS_MUN_PARTIDO = new Coluna("partido");
 		CO_FACT_VOTOS_MUN_CANDIDATO_SK = new Coluna("candidato_sk");
 		
-		Set<Coluna> c = new HashSet<Coluna>();
+		List<Coluna> c = new ArrayList<Coluna>();
 		c.add(CO_FACT_VOTOS_MUN_ANO);
 		c.add(CO_FACT_VOTOS_MUN_TURNO);
 		c.add(CO_FACT_VOTOS_MUN_COD_MUN);
@@ -206,7 +205,7 @@ public class Tabela {
 		CO_DIM_PARTIDOS_SIGLA = new Coluna("sigla_Partido", "Sigla", DISPONIVEL);
 		CO_DIM_PARTIDOS_NOME = new Coluna("nome_Partido", "Nome", DISPONIVEL);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_PARTIDOS_ANO);
 		c.add(CO_DIM_PARTIDOS_COD);
 		c.add(CO_DIM_PARTIDOS_SIGLA);
@@ -222,7 +221,7 @@ public class Tabela {
 		CO_DIM_CANDIDATOS_NOME = new Coluna("nome_Candidato", "Nome", DISPONIVEL);
 		CO_DIM_CANDIDATOS_TITULO = new Coluna("titulo", "Título", DISPONIVEL);
 		CO_DIM_CANDIDATOS_NR_VOTAVEL = new Coluna("nr_votavel", "Número", FIXO);
-		CO_DIM_CANDIDATOS_UF = new Coluna("uf", "UF", DISPONIVEL);
+		CO_DIM_CANDIDATOS_UF = new Coluna("uf", "UF", OCULTA);
 		CO_DIM_CANDIDATOS_SG_UE = new Coluna("SG_UE", "SG UE", DISPONIVEL);
 		CO_DIM_CANDIDATOS_CARGO_COD = new Coluna("cargo_cod", "Código Cargo", DISPONIVEL);
 		CO_DIM_CANDIDATOS_SIT_CANDIDATURA_COD = new Coluna("sit_candidatura_cod", "Código Situação Candidatura", DISPONIVEL);
@@ -240,7 +239,7 @@ public class Tabela {
 		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CANDIDATOS_SURROGATEKEY);
 		c.add(CO_DIM_CANDIDATOS_NOME);
 		c.add(CO_DIM_CANDIDATOS_TITULO);
@@ -271,7 +270,7 @@ public class Tabela {
 		CO_DIM_CARGO_DS = new Coluna("DS_CARGO");
 		CO_DIM_CARGO_CD = new Coluna("CD_CARGO");
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CARGO_DS);
 		c.add(CO_DIM_CARGO_CD);
 
@@ -281,7 +280,7 @@ public class Tabela {
 		CO_DIM_MACROREGIAO_NOME = new Coluna("nome_Macro", "Nome", DISPONIVEL);
 		CO_DIM_MACROREGIAO_COD = new Coluna("cod_Macro", "Código", FIXO);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MACROREGIAO_NOME);
 		c.add(CO_DIM_MACROREGIAO_COD);
 		
@@ -295,7 +294,7 @@ public class Tabela {
 		CO_DIM_ESTADOS_IBGE = new Coluna("ibge", "Código IBGE", FIXO);
 		CO_DIM_ESTADOS_SIGLA = new Coluna("sigla_Estado", "Sigla UF", DISPONIVEL);
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_ESTADOS_ID);
 		c.add(CO_DIM_ESTADOS_NOME);
 		c.add(CO_DIM_ESTADOS_IBGE);
@@ -312,7 +311,7 @@ public class Tabela {
 		CO_DIM_MESOREGIAO_SIGLA_UF = new Coluna("sigla_UF", "Sigla UF", FIXO);
 		CO_DIM_MESOREGIAO_NOME = new Coluna("nome_Meso", "Nome", DISPONIVEL);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MESOREGIAO_COD);
 		c.add(CO_DIM_MESOREGIAO_ID);
 		c.add(CO_DIM_MESOREGIAO_SIGLA_UF);
@@ -328,7 +327,7 @@ public class Tabela {
 		CO_DIM_MICROREGIAO_SIGLA_UF = new Coluna("sigla_UF", "Sigla UF", FIXO);
 		CO_DIM_MICROREGIAO_NOME = new Coluna("nome_Micro", "Nome", DISPONIVEL);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MICROREGIAO_COD);
 		c.add(CO_DIM_MICROREGIAO_ID);
 		c.add(CO_DIM_MICROREGIAO_SIGLA_UF);
@@ -354,7 +353,7 @@ public class Tabela {
 		CO_DIM_MUNICIPIO_COD = new Coluna("cod","Código TSE", DISPONIVEL);
 		CO_DIM_MUNICIPIO_NOME = new Coluna("nome_Municipio","Nome", DISPONIVEL);
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MUNICIPIO_SIGLA_UF);
 		c.add(CO_DIM_MUNICIPIO_IBGE);
 		c.add(CO_DIM_MUNICIPIO_UF);
@@ -379,7 +378,7 @@ public class Tabela {
 		CO_DIM_VOTAVEIS_SURROGATEKEY = new Coluna("surrogatekey");
 		CO_DIM_VOTAVEIS_NOME_CANDIDATO = new Coluna("nome_Candidato");
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_VOTAVEIS_NR_VOTAVEL);
 		c.add(CO_DIM_VOTAVEIS_TITULO);
 		c.add(CO_DIM_VOTAVEIS_SURROGATEKEY);
@@ -391,7 +390,7 @@ public class Tabela {
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");
 		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cod_cargo");
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANO_CARGO_ANO);
 		c.add(CO_SIS_ANO_CARGO_COD_CARGO);
 
@@ -400,7 +399,7 @@ public class Tabela {
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANOS_ANO = new Coluna("ano");
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANOS_ANO);
 
 		TB_SIS_ANOS = new Tabela("sis_anos", c);
@@ -410,22 +409,22 @@ public class Tabela {
 		__tabelas = null;
 	}
 
-	public Tabela(String nome, Set<Coluna> colunas) {
+	public Tabela(String nome, List<Coluna> colunas) {
 		this(nome, nome, colunas, null);
 	}
 
-	public Tabela(String nome, Set<Coluna> colunas, String relacao) {
+	public Tabela(String nome, List<Coluna> colunas, String relacao) {
 		this(nome, nome, colunas, relacao);
 	}
 
-	public Tabela(String nome, String nomeDescritivo, Set<Coluna> colunas) {
+	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas) {
 		this(nome, nomeDescritivo, colunas, null);
 	}
 	
-	public Tabela(String nome, String nomeDescritivo, Set<Coluna> colunas, String relacao) {
+	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas, String relacao) {
 		this.nome = nome;
 		this.nomeDescritivo = nomeDescritivo;
-		this.colunas = Collections.unmodifiableSet(colunas);
+		this.colunas = Collections.unmodifiableList(colunas);
 		this.relacao = relacao;
 		
 		__tabelas.put(nome, this);
@@ -443,7 +442,7 @@ public class Tabela {
 		return relacao;
 	}
 
-	public Set<Coluna> getColunas() {
+	public List<Coluna> getColunas() {
 		return this.colunas;
 	}
 	
