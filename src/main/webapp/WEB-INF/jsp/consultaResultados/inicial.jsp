@@ -363,9 +363,11 @@ function popularColunasOpcionaisFake() {
     
     // pegar os campos
 	$.each($('.multiselectOpcionais'), function() {
-		$.each($(this).val(), function(index, value){
-			$("<option/>").attr('selected', 'selected' ).text(value).val(value).appendTo(l);
-		});
+		if($(this).val() == null) {
+			$.each($(this).val(), function(index, value){
+				$("<option/>").attr('selected', 'selected' ).text(value).val(value).appendTo(l);
+			});
+		}
 	});
     
 }
@@ -723,14 +725,11 @@ $(function(){
     	
     	$('#butQuery').button('loading');
     	
-    	setTimeout(function() { $('#butQuery').button('reset'); }, 10000);
+    	setTimeout(function() { $('#butQuery').button('reset'); }, 60000);
     	
-    	popularColunasOpcionaisFake();
     	try {
-
-    		//var preparingFileModal = $("#preparing-file-modal");    		 
-            //preparingFileModal.dialog({ modal: true });
-	
+    		popularColunasOpcionaisFake();
+    		
 	        $.fileDownload('<c:url value="/resultados.csv"/>', {
 				httpMethod: "POST",
 				data: $('#formConsulta').serialize(),
