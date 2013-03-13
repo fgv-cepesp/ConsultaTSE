@@ -363,7 +363,7 @@ function popularColunasOpcionaisFake() {
     
     // pegar os campos
 	$.each($('.multiselectOpcionais'), function() {
-		if($(this).val() == null) {
+		if($(this).val() != null) {
 			$.each($(this).val(), function(index, value){
 				$("<option/>").attr('selected', 'selected' ).text(value).val(value).appendTo(l);
 			});
