@@ -212,7 +212,7 @@ public class ConsultaResultadosController {
 			List<String> filtroPartido, List<String> filtroCandidato) throws CepespDataException {
 		
 		long start = -1;
-		if(LOGGER.isDebugEnabled()) {
+		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
 			LOGGER.debug(">>> resultadosCSV " + Arrays.toString(camposEscolhidos.toArray()));
 			start = System.currentTimeMillis();
 		}
