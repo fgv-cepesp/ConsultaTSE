@@ -802,7 +802,7 @@ $(function(){
 			    </div>
 			  </div>
 			  <div class="control-group">
-			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional</label>
+			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional <a href="#myModal" role="button" data-toggle="modal"><i class="icon-question-sign"></i></a></label>
 			    <div class="controls">
 			        <select name="nivelAgregacaoRegional" required>
 	                    <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
@@ -887,11 +887,12 @@ $(function(){
       		<div class="page-header">
       			<h1>Colunas fixas e opcionais</h1>
       		</div>
-      	
 
-			<p>Dependendo das agregações ecolhidas anteriormente a consulta
-				pode trazer diferentes colunas. Algumas colunas são fixas e outras
-				opcionais. Aqui você pode escolher as colunas opicionais desejadas.</p>
+			<p>Dependendo da agregação ecolhida a consulta
+				pode trazer diferentes colunas. Algumas colunas são fixas, 
+				quando identificam a unicidade de cada informação, e outras
+				são opcionais e podem ser escolhidos de acordo com a necessidade
+				de sua pesquisa. Aqui você pode escolher as colunas opicionais desejadas.</p>
 	
 			<div id="colunasInfo">
 				<div class="alert alert-info">
@@ -992,6 +993,36 @@ $(function(){
       
 		</section>
 		
+		<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Divisão Regional</h3>
+  </div>
+  <div class="modal-body">
+
+
+Com exce&ccedil;&atilde;o das Unidades da Federa&ccedil;&atilde;o (tamb&eacute;m conhecidas como "Estados") e os munic&iacute;pios que s&atilde;o classifica&ccedil;&otilde;es administrativas definidas pelos respectivos legislativos e homologadas pelo TSE, o &oacute;rg&atilde;o respons&aacute;vel pela divis&atilde;o regional do Brasil &eacute; o Instituto Brasileiro de Geografia e Estat&iacute;stica (IBGE). 
+(<a href="http://www.ibge.gov.br/home/geociencias/geografia/default_div_int.shtm" target="blank" >mais...</a>) 
+<br/>O IBGE define atualmente 3 categorias:
+<ul>
+<li>
+<b>Macroregi&atilde;o:</b> Divide o pa&iacute;s em grandes blocos em fun&ccedil;&atilde;o de sua posi&ccedil;&atilde;o geogr&aacute;fica - Sul, Sudeste, Centro-Oeste, Norte e Nordeste. Essa classifica&ccedil;&atilde;o existe desde 1970 e substitui classifica&ccedil;&otilde;es anteriores (1913 e 1945). Consiste em um agrupamento de UFs.
+</li>
+<li>
+<b>Microregi&atilde;o:</b> Um agrupamento de munic&iacute;pios lim&iacute;trofes. Para fins estat&iacute;sticos e com base em similaridades econômicas e sociais, o IBGE divide os diversos estados da federa&ccedil;&atilde;o brasileira em microrregi&otilde;es.
+</li>
+<li>
+<b>Mesoregi&atilde;o:</b> A Divis&atilde;o Regional do Brasil em mesorregi&otilde;es, partindo de determina&ccedil;&otilde;es mais amplas a n&iacute;vel conjuntural, buscou identificar &aacute;reas individualizadas em cada uma das Unidades Federadas, tomadas como universo de an&aacute;lise e definiu as mesorregi&otilde;es com base nas seguintes dimens&otilde;es: o processo social como determinante, o quadro natural como condicionante e a rede de comunica&ccedil;&atilde;o e de lugares como elemento da articula&ccedil;&atilde;o espacial. Um exemplo t&iacute;pico de mesoregi&atilde;o s&atilde;o as regi&otilde;es metropolitanas. A mesoregi&atilde;o &eacute; um agrupamento de microregi&otilde;es.
+</li>
+</ul>
+
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+  </div>
+</div>
 		</form>
 	  
 	</div>	

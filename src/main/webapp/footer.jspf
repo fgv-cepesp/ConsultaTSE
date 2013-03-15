@@ -11,7 +11,9 @@
       			<img src="images/logoFapesp.jpg">
       		</div>
       		<div class="span3">
-      			<p><a href="https://github.com/fgv-cepesp/ConsultaTSE" target="_blank">Código fonte no GitHub</a></p>
+      			<p><small>Versão: ${appData.version} <br/>
+				Publicado em <fmt:formatDate type="both" dateStyle="long" value="${appData.dataPublicacao}" /></small><br/>
+      			<a href="https://github.com/fgv-cepesp/ConsultaTSE" target="_blank">Código fonte no GitHub</a></p>
       		</div>
       	</div>
       </div>
