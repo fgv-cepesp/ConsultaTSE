@@ -470,7 +470,7 @@ function configuraAutoComplete() {
 	
     $('#filtroPartidoNovo').autoSuggest('<c:url value="/consulta/partidosAnos"/>',
             {
-                startText: "Escolha o partido para filtro",
+                startText: "Se desejar, digite aqui a sigla de um ou mais partidos.",
                 emptyText: "Não existem resultados",
                 extraParamsDynamic: function(string){  return "&" + selectedAsMultipleParameter($('#anosDisponiveis'), 'anosList');},
                 selectedItemProp: "valor",
@@ -483,7 +483,7 @@ function configuraAutoComplete() {
     
     $('#filtroCandidato').autoSuggest('<c:url value="/consulta/candidatosAnosCargo"/>',
             {
-                startText: "Escolha os candidatos para filtro",
+                startText: "Se desejar, digite aqui o nome de um ou mais candidatos.",
                 emptyText: "Não existem resultados",
                 extraParamsDynamic: function(string){  
                 	return "&" + selectedAsMultipleParameter($('#anosDisponiveis'), 'anosList')
@@ -900,14 +900,13 @@ $(function(){
 			</div>
 			
 			<div id="colunasForm" style="display: none;">
-				        <h3>Colunas Fixas</h3>
-				        	<div class="row-fluid  show-grid" id="colunasFixasContainer"></div>
-							<select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
-						<hr>				        
 				        <h3>Colunas Opcionais</h3>
 				        <div class="control-group" id="colunasOpcionaisContainer"></div>
 				        	<select id="camposEscolhidos" name="camposEscolhidos[]"  class="multiselect" multiple="multiple" style="display: none;"></select>
 				        
+				        <h3>Colunas Fixas</h3>
+				        	<div class="row-fluid  show-grid" id="colunasFixasContainer"></div>
+							<select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
 	      		<div class="control-group">
 				  	<button class="btn btn-primary" id="colunasContinuar">Continuar</button>
 				</div>
