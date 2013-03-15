@@ -757,7 +757,7 @@ $(function(){
   <div class="row-fluid">
     <!-- Docs nav
     ================================================== -->
-      <div class="span3 well sidebar-nav" data-spy="affix" id="sidebar">
+      <div class="well sidebar-nav" data-spy="affix" id="sidebar">
         <ul class="nav nav-list scroll-sidebar">
           <li class="active"><a href="#inicio"><i class="icon-chevron-right"></i> Início</a></li>
           <li><a href="#filtrosObrigatorios"><i class="icon-chevron-right"></i> Filtros obrigatórios</a></li>
