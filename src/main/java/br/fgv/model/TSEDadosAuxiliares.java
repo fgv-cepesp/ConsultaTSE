@@ -36,9 +36,9 @@ public abstract class TSEDadosAuxiliares {
 		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par(Integer.toString(AgregacaoRegional.MACRO_REGIAO.getNivel()), AgregacaoRegional.MACRO_REGIAO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.UF.getNivel()), AgregacaoRegional.UF.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoRegional.UF_ZONA.getNivel()), AgregacaoRegional.UF_ZONA.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.MESO_REGIAO.getNivel()), AgregacaoRegional.MESO_REGIAO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.MICRO_REGIAO.getNivel()), AgregacaoRegional.MICRO_REGIAO.getNomeDescritivo()));
+		l.add(new Par(Integer.toString(AgregacaoRegional.UF_ZONA.getNivel()), AgregacaoRegional.UF_ZONA.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.MUNICIPIO.getNivel()), AgregacaoRegional.MUNICIPIO.getNomeDescritivo()));
         
         NIVEL_AGREGACAO_REGIONAL = Collections.unmodifiableList(l);

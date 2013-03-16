@@ -892,7 +892,8 @@ $(function(){
 				pode trazer diferentes colunas. Algumas colunas são fixas, 
 				quando identificam a unicidade de cada informação, e outras
 				são opcionais e podem ser escolhidos de acordo com a necessidade
-				de sua pesquisa. Aqui você pode escolher as colunas opicionais desejadas.</p>
+				de sua pesquisa. Aqui você pode escolher as colunas opicionais desejadas.<br/>
+				<a href="../ajuda" target="_blank">Veja aqui as descrições das opções</a></p>
 	
 			<div id="colunasInfo">
 				<div class="alert alert-info">
@@ -975,6 +976,7 @@ $(function(){
 				os filtros selecionados. O arquivo
 				<strong>.csv</strong> pode ser aberto com editores de planilhas
 				eletrônicas, como MS Excel ou OpenOffice Calc.
+				<a href="../ajuda" target="_blank">Veja aqui as descrições das variáveis</a>.
 			</p>
 
 			<div id="consultaInfo">

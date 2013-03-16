@@ -1,4 +1,5 @@
 /**
+
  * Copyright (c) 20012-2013 "FGV - CEPESP" [http://cepesp.fgv.br]
  *
  * This file is part of CEPESP-DATA.
@@ -24,7 +25,7 @@ public enum AgregacaoRegional {
 	
 	MACRO_REGIAO(Tabela.CO_FACT_VOTOS_MUN_MACRO.getNome(), "Macro-Região", 1), 
 	UF(Tabela.CO_FACT_VOTOS_MUN_UF.getNome(),"UF", 2), 
-	UF_ZONA(Tabela.CO_FACT_VOTOS_MUN_UF.getNome(),"UF/Zona", 3), 
+	UF_ZONA(Tabela.CO_FACT_VOTOS_MUN_UF.getNome(),"Zona Eleitoral", 3), 
 	MESO_REGIAO(Tabela.CO_FACT_VOTOS_MUN_MESO.getNome(), "Meso-Região", 4), 
 	MICRO_REGIAO(Tabela.CO_FACT_VOTOS_MUN_MICRO.getNome(), "Micro-Região", 5), 
 	MUNICIPIO(Tabela.CO_FACT_VOTOS_MUN_COD_MUN.getNome(), "Município", 6);

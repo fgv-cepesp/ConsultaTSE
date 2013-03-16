@@ -42,6 +42,7 @@ import br.fgv.business.AgregacaoRegional;
 import br.fgv.business.BusinessImpl;
 import br.fgv.business.FormResultAux;
 import br.fgv.model.TSEDadosAuxiliares;
+import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
 
 @Resource
@@ -60,17 +61,17 @@ public class ConsultaResultadosController {
 	@Get
 	@Path(priority = 1, value = "/consultaResultados")
 	public void inicial() {
-
-//		result.include("anoEleicaoList", business.getAnosDisponiveis());
 		result.include("nivelAgregacaoRegionalList", TSEDadosAuxiliares
 				.getNivelAgregacaoRegional());
 		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares
 				.getNivelAgregacaoPolitica());
 		result.include("filtroCargoList", business.getCargosDisponiveis());
-		
-		// XXX Porque? Deveria bloquear busca por partidos se um ano não estiver
-		// selecionado
-		result.include("filtroPartidoList", business.getPartidos("2002"));
+	}
+
+	@Get
+	@Path(priority = 1, value = "/ajuda")
+	public void ajuda() {
+		result.include("ajudaTabela", Tabela.getHelp());
 	}
 
 	@Get

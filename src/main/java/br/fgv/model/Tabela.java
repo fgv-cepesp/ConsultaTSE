@@ -212,7 +212,7 @@ public class Tabela {
 		c.add(CO_DIM_PARTIDOS_NOME);
 
 		final String dim_partidos = "dim_partidos";
-		TB_DIM_PARTIDOS = new Tabela(dim_partidos, "partido", c,
+		TB_DIM_PARTIDOS = new Tabela(dim_partidos, "Partido", c,
 				EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_COD), REF(CO_FACT_VOTOS_MUN_PARTIDO, REF_FACT))
 				+ _AND_ + EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_ANO), SQuote(HOLDER_ANO_ELEICAO)));
 
@@ -222,7 +222,7 @@ public class Tabela {
 		CO_DIM_CANDIDATOS_TITULO = new Coluna("titulo", "Título", DISPONIVEL);
 		CO_DIM_CANDIDATOS_NR_VOTAVEL = new Coluna("nr_votavel", "Número", FIXO);
 		CO_DIM_CANDIDATOS_UF = new Coluna("uf", "UF", OCULTA);
-		CO_DIM_CANDIDATOS_SG_UE = new Coluna("SG_UE", "SG UE", DISPONIVEL);
+		CO_DIM_CANDIDATOS_SG_UE = new Coluna("SG_UE", "Sigla da Unidade Eleitoral", DISPONIVEL);
 		CO_DIM_CANDIDATOS_CARGO_COD = new Coluna("cargo_cod", "Código Cargo", DISPONIVEL);
 		CO_DIM_CANDIDATOS_SIT_CANDIDATURA_COD = new Coluna("sit_candidatura_cod", "Código Situação Candidatura", DISPONIVEL);
 		CO_DIM_CANDIDATOS_PARTIDO_COD = new Coluna("partido_cod", "Código Partido", DISPONIVEL);
@@ -263,7 +263,7 @@ public class Tabela {
 		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD);
 
 		final String dim_candidatos = "aux_candidatos_" + HOLDER_ANO_ELEICAO;
-		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, "candidatos", c,
+		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, "Candidato", c,
 				EQ(TB_CO(dim_candidatos, CO_DIM_CANDIDATOS_SURROGATEKEY), REF(CO_FACT_VOTOS_MUN_CANDIDATO_SK, REF_FACT)));
 
 		/* Colunas da tabela DIM CARGO */
@@ -285,7 +285,7 @@ public class Tabela {
 		c.add(CO_DIM_MACROREGIAO_COD);
 		
 		final String dim_macroregiao = "aux_macroregiao";
-		TB_DIM_MACROREGIAO = new Tabela(dim_macroregiao,"macro-região", c,
+		TB_DIM_MACROREGIAO = new Tabela(dim_macroregiao,"Macro-região", c,
 				EQ(TB_CO(dim_macroregiao, CO_DIM_MACROREGIAO_COD), REF(CO_FACT_VOTOS_MUN_MACRO, REF_FACT)));
 
 		/* Colunas da tabela DIM ESTADOS */
@@ -302,7 +302,7 @@ public class Tabela {
 
 		// TODO: aqui falta um campo fixo: zona para UF_ZONA
 		final String dim_estados = "aux_estados";
-		TB_DIM_ESTADOS = new Tabela(dim_estados, "estado", c,
+		TB_DIM_ESTADOS = new Tabela(dim_estados, "Estado", c,
 				EQ(TB_CO(dim_estados, CO_DIM_ESTADOS_ID), REF(CO_FACT_VOTOS_MUN_UF, REF_FACT)));
 
 		/* Colunas da tabela DIM MESOREGIAO */
@@ -318,7 +318,7 @@ public class Tabela {
 		c.add(CO_DIM_MESOREGIAO_NOME);
 		
 		final String dim_mesoregiao = "aux_mesoregiao";
-		TB_DIM_MESOREGIAO = new Tabela(dim_mesoregiao,"meso-região", c,
+		TB_DIM_MESOREGIAO = new Tabela(dim_mesoregiao,"Meso-região", c,
 				EQ(TB_CO(dim_mesoregiao, CO_DIM_MESOREGIAO_ID), REF(CO_FACT_VOTOS_MUN_MESO, REF_FACT)));
 
 		/* Colunas da tabela DIM MICROREGIAO */
@@ -334,7 +334,7 @@ public class Tabela {
 		c.add(CO_DIM_MICROREGIAO_NOME);
 
 		final String dim_microregiao = "aux_microregiao";
-		TB_DIM_MICROREGIAO = new Tabela(dim_microregiao,"micro-região", c,
+		TB_DIM_MICROREGIAO = new Tabela(dim_microregiao,"Micro-região", c,
 				EQ(TB_CO(dim_microregiao, CO_DIM_MICROREGIAO_ID), REF(CO_FACT_VOTOS_MUN_MICRO, REF_FACT)));
 
 		/* Colunas da tabela DIM MUNICIPIO */
@@ -369,7 +369,7 @@ public class Tabela {
 		c.add(CO_DIM_MUNICIPIO_NOME);
 
 		final String dim_municipio = "aux_municipio";
-		TB_DIM_MUNICIPIO = new Tabela(dim_municipio, "município", c,
+		TB_DIM_MUNICIPIO = new Tabela(dim_municipio, "Município", c,
 				EQ(TB_CO(dim_municipio, CO_DIM_MUNICIPIO_COD), REF(CO_FACT_VOTOS_MUN_COD_MUN, REF_FACT)));
 
 		/* Colunas da tabela DIM VOTAVEIS */
@@ -466,5 +466,29 @@ public class Tabela {
 	
 	public static Tabela byName(String nome) {
 		return tabelas.get(nome);
+	}
+
+	public static List<AjudaTabela> getHelp() {
+		/* Estrutura assim
+		 * 
+		 * # Estados
+		 * ## UF: descricao
+		 * ### detalhes
+		 */
+		
+		List<AjudaTabela> l = new ArrayList<AjudaTabela>();
+		
+		l.add(new AjudaTabela(TB_DIM_PARTIDOS));
+		l.add(new AjudaTabela(TB_DIM_CANDIDATOS));
+//		l.add(new AjudaTabela(TB_DIM_CARGO));
+		l.add(new AjudaTabela(TB_DIM_MACROREGIAO));
+		l.add(new AjudaTabela(TB_DIM_ESTADOS));
+		l.add(new AjudaTabela(TB_DIM_MESOREGIAO));
+		l.add(new AjudaTabela(TB_DIM_MICROREGIAO));
+		l.add(new AjudaTabela(TB_DIM_MUNICIPIO));
+//		l.add(new AjudaTabela(TB_DIM_VOTAVEIS));
+		
+		
+		return l;
 	}
 }
