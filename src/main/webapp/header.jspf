@@ -62,7 +62,7 @@
           <!-- <li class="disabled"><a href="#">Sobre</a></li>
           <li class="disabled"><a href="#">Contato</a></li> -->
         </ul>
-        <a href="/" class="nav brand"><img src="images/logoCepespData.png" alt="FGV - CEPESP Data" /></a>
+        <a href="<c:url value='/' />" class="nav brand"><img src="images/logoCepespData.png" alt="FGV - CEPESP Data" /></a>
         
       </div>
     </div>
