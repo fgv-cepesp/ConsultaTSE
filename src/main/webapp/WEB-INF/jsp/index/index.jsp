@@ -44,14 +44,14 @@
 			<a class="btn" href="consultaResultados">Consultar &raquo;</a>
 		</p>
 	</div>
-	<div class="span4">
+	<!-- <div class="span4">
 		<h2>Eleições por candidato</h2>
 		<p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um ou mais candidatos. 
 		É possível acompanhar seu desempenho ao longo dos anos.</p>
 		<p>
 			<a class="btn" href="#">Em breve!</a>
 		</p>
-	</div>
+	</div> -->
 </div>
 
 <!-- Page End -->
