@@ -73,6 +73,17 @@ public class ConsultaResultadosController {
 	public void ajuda() {
 		result.include("ajudaTabela", Tabela.getHelp());
 	}
+	
+	@Get
+	@Path(priority = 1, value = "/ajudaCsv")
+	public Download ajudaCsv() throws CepespDataException {
+
+		
+		File retFile = Tabela.getHelpCSV();
+
+		return new FileDownload(retFile, "text/csv", "ajuda_cepesp-data.csv", true);
+		
+	}
 
 	@Get
 	@Path("/consulta/camposDisponiveis")

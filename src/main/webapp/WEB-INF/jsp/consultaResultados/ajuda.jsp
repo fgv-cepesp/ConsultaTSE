@@ -30,13 +30,33 @@
 	<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 	<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js' />" type="text/javascript" ></script>
-		
+
+
+	<script>
+	printDivCSS = new String ('<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">')
+	function printDiv(divId) {
+		var content = $('#' + divId).clone();
+		content.children('#print_btn').remove();
+	    window.frames["print_frame"].document.body.innerHTML=printDivCSS + content.html();
+	    window.frames["print_frame"].window.focus();
+	    window.frames["print_frame"].window.print();
+	}
+	</script>
 		
   <div class="row-fluid">
 
-	 <div class="">
+	<iframe name=print_frame width=0 height=0 frameborder=0 src=about:blank></iframe>
+	
+	 <div id="dicionario">
 		 
 		 <h1>Dicionário das colunas</h1>
+		 
+		 
+		 <div id='print_btn' class="alert alert-info">
+  			<a href="#" class="btn btn-mini btn-primary" onclick="printDiv('dicionario')">Imprimir</a>
+  			<a href="<c:url value='/ajudaCsv' />" class="btn btn-mini btn-primary">Exportar .CSV</a>
+		</div>
+		 
 		 
 		 <c:forEach var="ajuda" items="${ajudaTabela}">
 	          <h2>${ajuda.nome}</h2>

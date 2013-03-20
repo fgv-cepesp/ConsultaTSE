@@ -21,18 +21,31 @@ package br.fgv.model;
 import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
 import static br.fgv.model.Coluna.Disponibilidade.OCULTA;
-import static br.fgv.util.QueryBuilder.*;
+import static br.fgv.util.QueryBuilder.EQ;
+import static br.fgv.util.QueryBuilder.REF;
+import static br.fgv.util.QueryBuilder.SQuote;
+import static br.fgv.util.QueryBuilder.TB_CO;
+import static br.fgv.util.QueryBuilder._AND_;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
+import br.fgv.CepespDataException;
+import br.fgv.model.AjudaTabela.ItemAjuda;
 import br.fgv.model.Coluna.Disponibilidade;
+import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
 
 public class Tabela {
+	
+	private static final Logger LOGGER = Logger.getLogger(Tabela.class);
 	
 	public static final String HOLDER_ANO_ELEICAO = "#ANO_ELEICAO#";
 
@@ -490,5 +503,30 @@ public class Tabela {
 		
 		
 		return l;
+	}
+
+	public static File getHelpCSV() throws CepespDataException {
+
+		List<AjudaTabela> l = getHelp();
+		
+		File tmpFile = null;
+		try {
+			CSVBuilder csv = CSVBuilder.createTemp();
+			
+			csv.elemento("Grupo", "Coluna no CSV", "Nome no formulário", "Descrição");
+			csv.linha();
+			for (AjudaTabela ajudaTabela : l) {
+				for (ItemAjuda ajuda : ajudaTabela.getItens()) {
+					csv.elemento(ajudaTabela.getNome(), ajuda.getNome(), ajuda.getDescricao(), ajuda.getDetalhes());
+					csv.linha();
+				}
+			}
+			tmpFile  = csv.finalisa();
+			
+		} catch (IOException e) {
+			LOGGER.error("IOException ao montar output.", e);
+		}
+		
+		return tmpFile;
 	}
 }
