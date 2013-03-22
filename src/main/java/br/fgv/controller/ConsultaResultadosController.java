@@ -24,9 +24,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Joiner;
+import org.apache.log4j.Logger;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -45,6 +46,8 @@ import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
 
+import com.google.common.base.Joiner;
+
 @Resource
 public class ConsultaResultadosController {
 	
@@ -52,10 +55,12 @@ public class ConsultaResultadosController {
 
 	private final Result result;
 	private final BusinessImpl business;
+	private final HttpServletResponse response;
 
-	public ConsultaResultadosController(Result result, BusinessImpl business) {
+	public ConsultaResultadosController(Result result, BusinessImpl business, HttpServletResponse response) {
 		this.result = result;
 		this.business = business;
+		this.response = response;
 	}
 
 	@Get
@@ -282,8 +287,12 @@ public class ConsultaResultadosController {
 			LOGGER.debug("<<< resultadosCSV. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
 			
 		}		
-		
-		return new FileDownload(retFile, "text/csv", nameFile, true);
+		Download d = new FileDownload(retFile, "text/csv", nameFile, true);
+		Cookie cookie = new Cookie("fileDownload", "true");
+		cookie.setPath("/");
+        response.addCookie(cookie);
+        
+		return d;
 	}
 
 }

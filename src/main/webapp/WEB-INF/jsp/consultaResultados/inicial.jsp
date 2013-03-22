@@ -735,11 +735,11 @@ $(function(){
 				data: $('#formConsulta').serialize(),
 				dataType: 'text/csv',
 			    successCallback: function (url) {
-			    	$('#butQuery').button('complete');
+			    	$('#butQuery').button('reset');
 			    },
 			    failCallback: function (html, url) {
 			        alert('O download falhou.');
-			        $('#butQuery').button('complete');
+			        $('#butQuery').button('reset');
 			    }
 	        });
 	        return false;

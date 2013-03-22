@@ -148,7 +148,6 @@ $.extend({
 
             onSuccess: function (url) {
 
-        	alert('nada');
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
