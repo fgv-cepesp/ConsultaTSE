@@ -35,6 +35,7 @@
 	<script>
 	printDivCSS = new String ('<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">')
 	function printDiv(divId) {
+		_gaq.push(['_trackPageview', '/ajuda/print']);
 		var content = $('#' + divId).clone();
 		content.children('#print_btn').remove();
 	    window.frames["print_frame"].document.body.innerHTML=printDivCSS + content.html();
@@ -54,7 +55,7 @@
 		 
 		 <div id='print_btn' class="alert alert-info">
   			<a href="#" class="btn btn-mini btn-primary" onclick="printDiv('dicionario')">Imprimir</a>
-  			<a href="<c:url value='/ajudaCsv' />" class="btn btn-mini btn-primary">Exportar .CSV</a>
+  			<a href="<c:url value='/ajudaCsv' />" class="btn btn-mini btn-primary" onclick="_gaq.push(['_trackPageview', '/ajuda/ajuda_cepesp-data.csv'])">Exportar .CSV</a>
 		</div>
 		 
 		 

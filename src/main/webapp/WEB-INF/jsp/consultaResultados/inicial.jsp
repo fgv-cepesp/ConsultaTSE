@@ -735,9 +735,11 @@ $(function(){
 				data: $('#formConsulta').serialize(),
 				dataType: 'text/csv',
 			    successCallback: function (url) {
+			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados.csv']);
 			    	$('#butQuery').button('reset');
 			    },
 			    failCallback: function (html, url) {
+			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados-ERRO.csv']);
 			        alert('O download falhou.');
 			        $('#butQuery').button('reset');
 			    }
@@ -745,6 +747,7 @@ $(function(){
 	        return false;
     	}
         catch (err) {
+        	_gaq.push(['_trackPageview', '/consultaResultados/resultados-EXCEPTION.csv']);
             alert("Houve algum erro na geracao do arquivo.");
             return;
         }
