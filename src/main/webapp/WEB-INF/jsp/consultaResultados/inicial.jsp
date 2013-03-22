@@ -385,7 +385,7 @@ function popularColunasOpcionais(campos) {
         
         var valorParts = par.valor.split(':');
         var nomeGrupo = valorParts[0];
-        var nomeCol = valorParts[1].trim();
+        var nomeCol = $.trim(valorParts[1]);
         grupo = grupo.replace("#", "").replace("#", "");
         var id = '#' + grupo + 'Opcionais'; 
         
