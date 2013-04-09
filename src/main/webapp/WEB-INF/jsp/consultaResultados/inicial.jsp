@@ -267,6 +267,8 @@ function validarAnosSemAlerta()
 		$('#anosDisponiveisPlaceholder').hide();
 		$('#anosDisponiveisUneditable').text( commaJoin(anos) ).show();
 		
+		_gaq.push(['_trackEvent', 'ConsultaTSE.Anos', 'Anos', commaJoin(anos)]);
+		
 		// configurar botoes
 		
 		btnEdit.removeAttr('disabled', 'disabled').removeClass('disabled');
@@ -395,7 +397,7 @@ function popularColunasOpcionais(campos) {
         	$("<h4/>").text(nomeGrupo).appendTo(container);
         	
         	// criando elementos usando o template
-        	var clone = $('#anosTemplate').clone();
+        	var clone = $('#colunasOptTemplate').clone();
         	clone.show();
         	clone.removeAttr('id');
         	
@@ -581,6 +583,8 @@ $(function(){
     
     $('#filtrosObrigatoriosEditar').on('click', function (e) {
 		e.preventDefault();
+		
+		_gaq.push(['_trackEvent', 'ConsultaTSE', 'Editar', 'Filtros Obrigatorios']);
     	
 		var btnEdit = $('#filtrosObrigatoriosEditar');
 		var btnCont = $('#filtrosObrigatoriosContinuar');
@@ -631,6 +635,8 @@ $(function(){
     
     $('#anosEditar').on('click', function (e) {
 		e.preventDefault();
+		
+		_gaq.push(['_trackEvent', 'ConsultaTSE', 'Editar', 'Anos']);
     	
 		var btnEdit = $('#anosEditar');
 		var btnCont = $('#anosContinuar');
@@ -722,7 +728,7 @@ $(function(){
     
     $('#butQuery').click(function(e) {
     	e.preventDefault();
-    	
+    	var startTime = new Date().getTime();
     	$('#butQuery').button('loading');
     	
     	setTimeout(function() { $('#butQuery').button('reset'); }, 60000);
@@ -735,6 +741,8 @@ $(function(){
 				data: $('#formConsulta').serialize(),
 				dataType: 'text/csv',
 			    successCallback: function (url) {
+			    	var elapsedTime = (new Date().getTime()) - startTime;
+			    	_gaq.push(['_trackEvent', 'ConsultaTSE', 'Download', 'resultados.csv', elapsedTime]);
 			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados.csv']);
 			    	$('#butQuery').button('reset');
 			    },
@@ -796,7 +804,8 @@ $(function(){
       		  <div class="control-group">
 			    <label class="control-label" for="filtroCargo">Cargo</label>
 			    <div class="controls">
-			      <select id="filtroCargo" name="filtroCargo" required title="Cargo é um campo obrigatório.">
+			      <select id="filtroCargo" name="filtroCargo" required title="Cargo é um campo obrigatório."
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'Cargo', this.options[this.selectedIndex].text]);">
 	                    <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
 	                        <option value="${cargo.chave}">${cargo.valor}</option>
 	                    </c:forEach>
@@ -807,7 +816,8 @@ $(function(){
 			  <div class="control-group">
 			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional <a href="#myModal" role="button" data-toggle="modal"><i class="icon-question-sign"></i></a></label>
 			    <div class="controls">
-			        <select name="nivelAgregacaoRegional" required>
+			        <select name="nivelAgregacaoRegional" required
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'AgregacaoRegional', this.options[this.selectedIndex].text]);">
 	                    <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
 	                        <option value="${nar.chave}">${nar.valor}</option>
 	                    </c:forEach>
@@ -818,7 +828,8 @@ $(function(){
 			  <div class="control-group">
 			    <label class="control-label" for="nivelAgregacaoPolitica">Agregação política</label>
 			    <div class="controls">
-			      <select name="nivelAgregacaoPolitica" required>
+			      <select name="nivelAgregacaoPolitica" required
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'AgregacaoPolitica', this.options[this.selectedIndex].text]);">>
 	                    <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
 	                        <option value="${nap.chave}">${nap.valor}</option>
 	                    </c:forEach>
@@ -878,8 +889,10 @@ $(function(){
 	   		<div class="btn-group multiselect-group" id="anosTemplate" style="display: none;">
 				<select multiple="multiple" class="multiselect" required title="Este campo é obrigatório.">
 				</select>
-				<button class="btn multiselect-all">Selecionar todos</button>
-				<button class="btn multiselect-clean">Limpar seleção</button>
+				<button class="btn multiselect-all" 
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Todos', 'Anos']);">Selecionar todos</button>
+				<button class="btn multiselect-clean"
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Limpar', 'Anos']);">Limpar seleção</button>
 			</div>
 					    
 	</section>
@@ -921,7 +934,19 @@ $(function(){
 	      	<div class="span3" id="colunasDefTemplate" style="display: none; ">
 				<dl>
 				</dl>
-			</div>   
+			</div>  
+			
+			
+			
+			<!-- Multiselect template -->
+	   		<div class="btn-group multiselect-group" id="colunasOptTemplate" style="display: none;">
+				<select multiple="multiple" class="multiselect" required title="Este campo é obrigatório.">
+				</select>
+				<button class="btn multiselect-all" 
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Todos', 'colunasOpcionais']);">Selecionar todos</button>
+				<button class="btn multiselect-clean"
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Limpar', 'colunasOpcionais']);">Limpar seleção</button>
+			</div> 
       
 		</section>
 		
