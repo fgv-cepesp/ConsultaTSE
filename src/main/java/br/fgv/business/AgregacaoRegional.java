@@ -25,17 +25,17 @@ public enum AgregacaoRegional {
 	
 	MACRO_REGIAO(Tabela.CO_FACT_VOTOS_MUN_MACRO.getNome(), "Macro-Região", 1), 
 	UF(Tabela.CO_FACT_VOTOS_MUN_UF.getNome(),"UF", 2), 
-	UF_ZONA(Tabela.CO_FACT_VOTOS_MUN_UF.getNome(),"Zona Eleitoral", 3), 
+	UF_ZONA(Tabela.CO_FACT_VOTOS_MUN_UF.getNome() + ", " + Tabela.CO_FACT_VOTOS_MUN_ZONA,"Zona Eleitoral", 3), 
 	MESO_REGIAO(Tabela.CO_FACT_VOTOS_MUN_MESO.getNome(), "Meso-Região", 4), 
 	MICRO_REGIAO(Tabela.CO_FACT_VOTOS_MUN_MICRO.getNome(), "Micro-Região", 5), 
 	MUNICIPIO(Tabela.CO_FACT_VOTOS_MUN_COD_MUN.getNome(), "Município", 6);
 
 	private final String nomeDescritivo;
 	private final int nivel;
-	private final String nome;
+	private final String camposAgregar;
 
-	private AgregacaoRegional(String nome, String nomeDescritivo, int nivel) {
-		this.nome = nome;
+	private AgregacaoRegional(String camposAgregar, String nomeDescritivo, int nivel) {
+		this.camposAgregar = camposAgregar;
 		this.nomeDescritivo = nomeDescritivo;
 		this.nivel = nivel;
 	}
@@ -65,8 +65,8 @@ public enum AgregacaoRegional {
 		return nomeDescritivo;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getCamposAgregar() {
+		return camposAgregar;
 	}
 
 	public String getNomeDescritivo() {

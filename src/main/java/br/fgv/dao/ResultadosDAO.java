@@ -215,7 +215,7 @@ public class ResultadosDAO {
 		if(agregacaoRegional == null || filtroRegional == null || filtroRegional.length == 0){
 			// do nothing
 		} else {
-			query._and_().valor(agregacaoRegional.getNome()).in(filtroRegional);
+			query._and_().valor(agregacaoRegional.getCamposAgregar()).in(filtroRegional);
 		}
 		
 		return query;
@@ -224,7 +224,7 @@ public class ResultadosDAO {
 	
 	String getStringQueryFato(ArgumentosBusca args, String ano) {
 		
-		String reg = args.getNivelRegional().getNome();
+		String reg = args.getNivelRegional().getCamposAgregar();
 		String pol = args.getNivelAgrecacaoPolitica().getNome();
 		
 		QueryBuilder qb = new QueryBuilder();
@@ -256,16 +256,29 @@ public class ResultadosDAO {
 		
 		Set<String> tabelasARelacionar = new HashSet<String>(camposEscolhidos.length);
 		for (String campo : camposEscolhidos) {
-			tabelasARelacionar.add(campo.substring(0, campo.indexOf(".")));
+			String tabela = campo.substring(0, campo.indexOf("."));
+			if(Tabela.byName(tabela) != null)
+				tabelasARelacionar.add(tabela);
+		}
+		
+		
+		List<String> camposFiltrados = new ArrayList<String>();
+		for (String c : camposEscolhidos) {
+			if(c.startsWith("zona.")) {
+				camposFiltrados.add("zona");
+			} else {
+				camposFiltrados.add(c);
+			}
+			
 		}
 		
 		QueryBuilder qb = new QueryBuilder();
-		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").commaWithTrailing((Object[])camposEscolhidos).comma(agregacaoPolitica.getColunas())
+		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
 			._from_().par(queryFato)._as_().valor(REF_FACT);
 		
 		for (String nomeTabela : tabelasARelacionar) {
 			Tabela tabela = Tabela.byName(nomeTabela);
-	        if(tabela != null && tabela.getRelacao() != null) {
+	        if(tabela != null && tabela.getRelacao() != null && !nomeTabela.equals("zona")) {
 	        	qb._left_join_().tabela(tabela)._on_().valor(replace(tabela.getRelacao(), anoEleicao));
 	        }
 		}

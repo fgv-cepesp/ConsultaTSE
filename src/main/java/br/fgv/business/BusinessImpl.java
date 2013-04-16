@@ -91,8 +91,10 @@ public class BusinessImpl {
 		hashCamposFixosRegional.put(AgregacaoRegional.UF, 
 				Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
 		
+		List<Par> fixosUfZona = new ArrayList<Par>(Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
+		fixosUfZona.add(new Par("zona.blah", "Estados:Zona"));
 		hashCamposFixosRegional.put(AgregacaoRegional.UF_ZONA, 
-        		Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
+				fixosUfZona);
 
 		hashCamposFixosRegional.put(AgregacaoRegional.MESO_REGIAO, 
 				Tabela.TB_DIM_MESOREGIAO.getColunas(FIXO));
