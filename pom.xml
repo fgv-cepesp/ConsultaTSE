@@ -152,7 +152,7 @@
 	            <configuration>
 	                     <server>cepesp-dev</server>
 	                     <path>/${project.artifactId}</path>
-	                     <url>http://localhost:8080/manager</url>
+	                     <url>${cepesp.server.url}</url>
 	            </configuration>
 	        </plugin>
 	        <plugin>
