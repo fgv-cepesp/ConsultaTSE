@@ -228,10 +228,9 @@ public class ConsultaResultadosController {
 			String nivelFiltroRegional, List<String> filtroRegional,
 			List<String> filtroPartido, List<String> filtroCandidato) throws CepespDataException {
 		
-		long start = -1;
+		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
 			LOGGER.debug(">>> resultadosCSV " + Arrays.toString(camposEscolhidos.toArray()));
-			start = System.currentTimeMillis();
 		}
 		
 		
