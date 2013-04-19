@@ -116,8 +116,8 @@ public class CSVBuilder {
 		colunas = 0;
 		out.close();
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("CSV criado com " + getNumColunas() + " colunas e "
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("CSV criado com " + getNumColunas() + " colunas e "
 					+ getNumLinhas() + " linhas. Arquivo tmp: " + file);
 		}
 		return file;
