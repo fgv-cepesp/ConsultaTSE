@@ -44,15 +44,9 @@
 		<appender-ref ref="stdout" />
 		<appender-ref ref="R" />
 	</root>
-
-	<category name="br.com.caelum.vraptor">
-		<priority value="WARN" />
-		<appender-ref ref="stdout" />
-		<appender-ref ref="R" />
-	</category>
  
 	<category name="br.fgv">
-		<priority value="INFO" />		
+		<priority value="DEBUG" />		
 		<appender-ref ref="stdout" />
 		<appender-ref ref="R" />
 	</category>
