@@ -272,8 +272,8 @@ public class ConsultaResultadosController {
 		args.setFiltroPartido(fp);
 		args.setFiltroCandidato(fc);
 		
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Argumentos da busca: " + args.toString());
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("Argumentos da busca: " + args.toString());
 		}
 		
 		File retFile = business.getLinkResult(args);
@@ -282,9 +282,8 @@ public class ConsultaResultadosController {
 		String nameFile = business.getSugestaoNomeArquivo(Joiner.on("-").join(anosEscolhidos),
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
-		if(LOGGER.isDebugEnabled()) {
-			
-			LOGGER.debug("<<< resultadosCSV. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("<<< resultadosCSV. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
 			
 		}		
 		Download d = new FileDownload(retFile, "text/csv", nameFile, true);

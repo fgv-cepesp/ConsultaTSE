@@ -39,7 +39,7 @@
 	</category>
  
 	<category name="br.fgv">
-		<priority value="DEBUG" />		
+		<priority value="INFO" />		
 		<appender-ref ref="stdout" />
 	</category>
 	

@@ -355,6 +355,10 @@ public class ResultadosDAO {
 
 		ResultSet rs = ra.getResultSet();
 		
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("Consulta concluida... começando criação de CSV.");
+		}
+		
 		try {
 			int colCount = rs.getMetaData().getColumnCount();
 			
