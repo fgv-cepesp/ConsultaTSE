@@ -18,6 +18,7 @@
  */
 package br.fgv.util;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 import org.apache.log4j.Logger;
 
@@ -50,8 +52,9 @@ public class CSVBuilder {
 		try {
 			this.file = aFile;
 			this.file.deleteOnExit();
-			out = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(aFile), Charsets.UTF_8));
+			out = new OutputStreamWriter(
+					new BufferedOutputStream(
+					new FileOutputStream(aFile,false)), Charsets.UTF_8);
 
 		} catch (FileNotFoundException e) {
 			// não deve acontecer porque o arquivo foi criado pelo sistema
