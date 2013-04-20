@@ -391,6 +391,7 @@ public class ResultadosDAO {
 
 	public InputStream doWorkResult(ArgumentosBusca args) throws CepespDataException {
 		
+		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug(">>> doWorkResult");
 		}
@@ -399,14 +400,14 @@ public class ResultadosDAO {
 		final ResultSet rs = ra.getResultSet();
 		
 		if(LOGGER.isInfoEnabled()) {
-			LOGGER.info("Consulta concluida... começando criação de CSV.");
+			LOGGER.info("Consulta concluida. Tempo (s): " + (System.currentTimeMillis() - start)/1000.0);
 		}
 		
 		InputStream is = null;
 		try {
 			final int colCount = rs.getMetaData().getColumnCount();
 			
-			final CSVBuilder csv = CSVBuilder.createTemp();
+			final CSVBuilder csv = CSVBuilder.getInstance();
 			
 			Runnable r = new Runnable() {
 

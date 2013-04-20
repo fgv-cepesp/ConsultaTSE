@@ -35,7 +35,7 @@ public class CSVBuilderTest {
 
 	@Test
 	public void testCreateTemp() throws Exception {
-		CSVBuilder b = CSVBuilder.createTemp();
+		CSVBuilder b = CSVBuilder.getInstance();
 		
 		b.elemento("a");
 		b.elemento("b", "c", "d");
@@ -64,7 +64,7 @@ public class CSVBuilderTest {
 
 	@Test
 	public void testCreateTempComNull() throws Exception {
-		CSVBuilder b = CSVBuilder.createTemp();
+		CSVBuilder b = CSVBuilder.getInstance();
 		
 		b.elemento("a");
 		b.elemento("b", null, "d");

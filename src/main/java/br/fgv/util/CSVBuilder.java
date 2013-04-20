@@ -19,7 +19,6 @@
 package br.fgv.util;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +36,8 @@ import com.google.common.base.Joiner;
 
 public class CSVBuilder {
 	
+	private long start = System.currentTimeMillis();
+	
 	private int BUFFER = 2048;
 
 	private static final Logger LOGGER = Logger.getLogger(CSVBuilder.class);
@@ -50,7 +51,7 @@ public class CSVBuilder {
 
 	private int colunasTotal = -1;
 	private int colunas = 0;
-
+	
 	private CSVBuilder() throws IOException {
 			OutputStream os = new PipedOutputStream(this.pis);
 
@@ -59,7 +60,7 @@ public class CSVBuilder {
 
 	}
 
-	public static final CSVBuilder createTemp() throws IOException {
+	public static final CSVBuilder getInstance() throws IOException {
 		return new CSVBuilder();
 	}
 	
@@ -122,7 +123,7 @@ public class CSVBuilder {
 
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("CSV criado com " + getNumColunas() + " colunas e "
-					+ getNumLinhas() + " linhas.");
+					+ getNumLinhas() + " linhas. Tempo (s): " + (System.currentTimeMillis() - start)/1000.0);
 		}
 	}
 

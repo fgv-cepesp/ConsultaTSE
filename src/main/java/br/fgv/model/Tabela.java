@@ -514,7 +514,7 @@ public class Tabela {
 		File tmpFile = null;
 		try {
 			tmpFile = File.createTempFile("ajuda", ".csv");
-			CSVBuilder csv = CSVBuilder.createTemp();
+			CSVBuilder csv = CSVBuilder.getInstance();
 			
 			csv.elemento("Grupo", "Coluna no CSV", "Nome no formulário", "Descrição");
 			csv.linha();
