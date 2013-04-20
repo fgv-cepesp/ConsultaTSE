@@ -192,7 +192,7 @@ public class ConsultaResultadosController {
 			throws CepespDataException {
 
 		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Preparando para criar CSV");
+			LOGGER.debug("Controller preparando para delegar criacao do CSV");
 			LOGGER.debug("as_values_partidos:" + as_values_partidos);
 			LOGGER.debug("as_values_regional:" + as_values_regional);
 		}
@@ -231,7 +231,7 @@ public class ConsultaResultadosController {
 		
 		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
-			LOGGER.debug(">>> resultadosCSV " + Arrays.toString(camposEscolhidos.toArray()));
+			LOGGER.debug(">>> campos escolhidos " + Arrays.toString(camposEscolhidos.toArray()));
 		}
 		
 		
@@ -281,7 +281,7 @@ public class ConsultaResultadosController {
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
 		if(LOGGER.isInfoEnabled()) {
-			LOGGER.info("<<< Iniciando download. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
+			LOGGER.info("Comecando consulta propriamente, tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
 			
 		}
 		Download d = new InputStreamDownload(business.getLinkResult(args), "text/csv", nameFile);
@@ -289,6 +289,10 @@ public class ConsultaResultadosController {
 		cookie.setPath("/");
         response.addCookie(cookie);
         
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("<<< Download preparado. Tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
+		}
+		
 		return d;
 	}
 
