@@ -28,6 +28,7 @@ import static br.fgv.util.QueryBuilder.TB_CO;
 import static br.fgv.util.QueryBuilder._AND_;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,8 @@ import br.fgv.model.AjudaTabela.ItemAjuda;
 import br.fgv.model.Coluna.Disponibilidade;
 import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
+
+import com.google.common.io.ByteStreams;
 
 public class Tabela {
 	
@@ -508,9 +511,9 @@ public class Tabela {
 	public static File getHelpCSV() throws CepespDataException {
 
 		List<AjudaTabela> l = getHelp();
-		
 		File tmpFile = null;
 		try {
+			tmpFile = File.createTempFile("ajuda", ".csv");
 			CSVBuilder csv = CSVBuilder.createTemp();
 			
 			csv.elemento("Grupo", "Coluna no CSV", "Nome no formulário", "Descrição");
@@ -521,7 +524,9 @@ public class Tabela {
 					csv.linha();
 				}
 			}
-			tmpFile  = csv.finalisa();
+			csv.finalisa();
+			
+			ByteStreams.copy(csv.getAsInputStream(), new FileOutputStream(tmpFile));
 			
 		} catch (IOException e) {
 			LOGGER.error("IOException ao montar output.", e);

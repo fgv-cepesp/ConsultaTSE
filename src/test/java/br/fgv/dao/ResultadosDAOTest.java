@@ -33,12 +33,18 @@ import static br.fgv.util.QueryBuilder._AND_;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
 import br.fgv.util.ArgumentosBusca;
@@ -92,7 +98,7 @@ public class ResultadosDAOTest {
 		assertEquals("", dao.appendFiltroRegional(new QueryBuilder(), null, filtroRegional).toString());
 		assertEquals(_AND_ + CO_FACT_VOTOS_MUN_MACRO.getNome() + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.MACRO_REGIAO, filtroRegional).toString());
 		assertEquals(_AND_ + CO_FACT_VOTOS_MUN_UF.getNome() + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.UF, filtroRegional).toString());
-		assertEquals(_AND_ + CO_FACT_VOTOS_MUN_UF.getNome() + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.UF_ZONA, filtroRegional).toString());
+		assertEquals(_AND_ + QueryBuilder.COMMA(CO_FACT_VOTOS_MUN_UF.getNome(), "zona") + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.UF_ZONA, filtroRegional).toString());
 		assertEquals(_AND_ + CO_FACT_VOTOS_MUN_MESO.getNome() + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.MESO_REGIAO, filtroRegional).toString());
 		assertEquals(_AND_ + CO_FACT_VOTOS_MUN_MICRO.getNome() + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.MICRO_REGIAO, filtroRegional).toString());
 		assertEquals(_AND_ + CO_FACT_VOTOS_MUN_COD_MUN.getNome() + IN(filtroRegional), dao.appendFiltroRegional(new QueryBuilder(), AgregacaoRegional.MUNICIPIO, filtroRegional).toString());
@@ -293,5 +299,32 @@ public class ResultadosDAOTest {
 	@Test
 	public void testGetAnos() {
 		assertTrue(dao.getAnosParaCargoList("1").size() > 4);
+	}
+	
+	@Test
+	public void testCompleto() throws CepespDataException, IOException {
+		ArgumentosBusca ab = new ArgumentosBusca();
+		String[] anos = {"2010"};
+		ab.setAnoEleicao(anos);
+		
+		ab.setFiltroCargo("7");
+		ab.setNivelAgrecacaoPolitica(AgregacaoPolitica.PARTIDO);
+		ab.setNivelRegional(AgregacaoRegional.UF);
+		
+		String[] partidos = {"43"};
+		ab.setFiltroPartido(partidos);
+		
+		String[] campos = {"aux_estados.ibge"};
+		ab.setCamposEscolhidos(campos);
+		
+		InputStream is = dao.doWorkResult(ab);
+		
+		BufferedReader in = new BufferedReader(new InputStreamReader(is));
+		String line = null;
+		List<String> lines = new ArrayList<String>();
+		while((line = in.readLine()) != null) {
+		    lines.add(line);
+		}
+		assertEquals(28, lines.size());
 	}
 }

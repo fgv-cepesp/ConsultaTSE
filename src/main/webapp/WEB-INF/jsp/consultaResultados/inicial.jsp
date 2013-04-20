@@ -731,7 +731,7 @@ $(function(){
     	var startTime = new Date().getTime();
     	$('#butQuery').button('loading');
     	
-    	setTimeout(function() { $('#butQuery').button('reset'); }, 60000);
+    	setTimeout(function() { $('#butQuery').button('reset'); }, 300000);
     	
     	try {
     		popularColunasOpcionaisFake();

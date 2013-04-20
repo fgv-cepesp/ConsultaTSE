@@ -36,6 +36,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.FileDownload;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
@@ -275,17 +276,15 @@ public class ConsultaResultadosController {
 			LOGGER.info("Argumentos da busca: " + args.toString());
 		}
 		
-		File retFile = business.getLinkResult(args);
-
 		
 		String nameFile = business.getSugestaoNomeArquivo(Joiner.on("-").join(anosEscolhidos),
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
 		if(LOGGER.isInfoEnabled()) {
-			LOGGER.info("<<< resultadosCSV. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
+			LOGGER.info("<<< Iniciando download. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
 			
-		}		
-		Download d = new FileDownload(retFile, "text/csv", nameFile, true);
+		}
+		Download d = new InputStreamDownload(business.getLinkResult(args), "text/csv", nameFile);
 		Cookie cookie = new Cookie("fileDownload", "true");
 		cookie.setPath("/");
         response.addCookie(cookie);

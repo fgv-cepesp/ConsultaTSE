@@ -68,7 +68,7 @@ public class BusinessImplTest {
 		
 		l = this.businessImpl.getCamposDisponiveis(null,
 				AgregacaoPolitica.CANDIDATO);
-		assertEquals(18, l.size());
+		assertEquals(17, l.size());
 	}
 
 	@Test
@@ -116,7 +116,7 @@ public class BusinessImplTest {
 		assertEquals(1, l.size());
 		
 		assertEquals("aux_macroregiao.cod_Macro", l.get(0).getChave());
-		assertEquals("macro-região: Código", l.get(0).getValor());
+		assertEquals("Macro-região: Código", l.get(0).getValor());
 		
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF, null);
@@ -124,7 +124,7 @@ public class BusinessImplTest {
 		
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF_ZONA, null);
-		assertEquals(1, l.size());
+		assertEquals(2, l.size());
 		
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MESO_REGIAO, null);
@@ -143,7 +143,7 @@ public class BusinessImplTest {
 	public void testCamposDisponiveisCombinado() {
 		List<Par> l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
-		assertEquals(19, l.size());
+		assertEquals(18, l.size());
 	}
 
 	@Test

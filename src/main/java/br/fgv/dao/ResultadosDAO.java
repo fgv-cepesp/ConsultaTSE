@@ -18,11 +18,57 @@
  */
 package br.fgv.dao;
 
-import static br.fgv.model.Tabela.*;
-import static br.fgv.util.QueryBuilder.*;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_CARGO_COD;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_NOME;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_TITULO;
+import static br.fgv.model.Tabela.CO_DIM_CARGO_CD;
+import static br.fgv.model.Tabela.CO_DIM_CARGO_DS;
+import static br.fgv.model.Tabela.CO_DIM_ESTADOS_ID;
+import static br.fgv.model.Tabela.CO_DIM_ESTADOS_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_COD;
+import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_ID;
+import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_ID;
+import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_COD;
+import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_SIGLA_UF;
+import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_ANO;
+import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_COD;
+import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_SIGLA;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_COD_CARGO;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_QNT_VOTOS;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_TIPO_VOTAVEL;
+import static br.fgv.model.Tabela.CO_SIS_ANOS_ANO;
+import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_ANO;
+import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_COD_CARGO;
+import static br.fgv.model.Tabela.REF_FACT;
+import static br.fgv.model.Tabela.TB_DIM_CANDIDATOS;
+import static br.fgv.model.Tabela.TB_DIM_CARGO;
+import static br.fgv.model.Tabela.TB_DIM_ESTADOS;
+import static br.fgv.model.Tabela.TB_DIM_MACROREGIAO;
+import static br.fgv.model.Tabela.TB_DIM_MESOREGIAO;
+import static br.fgv.model.Tabela.TB_DIM_MICROREGIAO;
+import static br.fgv.model.Tabela.TB_DIM_MUNICIPIO;
+import static br.fgv.model.Tabela.TB_DIM_PARTIDOS;
+import static br.fgv.model.Tabela.TB_FACT_VOTOS_MUN;
+import static br.fgv.model.Tabela.TB_SIS_ANOS;
+import static br.fgv.model.Tabela.TB_SIS_ANO_CARGO;
+import static br.fgv.model.Tabela.VOTO_LEGENDA;
+import static br.fgv.model.Tabela.VOTO_LEGENDA_COD;
+import static br.fgv.model.Tabela.VOTO_NOMINAL;
+import static br.fgv.model.Tabela.VOTO_NOMINAL_COD;
+import static br.fgv.model.Tabela.VOTO_TOTAL;
+import static br.fgv.util.QueryBuilder.EQ;
+import static br.fgv.util.QueryBuilder.IFF;
+import static br.fgv.util.QueryBuilder._ORDER_BY_;
+import static br.fgv.util.QueryBuilder.a;
+import static br.fgv.util.QueryBuilder.p;
+import static br.fgv.util.QueryBuilder.s;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -343,41 +389,55 @@ public class ResultadosDAO {
 		return qb.toString();
 	}
 
-	public File doWorkResult(ArgumentosBusca args) throws CepespDataException {
+	public InputStream doWorkResult(ArgumentosBusca args) throws CepespDataException {
 		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug(">>> doWorkResult");
 		}
 		
-		File tmpFile = null;
-		
-		ResultSetWork ra = queryFato(args);
-
-		ResultSet rs = ra.getResultSet();
+		final ResultSetWork ra = queryFato(args);
+		final ResultSet rs = ra.getResultSet();
 		
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Consulta concluida... começando criação de CSV.");
 		}
 		
+		InputStream is = null;
 		try {
-			int colCount = rs.getMetaData().getColumnCount();
+			final int colCount = rs.getMetaData().getColumnCount();
 			
-			CSVBuilder csv = CSVBuilder.createTemp();
+			final CSVBuilder csv = CSVBuilder.createTemp();
 			
-			csv.elemento(ra.getColumnsName())
-				.linha();
-			
-			while (rs.next()) {
-				for (int i = 0; i < colCount; i++) {
-					csv.elemento(rs.getString(i + 1));
+			Runnable r = new Runnable() {
+
+				public void run() {
+					try {
+						LOGGER.info("Iniciando thread...");
+						csv.elemento(ra.getColumnsName()).linha();
+
+						while (rs.next()) {
+							for (int i = 0; i < colCount; i++) {
+								csv.elemento(rs.getString(i + 1));
+							}
+							csv.linha();
+						}
+
+						ra.close();
+						rs.close();
+
+						csv.finalisa();
+					} catch (Exception e) {
+						throw new RuntimeException(
+								"Falhou ao criar arquivo csv.", e);
+					}
 				}
-				
-				csv.linha();
-			}
-			
-			ra.close();
-			tmpFile = csv.finalisa();
-			
+			};
+			LOGGER.info("antes de chamar thread");
+			Thread t = new Thread(r);
+	        t.start();
+
+	        is = csv.getAsInputStream();
+	        
 		} catch (IOException e) {
 			LOGGER.error("IOException ao montar output.", e);
 		} catch (SQLException e) {
@@ -389,7 +449,8 @@ public class ResultadosDAO {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("<<< doWorkResult");
 		}
-		return tmpFile;
+		
+		return is;
 	}
 
 	public String getCargoByID(String codCargo) {

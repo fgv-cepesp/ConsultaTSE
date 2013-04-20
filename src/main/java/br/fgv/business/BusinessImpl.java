@@ -22,6 +22,7 @@ import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
 
 import java.io.File;
+import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -215,7 +216,7 @@ public class BusinessImpl {
 		return daoFactory.getResultadosDAO().getCargoByID(codCargo);
 	}
 
-	public File getLinkResult(ArgumentosBusca args)
+	public InputStream getLinkResult(ArgumentosBusca args)
 			throws CepespDataException {
 		
 		return daoFactory.getResultadosDAO().doWorkResult(args);

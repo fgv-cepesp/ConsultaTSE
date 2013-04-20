@@ -19,14 +19,14 @@
 package br.fgv.util;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.Writer;
-import java.nio.charset.Charset;
 
 import org.apache.log4j.Logger;
 
@@ -36,34 +36,35 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 
 public class CSVBuilder {
+	
+	private int BUFFER = 2048;
 
 	private static final Logger LOGGER = Logger.getLogger(CSVBuilder.class);
 	private static final Joiner JOINER = Joiner.on("\",\"").useForNull("null");
 
+	// 
 	private Writer out;
-	private File file;
-
+	private PipedInputStream pis = new PipedInputStream(BUFFER);
+	
 	private int linhas = 0;
 
 	private int colunasTotal = -1;
 	private int colunas = 0;
 
-	private CSVBuilder(File aFile) {
-		try {
-			this.file = aFile;
-			this.file.deleteOnExit();
-			out = new OutputStreamWriter(
-					new BufferedOutputStream(
-					new FileOutputStream(aFile,false)), Charsets.UTF_8);
+	private CSVBuilder() throws IOException {
+			OutputStream os = new PipedOutputStream(this.pis);
 
-		} catch (FileNotFoundException e) {
-			// não deve acontecer porque o arquivo foi criado pelo sistema
-			LOGGER.error("Não pude criar BufferedInputStream para " + file, e);
-		}
+			out = new OutputStreamWriter(
+					new BufferedOutputStream(os), Charsets.UTF_8);
+
 	}
 
 	public static final CSVBuilder createTemp() throws IOException {
-		return new CSVBuilder(File.createTempFile("cepesp-data", ".csv"));
+		return new CSVBuilder();
+	}
+	
+	public InputStream getAsInputStream() {
+		return this.pis;
 	}
 
 	public CSVBuilder elemento(String... elementos) throws IOException {
@@ -100,7 +101,7 @@ public class CSVBuilder {
 		return this;
 	}
 
-	public File finalisa() throws IOException, CepespDataException {
+	public void finalisa() throws IOException, CepespDataException {
 		// verifica coluna
 		if (colunasTotal < 0) {
 			colunasTotal = colunas;
@@ -121,9 +122,8 @@ public class CSVBuilder {
 
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info("CSV criado com " + getNumColunas() + " colunas e "
-					+ getNumLinhas() + " linhas. Arquivo tmp: " + file);
+					+ getNumLinhas() + " linhas.");
 		}
-		return file;
 	}
 
 	public int getNumLinhas() {

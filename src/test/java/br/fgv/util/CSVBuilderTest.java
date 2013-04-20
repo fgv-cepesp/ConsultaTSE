@@ -19,20 +19,15 @@
 package br.fgv.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-
-import br.fgv.CepespDataException;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 public class CSVBuilderTest {
 	
@@ -54,11 +49,9 @@ public class CSVBuilderTest {
 		
 		b.elemento("2a","2b", "2c", "2d");
 		
+		b.finalisa();
 		
-		File f = b.finalisa();
-		assertNotNull(f);
-		
-		List<String> linhas = readLines(f);
+		List<String> linhas = readLines(b);
 		assertEquals(3, linhas.size());
 		assertEquals(3, b.getNumLinhas());
 		assertEquals(4, b.getNumColunas());
@@ -66,10 +59,6 @@ public class CSVBuilderTest {
 		assertEquals("\"a\",\"b\",\"c\",\"d\"", linhas.get(0));
 		assertEquals("\"1a\",\"1b\",\"1c\",\"1d\"", linhas.get(1));
 		assertEquals("\"2a\",\"2b\",\"2c\",\"2d\"", linhas.get(2));
-		
-		if(!f.delete()) {
-			LOGGER.error("Não pude deletar arquivo " + f);
-		}
 	}
 	
 
@@ -89,71 +78,27 @@ public class CSVBuilderTest {
 		
 		b.elemento("2a",null, "2c", "2d");
 		
+		b.finalisa();
 		
-		File f = b.finalisa();
-		assertNotNull(f);
-		
-		List<String> linhas = readLines(f);
+		List<String> linhas = readLines(b);
 		assertEquals(3, linhas.size());
 		
 		assertEquals("\"a\",\"b\",\"null\",\"d\"", linhas.get(0));
 		assertEquals("\"null\",\"1b\",\"1c\",\"null\"", linhas.get(1));
 		assertEquals("\"2a\",\"null\",\"2c\",\"2d\"", linhas.get(2));
 		
-		if(!f.delete()) {
-			LOGGER.error("Não pude deletar arquivo " + f);
-		}
 	}
 	
-
-	@Test(expected=CepespDataException.class)
-	public void testCreateTempFail() throws CepespDataException, IOException {
-		CSVBuilder b = CSVBuilder.createTemp();
-		
-		b.elemento("a");
-		b.elemento("b", "c", "d");
-		
-		b.linha();
-		
-		b.elemento("1a");
-		b.elemento("1b", "1c");
-		
-		File f = b.finalisa();
-		assertNotNull(f);
-		
-		if(!f.delete()) {
-			LOGGER.error("Não pude deletar arquivo " + f);
+	private List<String> readLines(CSVBuilder csv) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(csv.getAsInputStream()));
+		String line = null;
+		List<String> lines = new ArrayList<String>();
+		StringBuilder responseData = new StringBuilder();
+		while((line = in.readLine()) != null) {
+		    lines.add(line);
 		}
 		
-		fail("Falhou ao nao enviar exception");
-	}
-	
-	@Test(expected=CepespDataException.class)
-	public void testCreateTempFail2() throws CepespDataException, IOException {
-		CSVBuilder b = CSVBuilder.createTemp();
-		
-		b.elemento("a");
-		b.elemento("b", "c", "d");
-		
-		b.linha();
-		
-		b.elemento("1a");
-		b.elemento("1b", "1c");
-		
-		b.linha();
-		
-		File f = b.finalisa();
-		assertNotNull(f);
-		
-		if(!f.delete()) {
-			LOGGER.error("Não pude deletar arquivo " + f);
-		}
-		
-		fail("Falhou ao nao enviar exception");
-	}
-	
-	private List<String> readLines(File f) throws IOException {
-		return Files.readLines(f, Charsets.UTF_8);
+		return lines;
 	}
 
 }
