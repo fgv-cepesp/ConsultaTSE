@@ -405,44 +405,14 @@ public class ResultadosDAO {
 		
 		InputStream is = null;
 		try {
-			final int colCount = rs.getMetaData().getColumnCount();
-			
 			final CSVBuilder csv = CSVBuilder.getInstance();
-			
-			Runnable r = new Runnable() {
-
-				public void run() {
-					try {
-						LOGGER.info("Iniciando thread...");
-						csv.elemento(ra.getColumnsName()).linha();
-
-						while (rs.next()) {
-							for (int i = 0; i < colCount; i++) {
-								csv.elemento(rs.getString(i + 1));
-							}
-							csv.linha();
-						}
-
-						ra.close();
-						rs.close();
-
-						csv.finalisa();
-					} catch (Exception e) {
-						throw new RuntimeException(
-								"Falhou ao criar arquivo csv.", e);
-					}
-				}
-			};
-			LOGGER.info("antes de chamar thread");
-			Thread t = new Thread(r);
-	        t.start();
+			csv.setSource(ra, rs);
+			csv.start();
 
 	        is = csv.getAsInputStream();
 	        
 		} catch (IOException e) {
 			LOGGER.error("IOException ao montar output.", e);
-		} catch (SQLException e) {
-			LOGGER.error("SQLException ao montar output.", e);
 		} catch (RuntimeException e) {
 			LOGGER.error("RuntimeException ao montar output.", e);
 		}

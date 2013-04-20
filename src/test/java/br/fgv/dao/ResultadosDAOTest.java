@@ -30,8 +30,7 @@ import static br.fgv.model.Tabela.TB_DIM_PARTIDOS;
 import static br.fgv.util.QueryBuilder.IN;
 import static br.fgv.util.QueryBuilder.SELECT_;
 import static br.fgv.util.QueryBuilder._AND_;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,6 +47,7 @@ import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
 import br.fgv.util.ArgumentosBusca;
+import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
 import br.fgv.util.QueryBuilder;
 
@@ -318,13 +318,43 @@ public class ResultadosDAOTest {
 		ab.setCamposEscolhidos(campos);
 		
 		InputStream is = dao.doWorkResult(ab);
-		
 		BufferedReader in = new BufferedReader(new InputStreamReader(is));
 		String line = null;
 		List<String> lines = new ArrayList<String>();
 		while((line = in.readLine()) != null) {
 		    lines.add(line);
 		}
+		
+		is.close();
 		assertEquals(28, lines.size());
+	}
+	
+	@Test
+	public void testCompletoCancelado() throws CepespDataException, IOException {
+		ArgumentosBusca ab = new ArgumentosBusca();
+		String[] anos = {"2010"};
+		ab.setAnoEleicao(anos);
+		
+		ab.setFiltroCargo("7");
+		ab.setNivelAgrecacaoPolitica(AgregacaoPolitica.PARTIDO);
+		ab.setNivelRegional(AgregacaoRegional.UF);
+		
+		String[] partidos = {"43"};
+		ab.setFiltroPartido(partidos);
+		
+		String[] campos = {"aux_estados.ibge"};
+		ab.setCamposEscolhidos(campos);
+		
+		InputStream is = dao.doWorkResult(ab);
+		((CSVBuilder)is).stop();
+		BufferedReader in = new BufferedReader(new InputStreamReader(is));
+		String line = null;
+		List<String> lines = new ArrayList<String>();
+		while((line = in.readLine()) != null) {
+		    lines.add(line);
+		}
+		
+		is.close();
+		assertNotEquals(28, lines.size());
 	}
 }

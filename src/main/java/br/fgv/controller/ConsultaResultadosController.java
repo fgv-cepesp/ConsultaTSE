@@ -19,6 +19,8 @@
 package br.fgv.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,6 +50,7 @@ import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
 
 import com.google.common.base.Joiner;
+import com.google.common.io.Closeables;
 
 @Resource
 public class ConsultaResultadosController {
@@ -284,7 +287,7 @@ public class ConsultaResultadosController {
 			LOGGER.info("Comecando consulta propriamente, tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
 			
 		}
-		Download d = new InputStreamDownload(business.getLinkResult(args), "text/csv", nameFile);
+		Download d = new CloseableInputStreamDownload(business.getLinkResult(args), "text/csv", nameFile, true, 0);
 		Cookie cookie = new Cookie("fileDownload", "true");
 		cookie.setPath("/");
         response.addCookie(cookie);
@@ -294,6 +297,27 @@ public class ConsultaResultadosController {
 		}
 		
 		return d;
+	}
+	
+	private static class CloseableInputStreamDownload extends InputStreamDownload{
+		
+		private InputStream stream;
+		
+		public CloseableInputStreamDownload(InputStream input, String contentType, String fileName, boolean doDownload, long size) {
+			super(input, contentType, fileName, doDownload, size);
+			this.stream = input;
+		}
+		
+		@Override
+		public void write(HttpServletResponse response) throws IOException {
+			try {
+				super.write(response);
+			} catch(IOException e) {
+				throw new IOException("Exception durante download. Vamos tentar fechar CSVBuilder." , e); 
+			} finally {
+				Closeables.closeQuietly(stream);
+			}
+		}
 	}
 
 }

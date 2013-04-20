@@ -524,7 +524,7 @@ public class Tabela {
 					csv.linha();
 				}
 			}
-			csv.finalisa();
+			csv.finaliza();
 			
 			ByteStreams.copy(csv.getAsInputStream(), new FileOutputStream(tmpFile));
 			

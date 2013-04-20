@@ -49,7 +49,7 @@ public class CSVBuilderTest {
 		
 		b.elemento("2a","2b", "2c", "2d");
 		
-		b.finalisa();
+		b.finaliza();
 		
 		List<String> linhas = readLines(b);
 		assertEquals(3, linhas.size());
@@ -78,7 +78,7 @@ public class CSVBuilderTest {
 		
 		b.elemento("2a",null, "2c", "2d");
 		
-		b.finalisa();
+		b.finaliza();
 		
 		List<String> linhas = readLines(b);
 		assertEquals(3, linhas.size());
