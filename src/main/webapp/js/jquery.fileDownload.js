@@ -367,7 +367,9 @@ $.extend({
         function cleanUp(isFailure) {
 
             if ($iframe) {
-                $iframe.remove();
+            	setTimeout($iframe.remove, 1000);
+            	//patch suggest from list.
+                //$iframe.remove();
             }
 
             if (downloadWindow) {
