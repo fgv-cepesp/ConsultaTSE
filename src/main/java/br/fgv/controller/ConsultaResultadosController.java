@@ -196,8 +196,6 @@ public class ConsultaResultadosController {
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Controller preparando para delegar criacao do CSV");
-			LOGGER.debug("as_values_partidos:" + as_values_partidos);
-			LOGGER.debug("as_values_regional:" + as_values_regional);
 		}
 		
 		List<String> fp = trataLista(as_values_partidos);
@@ -234,6 +232,7 @@ public class ConsultaResultadosController {
 		
 		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
+			LOGGER.debug(">>> campos fixos " + Arrays.toString(camposFixos.toArray()));
 			LOGGER.debug(">>> campos escolhidos " + Arrays.toString(camposEscolhidos.toArray()));
 		}
 		

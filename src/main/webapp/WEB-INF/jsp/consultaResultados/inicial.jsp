@@ -349,13 +349,12 @@ function popularColunasFixas(campos) {
     		dl.attr('id', grupo + 'Fixed');
     		$("<dt/>").text(nomeGrupo).appendTo(dl);
     		
-    		// fake
-    		$("<option/>").attr('selected', 'selected' ).text(par.valor).val(par.chave).appendTo(l);
         } else {
         	dl = $('#' + grupo + 'Fixed');
         }
         
         $("<dd/>").text(nomeCol).appendTo(dl);
+		$("<option/>").attr('selected', 'selected' ).text(par.valor).val(par.chave).appendTo(l);
    });
 }
 
