@@ -124,6 +124,7 @@ public class CSVBuilder extends InputStream implements Runnable {
 			    if(linhas == linhasAnterior) {
 			    	// it is frozen! we should stop the writting...
 			    	LOGGER.warn("Escrita do CSV parada a 2 minutos! Cancelando processo...");
+			    	this.cancel();
 			    	stop();
 			    } else {
 					LOGGER.info("Passaram-se 2 minutos e foram escritas "

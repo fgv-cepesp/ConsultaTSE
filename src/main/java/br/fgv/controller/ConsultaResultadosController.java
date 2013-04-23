@@ -193,7 +193,7 @@ public class ConsultaResultadosController {
 			String nivelFiltroRegional, String as_values_regional,
 			String as_values_candidatos, String as_values_partidos)
 			throws CepespDataException {
-
+		
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Controller preparando para delegar criacao do CSV");
 		}

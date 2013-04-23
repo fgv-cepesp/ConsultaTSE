@@ -745,9 +745,15 @@ $(function(){
 			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados.csv']);
 			    	$('#butQuery').button('reset');
 			    },
-			    failCallback: function (html, url) {
+			    failCallback: function (htmlStr, url) {
 			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados-ERRO.csv']);
-			        alert('O download falhou.');
+			    	$('#errorModalBody').html( htmlStr );
+			    	
+			    	var errorBody = $('#errorModalBody').children('#contentBody');
+			    	$('#errorModalBody').html( errorBody );
+			    	
+			    	
+			    	$('#errorModal').modal('show'); 
 			        $('#butQuery').button('reset');
 			    }
 	        });
@@ -1023,6 +1029,20 @@ $(function(){
 		</section>
 		
 		<!-- Modal -->
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Falha no download</h3>
+  </div>
+  <div class="modal-body" id="errorModalBody">
+	
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+  </div>
+</div>
+		
+		<!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -1052,6 +1072,7 @@ Com exce&ccedil;&atilde;o das Unidades da Federa&ccedil;&atilde;o (tamb&eacute;m
     <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
   </div>
 </div>
+			
 		</form>
 	  
 	</div>	
