@@ -28,6 +28,8 @@ import java.io.PipedOutputStream;
 import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
@@ -51,8 +53,9 @@ public class CSVBuilder extends InputStream implements Runnable {
 	private Writer out;
 	private PipedInputStream pis = new MonitoredPipedInputStream(BUFFER);
 	
-	private int linhas = 0;
-
+	private volatile int linhas = 0;
+	private volatile int linhasAnterior = 0;
+	
 	private int colunasTotal = -1;
 	private int colunas = 0;
 	
@@ -107,8 +110,29 @@ public class CSVBuilder extends InputStream implements Runnable {
 	private Thread t;
 	
 	public void start() {
+		
+		// start the thread
 		t = new Thread(this, "CSVBuilder");
 		t.start();
+		
+		// we will need to setup a timeout to the CSV writer..
+		Timer timer = new Timer();
+		
+		timer.scheduleAtFixedRate(new TimerTask() {
+			  @Override
+			  public void run() {
+			    if(linhas == linhasAnterior) {
+			    	// it is frozen! we should stop the writting...
+			    	LOGGER.warn("Escrita do CSV parada a 2 minutos! Cancelando processo...");
+			    	stop();
+			    } else {
+					LOGGER.info("Passaram-se 2 minutos e foram escritas "
+							+ (linhas - linhasAnterior)
+							+ " linhas neste periodo.");
+					linhasAnterior = linhas;
+			    }
+			  }
+			}, 2*60*1000, 2*60*1000);
 	}
 	
 	public void stop() {
