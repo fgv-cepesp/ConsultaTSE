@@ -108,23 +108,24 @@ public class CSVBuilder extends InputStream implements Runnable {
 	}
 	
 	private Thread t;
+	private Timer timer;
 	
 	public void start() {
 		
-		// start the thread
+		// start the CSVBuilder thread
 		t = new Thread(this, genThreadName("CSVBuilder"));
 		t.start();
 		
+		///////
+		// Cancel TIMER
 		// we will need to setup a timeout to the CSV writer..
-		Timer timer = new Timer(genThreadName("Timer"));
-		
+		timer = new Timer(genThreadName("Timer"));
 		timer.scheduleAtFixedRate(new TimerTask() {
 			  @Override
 			  public void run() {
 			    if(linhas == linhasAnterior) {
-			    	// it is frozen! we should stop the writting...
+			    	// it is frozen! we should stop the writing...
 			    	LOGGER.warn("Escrita do CSV parada a 2 minutos! Cancelando processo...");
-			    	this.cancel();
 			    	stop();
 			    } else {
 					LOGGER.info("Passaram-se 2 minutos e foram escritas "
@@ -136,19 +137,25 @@ public class CSVBuilder extends InputStream implements Runnable {
 			}, 2*60*1000, 2*60*1000);
 	}
 
+	private volatile boolean isStopPendente = true;
+	private Object stopFlag = new Object();
+	
 	public void stop() {
-		if(t != null) {
-			continuarPopulando = false;
-			LOGGER.info("Pediu parada de escrita do CSV. Aguardando thread finalizar.");
-			try {
-				t.join(50000);
-				LOGGER.info("Thread de escrita terminada, ou timeout.");
-			} catch (InterruptedException e) {
-				// oops
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			t = null;
+		synchronized (stopFlag) {
+			if(t != null && isStopPendente) {
+				isStopPendente = false;
+				continuarPopulando = false;
+				LOGGER.info("Pediu parada de escrita do CSV. Aguardando thread finalizar.");
+				try {
+					t.join(50000);
+					LOGGER.info("Thread de escrita terminada, ou timeout.");
+				} catch (InterruptedException e) {
+					// oops
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				t = null;
+			}			
 		}
 	}
 
@@ -199,6 +206,9 @@ public class CSVBuilder extends InputStream implements Runnable {
 
 	public void finaliza() throws IOException, CepespDataException {
 		synchronized (finalizaFlag) {
+			
+			if (timer != null) timer.cancel();
+			
 			if(isFinalizadoPendente) {
 				isFinalizadoPendente = false;
 				
