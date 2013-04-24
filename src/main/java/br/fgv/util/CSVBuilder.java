@@ -143,6 +143,7 @@ public class CSVBuilder extends InputStream implements Runnable {
 	public void stop() {
 		synchronized (stopFlag) {
 			if(t != null && isStopPendente) {
+				if (timer != null) timer.cancel();
 				isStopPendente = false;
 				continuarPopulando = false;
 				LOGGER.info("Pediu parada de escrita do CSV. Aguardando thread finalizar.");
