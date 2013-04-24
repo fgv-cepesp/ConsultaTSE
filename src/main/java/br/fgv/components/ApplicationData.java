@@ -32,6 +32,10 @@ public class ApplicationData {
 		return BuildUtil.POM_VERSION;
 	}
 
+	public String getAnalyticsCode() {
+		return BuildUtil.ANALYTICS_CODE;
+	}
+
 	public Date getDataPublicacao() {
 		return BuildUtil.BUILD_TIME;
 	}

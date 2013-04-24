@@ -34,6 +34,7 @@ public final class BuildUtil {
 	
 	public static final String POM_VERSION = PROPERTIES.getString("POM_VERSION");
 	public static final Date BUILD_TIME = getDate(PROPERTIES.getString("BUILD_TIME"));
+	public static final String ANALYTICS_CODE = PROPERTIES.getString("ANALYTICS_CODE");
 	
 	private static Date getDate(String date) {
 		try {
