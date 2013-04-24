@@ -44,7 +44,7 @@
         <param name="file" value="${catalina.home}/logs/cepespdata.log" />
         <param name="DatePattern" value="'.'yyyy-MM-dd" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss,SSS} %5p [%-20t{1}] [%-20c{1}] %m%n" />
+            <param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss,SSS} %5p [%20.20t] [%-20c{1}] %m%n" />
         </layout>
     </appender>
  
