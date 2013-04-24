@@ -19,7 +19,7 @@
     along with CEPESP-DATA. If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
@@ -37,18 +37,26 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss,SSS} %5p [%15.15t] [%-20c{1}] %m%n" />
 		</layout>
-	</appender> 
+	</appender>
+	
+	
+    <appender name="DAILY" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="${catalina.home}/logs/rejseportal.log" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss,SSS} %5p [%-20t{1}] [%-20c{1}] %m%n" />
+        </layout>
+    </appender>
+ 
+	<category name="br.fgv">
+		<priority value="INFO" />		
+		<appender-ref ref="stdout" />
+		<appender-ref ref="DAILY" />
+	</category>
 
 	<root>
 		<level value="WARN" />
 		<appender-ref ref="stdout" />
-		<appender-ref ref="R" />
+		<appender-ref ref="DAILY" />
 	</root>
- 
-	<category name="br.fgv">
-		<priority value="DEBUG" />		
-		<appender-ref ref="stdout" />
-		<appender-ref ref="R" />
-	</category>
-
 </log4j:configuration>

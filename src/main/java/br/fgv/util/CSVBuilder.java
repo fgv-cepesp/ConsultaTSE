@@ -112,11 +112,11 @@ public class CSVBuilder extends InputStream implements Runnable {
 	public void start() {
 		
 		// start the thread
-		t = new Thread(this, "CSVBuilder");
+		t = new Thread(this, genThreadName("CSVBuilder"));
 		t.start();
 		
 		// we will need to setup a timeout to the CSV writer..
-		Timer timer = new Timer();
+		Timer timer = new Timer(genThreadName("Timer"));
 		
 		timer.scheduleAtFixedRate(new TimerTask() {
 			  @Override
@@ -135,7 +135,7 @@ public class CSVBuilder extends InputStream implements Runnable {
 			  }
 			}, 2*60*1000, 2*60*1000);
 	}
-	
+
 	public void stop() {
 		if(t != null) {
 			continuarPopulando = false;
@@ -324,5 +324,9 @@ public class CSVBuilder extends InputStream implements Runnable {
 			LOGGER.info("Closing MonitoredPipedInputStream");
 			super.close();
 		}
+	}
+	
+	private String genThreadName(String suffix) {
+		return Thread.currentThread().getName() + "." + suffix;
 	}
 }
