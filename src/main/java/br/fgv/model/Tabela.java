@@ -515,13 +515,7 @@ public class Tabela {
 
 	public static File getHelpCSV() throws CepespDataException {
 
-		ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-			
-			public Thread newThread(Runnable arg0) {
-				return new Thread(Thread.currentThread().getName() + ".HelpCSV");
-			}
-			
-		});
+		ExecutorService executor = Executors.newFixedThreadPool(1);
 		List<AjudaTabela> l = getHelp();
 		File csvFile = null;
 		
