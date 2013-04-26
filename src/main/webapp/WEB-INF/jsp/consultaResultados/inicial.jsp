@@ -913,8 +913,8 @@ $(function(){
 				pode trazer diferentes colunas. Algumas colunas são fixas, 
 				quando identificam a unicidade de cada informação, e outras
 				são opcionais e podem ser escolhidos de acordo com a necessidade
-				de sua pesquisa. Aqui você pode escolher as colunas opicionais desejadas.<br/>
-				<a href="<c:url value='/ajuda' />" target="_blank">Veja aqui as descrições das opções</a></p>
+				de sua pesquisa. Aqui você pode escolher as colunas opcionais desejadas.
+				<a href="<c:url value='/ajuda' />" target="_blank">Veja aqui as descrições das opções</a>.</p>
 	
 			<div id="colunasInfo">
 				<div class="alert alert-info">
