@@ -255,8 +255,8 @@ public class CSVBuilder extends InputStream implements Runnable {
 	
 	public void closeDBResources() {
 		synchronized (dbFlag) {
-			LOGGER.info("Fechando conexao DB");
 			if(this.isDbOpen && this.rs != null) {
+				LOGGER.info("Fechando conexao DB");
 				this.isDbOpen = false;
 				try {
 					this.rs.close();

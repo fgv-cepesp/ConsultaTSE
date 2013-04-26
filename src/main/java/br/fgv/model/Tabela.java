@@ -35,6 +35,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import org.apache.log4j.Logger;
 
@@ -510,11 +514,32 @@ public class Tabela {
 
 	public static File getHelpCSV() throws CepespDataException {
 
+		ExecutorService executor = Executors.newFixedThreadPool(1);
 		List<AjudaTabela> l = getHelp();
-		File tmpFile = null;
+		File csvFile = null;
+		
 		try {
-			tmpFile = File.createTempFile("ajuda", ".csv");
-			CSVBuilder csv = CSVBuilder.getInstance();
+			
+			final CSVBuilder csv = CSVBuilder.getInstance();
+			
+			FutureTask<File> future = new FutureTask<File>(
+	                new Callable<File>()
+	                {
+	                    public File call()
+	                    {
+	                    	File tmpFile = null;
+	                    	try {	                    	
+	                    		tmpFile = File.createTempFile("ajuda", ".csv");
+								ByteStreams.copy(csv.getAsInputStream(), new FileOutputStream(tmpFile));
+								csv.close();
+							} catch (IOException e) {
+								LOGGER.error("Exception ao criar arquivo CSV.");
+							}
+	                    	
+	                    	return tmpFile;
+	                    }
+	                });
+	        executor.execute(future);
 			
 			csv.elemento("Grupo", "Coluna no CSV", "Nome no formulário", "Descrição");
 			csv.linha();
@@ -526,12 +551,13 @@ public class Tabela {
 			}
 			csv.finaliza();
 			
-			ByteStreams.copy(csv.getAsInputStream(), new FileOutputStream(tmpFile));
+			csvFile = future.get();
 			
 		} catch (IOException e) {
 			LOGGER.error("IOException ao montar output.", e);
+		} catch (Exception e) {
+			LOGGER.error("Erro ao aguardar montar CSV de ajuda.", e);
 		}
-		
-		return tmpFile;
+		return csvFile;
 	}
 }
