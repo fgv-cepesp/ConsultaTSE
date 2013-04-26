@@ -39,6 +39,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
@@ -514,7 +515,13 @@ public class Tabela {
 
 	public static File getHelpCSV() throws CepespDataException {
 
-		ExecutorService executor = Executors.newFixedThreadPool(1);
+		ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+			
+			public Thread newThread(Runnable arg0) {
+				return new Thread(Thread.currentThread().getName() + ".HelpCSV");
+			}
+			
+		});
 		List<AjudaTabela> l = getHelp();
 		File csvFile = null;
 		
