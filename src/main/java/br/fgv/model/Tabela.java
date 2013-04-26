@@ -552,7 +552,7 @@ public class Tabela {
 			csv.finaliza();
 			
 			csvFile = future.get();
-			
+			executor.shutdown();
 		} catch (IOException e) {
 			LOGGER.error("IOException ao montar output.", e);
 		} catch (Exception e) {
