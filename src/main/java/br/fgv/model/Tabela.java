@@ -39,7 +39,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
@@ -76,6 +75,7 @@ public class Tabela {
 	public static final Coluna CO_FACT_VOTOS_MUN_UF;
 	public static final Coluna CO_FACT_VOTOS_MUN_PARTIDO;
 	public static final Coluna CO_FACT_VOTOS_MUN_CANDIDATO_SK;
+	public static final Coluna CO_FACT_VOTOS_MUN_COLIGACAO_ID;
 
 	/* Tabelas "Dim" */
 	public static final Tabela TB_DIM_PARTIDOS;
@@ -88,6 +88,7 @@ public class Tabela {
 	public static final Tabela TB_DIM_CANDIDATOS;
 	public static final Coluna CO_DIM_CANDIDATOS_CARGO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC;
+	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC_ORI;
 	public static final Coluna CO_DIM_CANDIDATOS_SURROGATEKEY;
 	public static final Coluna CO_DIM_CANDIDATOS_NOME;
 	public static final Coluna CO_DIM_CANDIDATOS_TITULO;
@@ -99,6 +100,7 @@ public class Tabela {
 	public static final Coluna CO_DIM_CANDIDATOS_PARTIDO_SIG;
 	public static final Coluna CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO;
 	public static final Coluna CO_DIM_CANDIDATOS_LEGENDA_DES;
+	public static final Coluna CO_DIM_CANDIDATOS_COLIGACAO_ID;
 	public static final Coluna CO_DIM_CANDIDATOS_OCUPACAO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_SEXO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD;
@@ -155,6 +157,14 @@ public class Tabela {
 	public static final Coluna CO_DIM_VOTAVEIS_SURROGATEKEY;
 	public static final Coluna CO_DIM_VOTAVEIS_NOME_CANDIDATO;
 	
+	public static final Tabela TB_DIM_COLIGACOES;
+	public static final Coluna CO_DIM_COLIGACOES_ID;
+	public static final Coluna CO_DIM_COLIGACOES_ANO;
+	public static final Coluna CO_DIM_COLIGACOES_UE;
+	public static final Coluna CO_DIM_COLIGACOES_CARGO_COD;
+	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO;
+	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_DES;
+	
 	public static final Tabela TB_SIS_ANO_CARGO;
 	public static final Coluna CO_SIS_ANO_CARGO_ANO;
 	public static final Coluna CO_SIS_ANO_CARGO_COD_CARGO;
@@ -188,6 +198,7 @@ public class Tabela {
 		/* Colunas da tabela FACT VOTOS */
 
 		CO_FACT_VOTOS_MUN_ANO = new Coluna("ano");
+		CO_FACT_VOTOS_MUN_COLIGACAO_ID = new Coluna("coligacao_id");
 		CO_FACT_VOTOS_MUN_TURNO = new Coluna("turno");
 		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("cod_mun", "código do município");
 		CO_FACT_VOTOS_MUN_ZONA = new Coluna("zona");
@@ -204,6 +215,7 @@ public class Tabela {
 		
 		List<Coluna> c = new ArrayList<Coluna>();
 		c.add(CO_FACT_VOTOS_MUN_ANO);
+		c.add(CO_FACT_VOTOS_MUN_COLIGACAO_ID);
 		c.add(CO_FACT_VOTOS_MUN_TURNO);
 		c.add(CO_FACT_VOTOS_MUN_COD_MUN);
 		c.add(CO_FACT_VOTOS_MUN_ZONA);
@@ -237,6 +249,28 @@ public class Tabela {
 				EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_COD), REF(CO_FACT_VOTOS_MUN_PARTIDO, REF_FACT))
 				+ _AND_ + EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_ANO), SQuote(HOLDER_ANO_ELEICAO)));
 
+		/* Colunas da tabela dim_coligacoes_por_cargo_ue */
+		CO_DIM_COLIGACOES_ID = new Coluna("coligacao_id");
+		CO_DIM_COLIGACOES_ANO = new Coluna("ano");
+		CO_DIM_COLIGACOES_UE = new Coluna("ue");
+		CO_DIM_COLIGACOES_CARGO_COD = new Coluna("cargo_cod");
+		CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Composição da Legenda", FIXO);
+		CO_DIM_COLIGACOES_LEGENDA_DES = new Coluna("legenda_des", "Descrição da Legenda", FIXO);
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_COLIGACOES_ID);
+		c.add(CO_DIM_COLIGACOES_ANO);
+		c.add(CO_DIM_COLIGACOES_UE);
+		c.add(CO_DIM_COLIGACOES_CARGO_COD);
+		c.add(CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO);
+		c.add(CO_DIM_COLIGACOES_LEGENDA_DES);
+
+		String dim_coligacoes = "dim_coligacoes_por_cargo_ue";
+		TB_DIM_COLIGACOES = new Tabela(dim_coligacoes, "Coligação", c,
+				EQ(TB_CO(dim_coligacoes, CO_DIM_COLIGACOES_ID), REF(CO_FACT_VOTOS_MUN_COLIGACAO_ID, REF_FACT))
+			);
+		
+
 		/* Colunas da tabela DIM CANDIDATOS */
 		CO_DIM_CANDIDATOS_SURROGATEKEY = new Coluna("surrogatekey");
 		CO_DIM_CANDIDATOS_NOME = new Coluna("nome_Candidato", "Nome", DISPONIVEL);
@@ -250,8 +284,10 @@ public class Tabela {
 		CO_DIM_CANDIDATOS_PARTIDO_SIG = new Coluna("partido_sig", "Sigla Partido", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Legenda Composisão", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_DES = new Coluna("legenda_des", "Legenda Des", DISPONIVEL);
+		CO_DIM_CANDIDATOS_COLIGACAO_ID = new Coluna("coligacao_id", OCULTA);
 		CO_DIM_CANDIDATOS_OCUPACAO_COD = new Coluna("ocupacao_cod", "Código Ocupação", DISPONIVEL);
 		CO_DIM_CANDIDATOS_DATA_NASC = new Coluna("data_nasc","Data Nascimento", DISPONIVEL);
+		CO_DIM_CANDIDATOS_DATA_NASC_ORI = new Coluna("data_nasc_original", OCULTA);
 		CO_DIM_CANDIDATOS_SEXO_COD = new Coluna("sexo_cod", "Código Sexo", DISPONIVEL);
 		CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD = new Coluna("grau_instrucao_cod", "Código Instrução");
 		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Código Estado Civil", DISPONIVEL);
@@ -273,8 +309,10 @@ public class Tabela {
 		c.add(CO_DIM_CANDIDATOS_PARTIDO_SIG);
 		c.add(CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO);
 		c.add(CO_DIM_CANDIDATOS_LEGENDA_DES);
+		c.add(CO_DIM_CANDIDATOS_COLIGACAO_ID);
 		c.add(CO_DIM_CANDIDATOS_OCUPACAO_COD);
 		c.add(CO_DIM_CANDIDATOS_DATA_NASC);
+		c.add(CO_DIM_CANDIDATOS_DATA_NASC_ORI);
 		c.add(CO_DIM_CANDIDATOS_SEXO_COD);
 		c.add(CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD);
 		c.add(CO_DIM_CANDIDATOS_EST_CIVIL_COD);
@@ -507,6 +545,7 @@ public class Tabela {
 		l.add(new AjudaTabela(TB_DIM_MESOREGIAO));
 		l.add(new AjudaTabela(TB_DIM_MICROREGIAO));
 		l.add(new AjudaTabela(TB_DIM_MUNICIPIO));
+		l.add(new AjudaTabela(TB_DIM_COLIGACOES));
 //		l.add(new AjudaTabela(TB_DIM_VOTAVEIS));
 		
 		

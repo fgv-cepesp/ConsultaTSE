@@ -71,10 +71,10 @@ public class ResultadosDAOTest {
 	@Test
 	public void testCargosDisponiveisList() {
 		List<Par> l = dao.getCargosPorAnoList("2010");
-		assertEquals(6, l.size());
+		assertEquals(5, l.size());
 		
 		l = dao.getCargosPorAnoList("2008");
-		assertEquals(4, l.size());
+		assertEquals(2, l.size());
 	}
 	
 	@Test
@@ -298,7 +298,7 @@ public class ResultadosDAOTest {
 	
 	@Test
 	public void testGetAnos() {
-		assertTrue(dao.getAnosParaCargoList("1").size() > 4);
+		assertEquals(3, dao.getAnosParaCargoList("1").size());
 	}
 	
 	@Test

@@ -119,6 +119,9 @@ public class BusinessImpl {
 
 		hashCamposDisponiveisPolitico.put(AgregacaoPolitica.CANDIDATO,
 				Tabela.TB_DIM_CANDIDATOS.getColunas(DISPONIVEL));
+
+		hashCamposDisponiveisPolitico.put(AgregacaoPolitica.COLIGACAO,
+				Tabela.TB_DIM_COLIGACOES.getColunas(DISPONIVEL));
 		
 		CAMPOS_DISPONIVEIS_POLITICO = Collections.unmodifiableMap(hashCamposDisponiveisPolitico);
 		
@@ -132,6 +135,9 @@ public class BusinessImpl {
 
 		hashCamposFixosPolitico.put(AgregacaoPolitica.CANDIDATO,
 				Tabela.TB_DIM_CANDIDATOS.getColunas(FIXO));
+
+		hashCamposFixosPolitico.put(AgregacaoPolitica.COLIGACAO,
+				Tabela.TB_DIM_COLIGACOES.getColunas(FIXO));
 		
 		CAMPOS_FIXOS_POLITICO = Collections.unmodifiableMap(hashCamposFixosPolitico);
 	}
