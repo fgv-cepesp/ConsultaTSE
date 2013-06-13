@@ -18,54 +18,8 @@
  */
 package br.fgv.dao;
 
-import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_CARGO_COD;
-import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_NOME;
-import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_TITULO;
-import static br.fgv.model.Tabela.CO_DIM_CARGO_CD;
-import static br.fgv.model.Tabela.CO_DIM_CARGO_DS;
-import static br.fgv.model.Tabela.CO_DIM_ESTADOS_ID;
-import static br.fgv.model.Tabela.CO_DIM_ESTADOS_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_COD;
-import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_ID;
-import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_ID;
-import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_COD;
-import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_NOME;
-import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_SIGLA_UF;
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_ANO;
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_COD;
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_SIGLA;
-import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_COD_CARGO;
-import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_QNT_VOTOS;
-import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_TIPO_VOTAVEL;
-import static br.fgv.model.Tabela.CO_SIS_ANOS_ANO;
-import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_ANO;
-import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_COD_CARGO;
-import static br.fgv.model.Tabela.REF_FACT;
-import static br.fgv.model.Tabela.TB_DIM_CANDIDATOS;
-import static br.fgv.model.Tabela.TB_DIM_CARGO;
-import static br.fgv.model.Tabela.TB_DIM_ESTADOS;
-import static br.fgv.model.Tabela.TB_DIM_MACROREGIAO;
-import static br.fgv.model.Tabela.TB_DIM_MESOREGIAO;
-import static br.fgv.model.Tabela.TB_DIM_MICROREGIAO;
-import static br.fgv.model.Tabela.TB_DIM_MUNICIPIO;
-import static br.fgv.model.Tabela.TB_DIM_PARTIDOS;
-import static br.fgv.model.Tabela.TB_FACT_VOTOS_MUN;
-import static br.fgv.model.Tabela.TB_SIS_ANOS;
-import static br.fgv.model.Tabela.TB_SIS_ANO_CARGO;
-import static br.fgv.model.Tabela.VOTO_LEGENDA;
-import static br.fgv.model.Tabela.VOTO_LEGENDA_COD;
-import static br.fgv.model.Tabela.VOTO_NOMINAL;
-import static br.fgv.model.Tabela.VOTO_NOMINAL_COD;
-import static br.fgv.model.Tabela.VOTO_TOTAL;
-import static br.fgv.util.QueryBuilder.EQ;
-import static br.fgv.util.QueryBuilder.IFF;
-import static br.fgv.util.QueryBuilder._ORDER_BY_;
-import static br.fgv.util.QueryBuilder.a;
-import static br.fgv.util.QueryBuilder.p;
-import static br.fgv.util.QueryBuilder.s;
+import static br.fgv.model.Tabela.*;
+import static br.fgv.util.QueryBuilder.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -276,7 +230,7 @@ public class ResultadosDAO {
 		QueryBuilder qb = new QueryBuilder();
 
 		// SELECT
-		qb.select_().comma(reg, pol);
+		qb.select_().comma(CO_FACT_VOTOS_MUN_TURNO, reg, pol);
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
 		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
 			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA)
@@ -292,7 +246,7 @@ public class ResultadosDAO {
 			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 		
 		// GROUP BY
-		qb._group_by_().comma(reg, pol)._order_by_().comma(reg, pol);
+		qb._group_by_().comma(reg, pol, CO_FACT_VOTOS_MUN_TURNO)._order_by_().comma(reg, pol, CO_FACT_VOTOS_MUN_TURNO);
 
 		return qb.toString(ano);
 	}
@@ -319,7 +273,8 @@ public class ResultadosDAO {
 		}
 		
 		QueryBuilder qb = new QueryBuilder();
-		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
+		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").
+			valor(CO_FACT_VOTOS_MUN_TURNO + " AS \"Turno\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
 			._from_().par(queryFato)._as_().valor(REF_FACT);
 		
 		for (String nomeTabela : tabelasARelacionar) {

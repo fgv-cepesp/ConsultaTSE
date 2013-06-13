@@ -48,7 +48,7 @@ public abstract class TSEDadosAuxiliares {
 		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par(Integer.toString(AgregacaoPolitica.PARTIDO.getNivel()), AgregacaoPolitica.PARTIDO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoPolitica.CANDIDATO.getNivel()), AgregacaoPolitica.CANDIDATO.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoPolitica.COLIGACAO.getNivel()), AgregacaoPolitica.COLIGACAO.getNomeDescritivo()));
+//		l.add(new Par(Integer.toString(AgregacaoPolitica.COLIGACAO.getNivel()), AgregacaoPolitica.COLIGACAO.getNomeDescritivo()));
 		
 		NIVEL_AGREGACAO_POLITICA = Collections.unmodifiableList(l);
 		
