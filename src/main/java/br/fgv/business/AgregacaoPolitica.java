@@ -26,8 +26,10 @@ import br.fgv.model.Tabela;
 public enum AgregacaoPolitica {
 	
 	PARTIDO(Tabela.CO_FACT_VOTOS_MUN_PARTIDO.getNome(), "Partido", 1, VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL), 
-	CANDIDATO(Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK.getNome(), "Candidato", 2, Tabela.VOTO_NOMINAL);
-
+	CANDIDATO(Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK.getNome(), "Candidato", 2, VOTO_NOMINAL), 
+	COLIGACAO(Tabela.CO_FACT_VOTOS_MUN_COLIGACAO_ID.getNome(), "Coligação", 3, VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL);
+	
+	
 	private final String nomeDescritivo;
 	private final int nivel;
 	private final String nome;

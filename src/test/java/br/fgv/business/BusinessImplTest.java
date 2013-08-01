@@ -22,8 +22,11 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.junit.Test;
 
+import br.fgv.dao.DaoFactoryImpl;
+import br.fgv.dao.FactorySessionMySqlDB;
 import br.fgv.util.Par;
 
 public class BusinessImplTest {
@@ -31,7 +34,8 @@ public class BusinessImplTest {
 	private BusinessImpl businessImpl;
 
 	public BusinessImplTest() {
-		this.businessImpl = new BusinessImpl(null);
+		Session session = FactorySessionMySqlDB.create();
+		this.businessImpl = new BusinessImpl(new DaoFactoryImpl(session));
 	}
 	
 	@Test
@@ -64,7 +68,7 @@ public class BusinessImplTest {
 		
 		l = this.businessImpl.getCamposDisponiveis(null,
 				AgregacaoPolitica.CANDIDATO);
-		assertEquals(18, l.size());
+		assertEquals(17, l.size());
 	}
 
 	@Test
@@ -112,7 +116,7 @@ public class BusinessImplTest {
 		assertEquals(1, l.size());
 		
 		assertEquals("aux_macroregiao.cod_Macro", l.get(0).getChave());
-		assertEquals("macro-região: Código", l.get(0).getValor());
+		assertEquals("Macro-região: Código", l.get(0).getValor());
 		
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF, null);
@@ -120,7 +124,7 @@ public class BusinessImplTest {
 		
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF_ZONA, null);
-		assertEquals(1, l.size());
+		assertEquals(2, l.size());
 		
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MESO_REGIAO, null);
@@ -139,7 +143,7 @@ public class BusinessImplTest {
 	public void testCamposDisponiveisCombinado() {
 		List<Par> l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
-		assertEquals(19, l.size());
+		assertEquals(18, l.size());
 	}
 
 	@Test
@@ -147,5 +151,13 @@ public class BusinessImplTest {
 		List<Par> l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
 		assertEquals(2, l.size());
+	}
+
+	@Test
+	public void testNomeArquivo01() {
+		assertEquals("2099_Presidente_MacroRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "1", "1", "1"));
+		assertEquals("2099_DeputadoFederal_MacroRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "1", "1", "6"));
+		assertEquals("2099_DeputadoFederal_MesoRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "4", "1", "6"));
+		
 	}
 }

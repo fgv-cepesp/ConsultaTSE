@@ -19,14 +19,17 @@
 package br.fgv.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Joiner;
+import org.apache.log4j.Logger;
 
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -35,6 +38,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.Download;
 import br.com.caelum.vraptor.interceptor.download.FileDownload;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
@@ -42,7 +46,11 @@ import br.fgv.business.AgregacaoRegional;
 import br.fgv.business.BusinessImpl;
 import br.fgv.business.FormResultAux;
 import br.fgv.model.TSEDadosAuxiliares;
+import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
+
+import com.google.common.base.Joiner;
+import com.google.common.io.Closeables;
 
 @Resource
 public class ConsultaResultadosController {
@@ -51,26 +59,39 @@ public class ConsultaResultadosController {
 
 	private final Result result;
 	private final BusinessImpl business;
+	private final HttpServletResponse response;
 
-	public ConsultaResultadosController(Result result, BusinessImpl business) {
+	public ConsultaResultadosController(Result result, BusinessImpl business, HttpServletResponse response) {
 		this.result = result;
 		this.business = business;
+		this.response = response;
 	}
 
 	@Get
 	@Path(priority = 1, value = "/consultaResultados")
 	public void inicial() {
-
-//		result.include("anoEleicaoList", business.getAnosDisponiveis());
 		result.include("nivelAgregacaoRegionalList", TSEDadosAuxiliares
 				.getNivelAgregacaoRegional());
 		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares
 				.getNivelAgregacaoPolitica());
 		result.include("filtroCargoList", business.getCargosDisponiveis());
+	}
+
+	@Get
+	@Path(priority = 1, value = "/ajuda")
+	public void ajuda() {
+		result.include("ajudaTabela", Tabela.getHelp());
+	}
+	
+	@Get
+	@Path(priority = 1, value = "/ajudaCsv")
+	public Download ajudaCsv() throws CepespDataException {
+
 		
-		// XXX Porque? Deveria bloquear busca por partidos se um ano não estiver
-		// selecionado
-		result.include("filtroPartidoList", business.getPartidos("2002"));
+		File retFile = Tabela.getHelpCSV();
+
+		return new FileDownload(retFile, "text/csv", "ajuda_cepesp-data.csv", true);
+		
 	}
 
 	@Get
@@ -172,11 +193,9 @@ public class ConsultaResultadosController {
 			String nivelFiltroRegional, String as_values_regional,
 			String as_values_candidatos, String as_values_partidos)
 			throws CepespDataException {
-
+		
 		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Preparando para criar CSV");
-			LOGGER.debug("as_values_partidos:" + as_values_partidos);
-			LOGGER.debug("as_values_regional:" + as_values_regional);
+			LOGGER.debug("Controller preparando para delegar criacao do CSV");
 		}
 		
 		List<String> fp = trataLista(as_values_partidos);
@@ -211,10 +230,10 @@ public class ConsultaResultadosController {
 			String nivelFiltroRegional, List<String> filtroRegional,
 			List<String> filtroPartido, List<String> filtroCandidato) throws CepespDataException {
 		
-		long start = -1;
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug(">>> resultadosCSV " + Arrays.toString(camposEscolhidos.toArray()));
-			start = System.currentTimeMillis();
+		long start = System.currentTimeMillis();
+		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
+			LOGGER.debug(">>> campos fixos " + Arrays.toString(camposFixos.toArray()));
+			LOGGER.debug(">>> campos escolhidos " + Arrays.toString(camposEscolhidos.toArray()));
 		}
 		
 		
@@ -255,23 +274,49 @@ public class ConsultaResultadosController {
 		args.setFiltroPartido(fp);
 		args.setFiltroCandidato(fc);
 		
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Argumentos da busca: " + args.toString());
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("Argumentos da busca: " + args.toString());
 		}
 		
-		File retFile = business.getLinkResult(args);
-
 		
 		String nameFile = business.getSugestaoNomeArquivo(Joiner.on("-").join(anosEscolhidos),
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
-		if(LOGGER.isDebugEnabled()) {
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("Comecando consulta propriamente, tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
 			
-			LOGGER.debug("<<< resultadosCSV. Tempo(s): " + (System.currentTimeMillis() - start)/1000.0);
-			
-		}		
+		}
+		Download d = new CloseableInputStreamDownload(business.getLinkResult(args), "text/csv", nameFile, true, 0);
+		Cookie cookie = new Cookie("fileDownload", "true");
+		cookie.setPath("/");
+        response.addCookie(cookie);
+        
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("<<< Download preparado. Tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
+		}
 		
-		return new FileDownload(retFile, "text/csv", nameFile, true);
+		return d;
+	}
+	
+	private static class CloseableInputStreamDownload extends InputStreamDownload{
+		
+		private InputStream stream;
+		
+		public CloseableInputStreamDownload(InputStream input, String contentType, String fileName, boolean doDownload, long size) {
+			super(input, contentType, fileName, doDownload, size);
+			this.stream = input;
+		}
+		
+		@Override
+		public void write(HttpServletResponse response) throws IOException {
+			try {
+				super.write(response);
+			} catch(IOException e) {
+				throw new IOException("Exception durante download. Vamos tentar fechar CSVBuilder." , e); 
+			} finally {
+				Closeables.closeQuietly(stream);
+			}
+		}
 	}
 
 }

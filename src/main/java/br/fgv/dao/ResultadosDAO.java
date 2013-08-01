@@ -21,8 +21,8 @@ package br.fgv.dao;
 import static br.fgv.model.Tabela.*;
 import static br.fgv.util.QueryBuilder.*;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -215,7 +215,7 @@ public class ResultadosDAO {
 		if(agregacaoRegional == null || filtroRegional == null || filtroRegional.length == 0){
 			// do nothing
 		} else {
-			query._and_().valor(agregacaoRegional.getNome()).in(filtroRegional);
+			query._and_().valor(agregacaoRegional.getCamposAgregar()).in(filtroRegional);
 		}
 		
 		return query;
@@ -224,15 +224,15 @@ public class ResultadosDAO {
 	
 	String getStringQueryFato(ArgumentosBusca args, String ano) {
 		
-		String reg = args.getNivelRegional().getNome();
+		String reg = args.getNivelRegional().getCamposAgregar();
 		String pol = args.getNivelAgrecacaoPolitica().getNome();
 		
 		QueryBuilder qb = new QueryBuilder();
 
 		// SELECT
-		qb.select_().comma(reg, pol);
+		qb.select_().comma(CO_FACT_VOTOS_MUN_TURNO, reg, pol);
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
-		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica())) {
+		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
 			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA)
 				.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
 		}
@@ -246,7 +246,7 @@ public class ResultadosDAO {
 			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 		
 		// GROUP BY
-		qb._group_by_().comma(reg, pol)._order_by_().comma(reg, pol);
+		qb._group_by_().comma(reg, pol, CO_FACT_VOTOS_MUN_TURNO)._order_by_().comma(reg, pol, CO_FACT_VOTOS_MUN_TURNO);
 
 		return qb.toString(ano);
 	}
@@ -256,16 +256,30 @@ public class ResultadosDAO {
 		
 		Set<String> tabelasARelacionar = new HashSet<String>(camposEscolhidos.length);
 		for (String campo : camposEscolhidos) {
-			tabelasARelacionar.add(campo.substring(0, campo.indexOf(".")));
+			String tabela = campo.substring(0, campo.indexOf("."));
+			if(Tabela.byName(tabela) != null)
+				tabelasARelacionar.add(tabela);
+		}
+		
+		
+		List<String> camposFiltrados = new ArrayList<String>();
+		for (String c : camposEscolhidos) {
+			if(c.startsWith("zona.")) {
+				camposFiltrados.add("zona");
+			} else {
+				camposFiltrados.add(c);
+			}
+			
 		}
 		
 		QueryBuilder qb = new QueryBuilder();
-		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").commaWithTrailing((Object[])camposEscolhidos).comma(agregacaoPolitica.getColunas())
+		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").
+			valor(CO_FACT_VOTOS_MUN_TURNO + " AS \"Turno\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
 			._from_().par(queryFato)._as_().valor(REF_FACT);
 		
 		for (String nomeTabela : tabelasARelacionar) {
 			Tabela tabela = Tabela.byName(nomeTabela);
-	        if(tabela != null && tabela.getRelacao() != null) {
+	        if(tabela != null && tabela.getRelacao() != null && !nomeTabela.equals("zona")) {
 	        	qb._left_join_().tabela(tabela)._on_().valor(replace(tabela.getRelacao(), anoEleicao));
 	        }
 		}
@@ -330,41 +344,30 @@ public class ResultadosDAO {
 		return qb.toString();
 	}
 
-	public File doWorkResult(ArgumentosBusca args) throws CepespDataException {
+	public InputStream doWorkResult(ArgumentosBusca args) throws CepespDataException {
 		
+		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug(">>> doWorkResult");
 		}
 		
-		File tmpFile = null;
+		final ResultSetWork ra = queryFato(args);
+		final ResultSet rs = ra.getResultSet();
 		
-		ResultSetWork ra = queryFato(args);
-
-		ResultSet rs = ra.getResultSet();
+		if(LOGGER.isInfoEnabled()) {
+			LOGGER.info("Consulta concluida. Tempo (s): " + (System.currentTimeMillis() - start)/1000.0);
+		}
 		
+		InputStream is = null;
 		try {
-			int colCount = rs.getMetaData().getColumnCount();
-			
-			CSVBuilder csv = CSVBuilder.createTemp();
-			
-			csv.elemento(ra.getColumnsName())
-				.linha();
-			
-			while (rs.next()) {
-				for (int i = 0; i < colCount; i++) {
-					csv.elemento(rs.getString(i + 1));
-				}
-				
-				csv.linha();
-			}
-			
-			ra.close();
-			tmpFile = csv.finalisa();
-			
+			final CSVBuilder csv = CSVBuilder.getInstance();
+			csv.setSource(ra, rs);
+			csv.start();
+
+	        is = csv.getAsInputStream();
+	        
 		} catch (IOException e) {
 			LOGGER.error("IOException ao montar output.", e);
-		} catch (SQLException e) {
-			LOGGER.error("SQLException ao montar output.", e);
 		} catch (RuntimeException e) {
 			LOGGER.error("RuntimeException ao montar output.", e);
 		}
@@ -372,7 +375,8 @@ public class ResultadosDAO {
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("<<< doWorkResult");
 		}
-		return tmpFile;
+		
+		return is;
 	}
 
 	public String getCargoByID(String codCargo) {

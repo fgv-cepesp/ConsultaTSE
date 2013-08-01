@@ -20,20 +20,39 @@ package br.fgv.model;
 
 import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
-import static br.fgv.util.QueryBuilder.*;
+import static br.fgv.model.Coluna.Disponibilidade.OCULTA;
+import static br.fgv.util.QueryBuilder.EQ;
+import static br.fgv.util.QueryBuilder.REF;
+import static br.fgv.util.QueryBuilder.SQuote;
+import static br.fgv.util.QueryBuilder.TB_CO;
+import static br.fgv.util.QueryBuilder._AND_;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
+import org.apache.log4j.Logger;
+
+import br.fgv.CepespDataException;
+import br.fgv.model.AjudaTabela.ItemAjuda;
 import br.fgv.model.Coluna.Disponibilidade;
+import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
 
+import com.google.common.io.ByteStreams;
+
 public class Tabela {
+	
+	private static final Logger LOGGER = Logger.getLogger(Tabela.class);
 	
 	public static final String HOLDER_ANO_ELEICAO = "#ANO_ELEICAO#";
 
@@ -56,6 +75,7 @@ public class Tabela {
 	public static final Coluna CO_FACT_VOTOS_MUN_UF;
 	public static final Coluna CO_FACT_VOTOS_MUN_PARTIDO;
 	public static final Coluna CO_FACT_VOTOS_MUN_CANDIDATO_SK;
+	public static final Coluna CO_FACT_VOTOS_MUN_COLIGACAO_ID;
 
 	/* Tabelas "Dim" */
 	public static final Tabela TB_DIM_PARTIDOS;
@@ -68,6 +88,7 @@ public class Tabela {
 	public static final Tabela TB_DIM_CANDIDATOS;
 	public static final Coluna CO_DIM_CANDIDATOS_CARGO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC;
+	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC_ORI;
 	public static final Coluna CO_DIM_CANDIDATOS_SURROGATEKEY;
 	public static final Coluna CO_DIM_CANDIDATOS_NOME;
 	public static final Coluna CO_DIM_CANDIDATOS_TITULO;
@@ -79,6 +100,7 @@ public class Tabela {
 	public static final Coluna CO_DIM_CANDIDATOS_PARTIDO_SIG;
 	public static final Coluna CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO;
 	public static final Coluna CO_DIM_CANDIDATOS_LEGENDA_DES;
+	public static final Coluna CO_DIM_CANDIDATOS_COLIGACAO_ID;
 	public static final Coluna CO_DIM_CANDIDATOS_OCUPACAO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_SEXO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD;
@@ -135,6 +157,14 @@ public class Tabela {
 	public static final Coluna CO_DIM_VOTAVEIS_SURROGATEKEY;
 	public static final Coluna CO_DIM_VOTAVEIS_NOME_CANDIDATO;
 	
+	public static final Tabela TB_DIM_COLIGACOES;
+	public static final Coluna CO_DIM_COLIGACOES_ID;
+	public static final Coluna CO_DIM_COLIGACOES_ANO;
+	public static final Coluna CO_DIM_COLIGACOES_UE;
+	public static final Coluna CO_DIM_COLIGACOES_CARGO_COD;
+	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO;
+	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_DES;
+	
 	public static final Tabela TB_SIS_ANO_CARGO;
 	public static final Coluna CO_SIS_ANO_CARGO_ANO;
 	public static final Coluna CO_SIS_ANO_CARGO_COD_CARGO;
@@ -158,7 +188,7 @@ public class Tabela {
 	
 	private final String nome;
 	private final String nomeDescritivo;
-	private final Set<Coluna> colunas;
+	private final List<Coluna> colunas;
 	private final String relacao;
 
 	/*
@@ -168,6 +198,7 @@ public class Tabela {
 		/* Colunas da tabela FACT VOTOS */
 
 		CO_FACT_VOTOS_MUN_ANO = new Coluna("ano");
+		CO_FACT_VOTOS_MUN_COLIGACAO_ID = new Coluna("coligacao_id");
 		CO_FACT_VOTOS_MUN_TURNO = new Coluna("turno");
 		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("cod_mun", "código do município");
 		CO_FACT_VOTOS_MUN_ZONA = new Coluna("zona");
@@ -182,8 +213,9 @@ public class Tabela {
 		CO_FACT_VOTOS_MUN_PARTIDO = new Coluna("partido");
 		CO_FACT_VOTOS_MUN_CANDIDATO_SK = new Coluna("candidato_sk");
 		
-		Set<Coluna> c = new HashSet<Coluna>();
+		List<Coluna> c = new ArrayList<Coluna>();
 		c.add(CO_FACT_VOTOS_MUN_ANO);
+		c.add(CO_FACT_VOTOS_MUN_COLIGACAO_ID);
 		c.add(CO_FACT_VOTOS_MUN_TURNO);
 		c.add(CO_FACT_VOTOS_MUN_COD_MUN);
 		c.add(CO_FACT_VOTOS_MUN_ZONA);
@@ -206,32 +238,56 @@ public class Tabela {
 		CO_DIM_PARTIDOS_SIGLA = new Coluna("sigla_Partido", "Sigla", DISPONIVEL);
 		CO_DIM_PARTIDOS_NOME = new Coluna("nome_Partido", "Nome", DISPONIVEL);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_PARTIDOS_ANO);
 		c.add(CO_DIM_PARTIDOS_COD);
 		c.add(CO_DIM_PARTIDOS_SIGLA);
 		c.add(CO_DIM_PARTIDOS_NOME);
 
 		final String dim_partidos = "dim_partidos";
-		TB_DIM_PARTIDOS = new Tabela(dim_partidos, "partido", c,
+		TB_DIM_PARTIDOS = new Tabela(dim_partidos, "Partido", c,
 				EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_COD), REF(CO_FACT_VOTOS_MUN_PARTIDO, REF_FACT))
 				+ _AND_ + EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_ANO), SQuote(HOLDER_ANO_ELEICAO)));
+
+		/* Colunas da tabela dim_coligacoes_por_cargo_ue */
+		CO_DIM_COLIGACOES_ID = new Coluna("coligacao_id");
+		CO_DIM_COLIGACOES_ANO = new Coluna("ano");
+		CO_DIM_COLIGACOES_UE = new Coluna("ue");
+		CO_DIM_COLIGACOES_CARGO_COD = new Coluna("cargo_cod");
+		CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Composição da Legenda", FIXO);
+		CO_DIM_COLIGACOES_LEGENDA_DES = new Coluna("legenda_des", "Descrição da Legenda", FIXO);
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_COLIGACOES_ID);
+		c.add(CO_DIM_COLIGACOES_ANO);
+		c.add(CO_DIM_COLIGACOES_UE);
+		c.add(CO_DIM_COLIGACOES_CARGO_COD);
+		c.add(CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO);
+		c.add(CO_DIM_COLIGACOES_LEGENDA_DES);
+
+		String dim_coligacoes = "dim_coligacoes_por_cargo_ue";
+		TB_DIM_COLIGACOES = new Tabela(dim_coligacoes, "Coligação", c,
+				EQ(TB_CO(dim_coligacoes, CO_DIM_COLIGACOES_ID), REF(CO_FACT_VOTOS_MUN_COLIGACAO_ID, REF_FACT))
+			);
+		
 
 		/* Colunas da tabela DIM CANDIDATOS */
 		CO_DIM_CANDIDATOS_SURROGATEKEY = new Coluna("surrogatekey");
 		CO_DIM_CANDIDATOS_NOME = new Coluna("nome_Candidato", "Nome", DISPONIVEL);
 		CO_DIM_CANDIDATOS_TITULO = new Coluna("titulo", "Título", DISPONIVEL);
 		CO_DIM_CANDIDATOS_NR_VOTAVEL = new Coluna("nr_votavel", "Número", FIXO);
-		CO_DIM_CANDIDATOS_UF = new Coluna("uf", "UF", DISPONIVEL);
-		CO_DIM_CANDIDATOS_SG_UE = new Coluna("SG_UE", "SG UE", DISPONIVEL);
+		CO_DIM_CANDIDATOS_UF = new Coluna("uf", "UF", OCULTA);
+		CO_DIM_CANDIDATOS_SG_UE = new Coluna("SG_UE", "Sigla da Unidade Eleitoral", DISPONIVEL);
 		CO_DIM_CANDIDATOS_CARGO_COD = new Coluna("cargo_cod", "Código Cargo", DISPONIVEL);
 		CO_DIM_CANDIDATOS_SIT_CANDIDATURA_COD = new Coluna("sit_candidatura_cod", "Código Situação Candidatura", DISPONIVEL);
 		CO_DIM_CANDIDATOS_PARTIDO_COD = new Coluna("partido_cod", "Código Partido", DISPONIVEL);
 		CO_DIM_CANDIDATOS_PARTIDO_SIG = new Coluna("partido_sig", "Sigla Partido", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Legenda Composisão", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_DES = new Coluna("legenda_des", "Legenda Des", DISPONIVEL);
+		CO_DIM_CANDIDATOS_COLIGACAO_ID = new Coluna("coligacao_id", OCULTA);
 		CO_DIM_CANDIDATOS_OCUPACAO_COD = new Coluna("ocupacao_cod", "Código Ocupação", DISPONIVEL);
 		CO_DIM_CANDIDATOS_DATA_NASC = new Coluna("data_nasc","Data Nascimento", DISPONIVEL);
+		CO_DIM_CANDIDATOS_DATA_NASC_ORI = new Coluna("data_nasc_original", OCULTA);
 		CO_DIM_CANDIDATOS_SEXO_COD = new Coluna("sexo_cod", "Código Sexo", DISPONIVEL);
 		CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD = new Coluna("grau_instrucao_cod", "Código Instrução");
 		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Código Estado Civil", DISPONIVEL);
@@ -240,7 +296,7 @@ public class Tabela {
 		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CANDIDATOS_SURROGATEKEY);
 		c.add(CO_DIM_CANDIDATOS_NOME);
 		c.add(CO_DIM_CANDIDATOS_TITULO);
@@ -253,8 +309,10 @@ public class Tabela {
 		c.add(CO_DIM_CANDIDATOS_PARTIDO_SIG);
 		c.add(CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO);
 		c.add(CO_DIM_CANDIDATOS_LEGENDA_DES);
+		c.add(CO_DIM_CANDIDATOS_COLIGACAO_ID);
 		c.add(CO_DIM_CANDIDATOS_OCUPACAO_COD);
 		c.add(CO_DIM_CANDIDATOS_DATA_NASC);
+		c.add(CO_DIM_CANDIDATOS_DATA_NASC_ORI);
 		c.add(CO_DIM_CANDIDATOS_SEXO_COD);
 		c.add(CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD);
 		c.add(CO_DIM_CANDIDATOS_EST_CIVIL_COD);
@@ -264,14 +322,14 @@ public class Tabela {
 		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD);
 
 		final String dim_candidatos = "aux_candidatos_" + HOLDER_ANO_ELEICAO;
-		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, "candidatos", c,
+		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, "Candidato", c,
 				EQ(TB_CO(dim_candidatos, CO_DIM_CANDIDATOS_SURROGATEKEY), REF(CO_FACT_VOTOS_MUN_CANDIDATO_SK, REF_FACT)));
 
 		/* Colunas da tabela DIM CARGO */
 		CO_DIM_CARGO_DS = new Coluna("DS_CARGO");
 		CO_DIM_CARGO_CD = new Coluna("CD_CARGO");
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CARGO_DS);
 		c.add(CO_DIM_CARGO_CD);
 
@@ -281,12 +339,12 @@ public class Tabela {
 		CO_DIM_MACROREGIAO_NOME = new Coluna("nome_Macro", "Nome", DISPONIVEL);
 		CO_DIM_MACROREGIAO_COD = new Coluna("cod_Macro", "Código", FIXO);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MACROREGIAO_NOME);
 		c.add(CO_DIM_MACROREGIAO_COD);
 		
 		final String dim_macroregiao = "aux_macroregiao";
-		TB_DIM_MACROREGIAO = new Tabela(dim_macroregiao,"macro-região", c,
+		TB_DIM_MACROREGIAO = new Tabela(dim_macroregiao,"Macro-região", c,
 				EQ(TB_CO(dim_macroregiao, CO_DIM_MACROREGIAO_COD), REF(CO_FACT_VOTOS_MUN_MACRO, REF_FACT)));
 
 		/* Colunas da tabela DIM ESTADOS */
@@ -295,7 +353,7 @@ public class Tabela {
 		CO_DIM_ESTADOS_IBGE = new Coluna("ibge", "Código IBGE", FIXO);
 		CO_DIM_ESTADOS_SIGLA = new Coluna("sigla_Estado", "Sigla UF", DISPONIVEL);
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_ESTADOS_ID);
 		c.add(CO_DIM_ESTADOS_NOME);
 		c.add(CO_DIM_ESTADOS_IBGE);
@@ -303,7 +361,7 @@ public class Tabela {
 
 		// TODO: aqui falta um campo fixo: zona para UF_ZONA
 		final String dim_estados = "aux_estados";
-		TB_DIM_ESTADOS = new Tabela(dim_estados, "estado", c,
+		TB_DIM_ESTADOS = new Tabela(dim_estados, "Estado", c,
 				EQ(TB_CO(dim_estados, CO_DIM_ESTADOS_ID), REF(CO_FACT_VOTOS_MUN_UF, REF_FACT)));
 
 		/* Colunas da tabela DIM MESOREGIAO */
@@ -312,14 +370,14 @@ public class Tabela {
 		CO_DIM_MESOREGIAO_SIGLA_UF = new Coluna("sigla_UF", "Sigla UF", FIXO);
 		CO_DIM_MESOREGIAO_NOME = new Coluna("nome_Meso", "Nome", DISPONIVEL);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MESOREGIAO_COD);
 		c.add(CO_DIM_MESOREGIAO_ID);
 		c.add(CO_DIM_MESOREGIAO_SIGLA_UF);
 		c.add(CO_DIM_MESOREGIAO_NOME);
 		
 		final String dim_mesoregiao = "aux_mesoregiao";
-		TB_DIM_MESOREGIAO = new Tabela(dim_mesoregiao,"meso-região", c,
+		TB_DIM_MESOREGIAO = new Tabela(dim_mesoregiao,"Meso-região", c,
 				EQ(TB_CO(dim_mesoregiao, CO_DIM_MESOREGIAO_ID), REF(CO_FACT_VOTOS_MUN_MESO, REF_FACT)));
 
 		/* Colunas da tabela DIM MICROREGIAO */
@@ -328,14 +386,14 @@ public class Tabela {
 		CO_DIM_MICROREGIAO_SIGLA_UF = new Coluna("sigla_UF", "Sigla UF", FIXO);
 		CO_DIM_MICROREGIAO_NOME = new Coluna("nome_Micro", "Nome", DISPONIVEL);
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MICROREGIAO_COD);
 		c.add(CO_DIM_MICROREGIAO_ID);
 		c.add(CO_DIM_MICROREGIAO_SIGLA_UF);
 		c.add(CO_DIM_MICROREGIAO_NOME);
 
 		final String dim_microregiao = "aux_microregiao";
-		TB_DIM_MICROREGIAO = new Tabela(dim_microregiao,"micro-região", c,
+		TB_DIM_MICROREGIAO = new Tabela(dim_microregiao,"Micro-região", c,
 				EQ(TB_CO(dim_microregiao, CO_DIM_MICROREGIAO_ID), REF(CO_FACT_VOTOS_MUN_MICRO, REF_FACT)));
 
 		/* Colunas da tabela DIM MUNICIPIO */
@@ -354,7 +412,7 @@ public class Tabela {
 		CO_DIM_MUNICIPIO_COD = new Coluna("cod","Código TSE", DISPONIVEL);
 		CO_DIM_MUNICIPIO_NOME = new Coluna("nome_Municipio","Nome", DISPONIVEL);
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MUNICIPIO_SIGLA_UF);
 		c.add(CO_DIM_MUNICIPIO_IBGE);
 		c.add(CO_DIM_MUNICIPIO_UF);
@@ -370,7 +428,7 @@ public class Tabela {
 		c.add(CO_DIM_MUNICIPIO_NOME);
 
 		final String dim_municipio = "aux_municipio";
-		TB_DIM_MUNICIPIO = new Tabela(dim_municipio, "município", c,
+		TB_DIM_MUNICIPIO = new Tabela(dim_municipio, "Município", c,
 				EQ(TB_CO(dim_municipio, CO_DIM_MUNICIPIO_COD), REF(CO_FACT_VOTOS_MUN_COD_MUN, REF_FACT)));
 
 		/* Colunas da tabela DIM VOTAVEIS */
@@ -379,7 +437,7 @@ public class Tabela {
 		CO_DIM_VOTAVEIS_SURROGATEKEY = new Coluna("surrogatekey");
 		CO_DIM_VOTAVEIS_NOME_CANDIDATO = new Coluna("nome_Candidato");
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_VOTAVEIS_NR_VOTAVEL);
 		c.add(CO_DIM_VOTAVEIS_TITULO);
 		c.add(CO_DIM_VOTAVEIS_SURROGATEKEY);
@@ -391,7 +449,7 @@ public class Tabela {
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");
 		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cod_cargo");
 		
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANO_CARGO_ANO);
 		c.add(CO_SIS_ANO_CARGO_COD_CARGO);
 
@@ -400,7 +458,7 @@ public class Tabela {
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANOS_ANO = new Coluna("ano");
 
-		c = new HashSet<Coluna>();
+		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANOS_ANO);
 
 		TB_SIS_ANOS = new Tabela("sis_anos", c);
@@ -410,22 +468,22 @@ public class Tabela {
 		__tabelas = null;
 	}
 
-	public Tabela(String nome, Set<Coluna> colunas) {
+	public Tabela(String nome, List<Coluna> colunas) {
 		this(nome, nome, colunas, null);
 	}
 
-	public Tabela(String nome, Set<Coluna> colunas, String relacao) {
+	public Tabela(String nome, List<Coluna> colunas, String relacao) {
 		this(nome, nome, colunas, relacao);
 	}
 
-	public Tabela(String nome, String nomeDescritivo, Set<Coluna> colunas) {
+	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas) {
 		this(nome, nomeDescritivo, colunas, null);
 	}
 	
-	public Tabela(String nome, String nomeDescritivo, Set<Coluna> colunas, String relacao) {
+	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas, String relacao) {
 		this.nome = nome;
 		this.nomeDescritivo = nomeDescritivo;
-		this.colunas = Collections.unmodifiableSet(colunas);
+		this.colunas = Collections.unmodifiableList(colunas);
 		this.relacao = relacao;
 		
 		__tabelas.put(nome, this);
@@ -443,7 +501,7 @@ public class Tabela {
 		return relacao;
 	}
 
-	public Set<Coluna> getColunas() {
+	public List<Coluna> getColunas() {
 		return this.colunas;
 	}
 	
@@ -467,5 +525,79 @@ public class Tabela {
 	
 	public static Tabela byName(String nome) {
 		return tabelas.get(nome);
+	}
+
+	public static List<AjudaTabela> getHelp() {
+		/* Estrutura assim
+		 * 
+		 * # Estados
+		 * ## UF: descricao
+		 * ### detalhes
+		 */
+		
+		List<AjudaTabela> l = new ArrayList<AjudaTabela>();
+		
+		l.add(new AjudaTabela(TB_DIM_PARTIDOS));
+		l.add(new AjudaTabela(TB_DIM_CANDIDATOS));
+//		l.add(new AjudaTabela(TB_DIM_CARGO));
+		l.add(new AjudaTabela(TB_DIM_MACROREGIAO));
+		l.add(new AjudaTabela(TB_DIM_ESTADOS));
+		l.add(new AjudaTabela(TB_DIM_MESOREGIAO));
+		l.add(new AjudaTabela(TB_DIM_MICROREGIAO));
+		l.add(new AjudaTabela(TB_DIM_MUNICIPIO));
+		l.add(new AjudaTabela(TB_DIM_COLIGACOES));
+//		l.add(new AjudaTabela(TB_DIM_VOTAVEIS));
+		
+		
+		return l;
+	}
+
+	public static File getHelpCSV() throws CepespDataException {
+
+		ExecutorService executor = Executors.newFixedThreadPool(1);
+		List<AjudaTabela> l = getHelp();
+		File csvFile = null;
+		
+		try {
+			
+			final CSVBuilder csv = CSVBuilder.getInstance();
+			
+			FutureTask<File> future = new FutureTask<File>(
+	                new Callable<File>()
+	                {
+	                    public File call()
+	                    {
+	                    	File tmpFile = null;
+	                    	try {	                    	
+	                    		tmpFile = File.createTempFile("ajuda", ".csv");
+								ByteStreams.copy(csv.getAsInputStream(), new FileOutputStream(tmpFile));
+								csv.close();
+							} catch (IOException e) {
+								LOGGER.error("Exception ao criar arquivo CSV.");
+							}
+	                    	
+	                    	return tmpFile;
+	                    }
+	                });
+	        executor.execute(future);
+			
+			csv.elemento("Grupo", "Coluna no CSV", "Nome no formulário", "Descrição");
+			csv.linha();
+			for (AjudaTabela ajudaTabela : l) {
+				for (ItemAjuda ajuda : ajudaTabela.getItens()) {
+					csv.elemento(ajudaTabela.getNome(), ajuda.getNome(), ajuda.getDescricao(), ajuda.getDetalhes());
+					csv.linha();
+				}
+			}
+			csv.finaliza();
+			
+			csvFile = future.get();
+			executor.shutdown();
+		} catch (IOException e) {
+			LOGGER.error("IOException ao montar output.", e);
+		} catch (Exception e) {
+			LOGGER.error("Erro ao aguardar montar CSV de ajuda.", e);
+		}
+		return csvFile;
 	}
 }

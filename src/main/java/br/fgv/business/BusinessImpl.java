@@ -22,6 +22,8 @@ import static br.fgv.model.Coluna.Disponibilidade.DISPONIVEL;
 import static br.fgv.model.Coluna.Disponibilidade.FIXO;
 
 import java.io.File;
+import java.io.InputStream;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -90,8 +92,10 @@ public class BusinessImpl {
 		hashCamposFixosRegional.put(AgregacaoRegional.UF, 
 				Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
 		
+		List<Par> fixosUfZona = new ArrayList<Par>(Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
+		fixosUfZona.add(new Par("zona.blah", "Estados:Zona"));
 		hashCamposFixosRegional.put(AgregacaoRegional.UF_ZONA, 
-        		Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
+				fixosUfZona);
 
 		hashCamposFixosRegional.put(AgregacaoRegional.MESO_REGIAO, 
 				Tabela.TB_DIM_MESOREGIAO.getColunas(FIXO));
@@ -115,6 +119,9 @@ public class BusinessImpl {
 
 		hashCamposDisponiveisPolitico.put(AgregacaoPolitica.CANDIDATO,
 				Tabela.TB_DIM_CANDIDATOS.getColunas(DISPONIVEL));
+
+		hashCamposDisponiveisPolitico.put(AgregacaoPolitica.COLIGACAO,
+				Tabela.TB_DIM_COLIGACOES.getColunas(DISPONIVEL));
 		
 		CAMPOS_DISPONIVEIS_POLITICO = Collections.unmodifiableMap(hashCamposDisponiveisPolitico);
 		
@@ -128,6 +135,9 @@ public class BusinessImpl {
 
 		hashCamposFixosPolitico.put(AgregacaoPolitica.CANDIDATO,
 				Tabela.TB_DIM_CANDIDATOS.getColunas(FIXO));
+
+		hashCamposFixosPolitico.put(AgregacaoPolitica.COLIGACAO,
+				Tabela.TB_DIM_COLIGACOES.getColunas(FIXO));
 		
 		CAMPOS_FIXOS_POLITICO = Collections.unmodifiableMap(hashCamposFixosPolitico);
 	}
@@ -212,7 +222,7 @@ public class BusinessImpl {
 		return daoFactory.getResultadosDAO().getCargoByID(codCargo);
 	}
 
-	public File getLinkResult(ArgumentosBusca args)
+	public InputStream getLinkResult(ArgumentosBusca args)
 			throws CepespDataException {
 		
 		return daoFactory.getResultadosDAO().doWorkResult(args);
@@ -223,22 +233,12 @@ public class BusinessImpl {
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			String filtroCargo) {
 
-		String[] nivelRegional = new String[7];
-		nivelRegional[1] = "MacroRegiao";
-		nivelRegional[2] = "Estados";
-		nivelRegional[3] = "UF-Zona";
-		nivelRegional[4] = "MesoRegiao";
-		nivelRegional[5] = "MicroRegiao";
-        nivelRegional[6] = "Municipio";
-		String[] nivelPolitico = new String[3];
-		nivelPolitico[1] = "Partido";
-		nivelPolitico[2] = "Candidato";
-
-		String cargo = getCargoByID(filtroCargo);
-		String agregacaoRegional = nivelRegional[Integer
-				.parseInt(nivelAgregacaoRegional)];
-		String agregacaoPolitica = nivelPolitico[Integer
-				.parseInt(nivelAgregacaoPolitica)];
+		String cargo = preprocessarParaNome(getCargoByID(filtroCargo));
+		String agregacaoRegional = preprocessarParaNome(
+				AgregacaoRegional.fromInt(nivelAgregacaoRegional).getNomeDescritivo());
+		
+		String agregacaoPolitica = preprocessarParaNome(
+				AgregacaoPolitica.fromInt(nivelAgregacaoPolitica).getNomeDescritivo());
 
 		String nameFile = anoEleicao + "_" + cargo + "_" + agregacaoRegional
 				+ "_" + agregacaoPolitica + ".csv";
@@ -248,6 +248,16 @@ public class BusinessImpl {
 		}
 
 		return nameFile;
+	}
+	
+	private String preprocessarParaNome(String str) {
+		str = str.replace("/", "");
+		str = str.replace("-", "");
+		str = str.replace(" ", "");
+		str = Normalizer.normalize(str, Normalizer.Form.NFD);
+		str = str.replaceAll("[^\\p{ASCII}]", "");
+		
+		return str;
 	}
 
 	public List<Par> getPartidos(String string) {

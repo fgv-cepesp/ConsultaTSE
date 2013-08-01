@@ -148,7 +148,6 @@ $.extend({
 
             onSuccess: function (url) {
 
-        	alert('nada');
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
@@ -368,7 +367,9 @@ $.extend({
         function cleanUp(isFailure) {
 
             if ($iframe) {
-                $iframe.remove();
+            	setTimeout($iframe.remove, 1000);
+            	//patch suggest from list.
+                //$iframe.remove();
             }
 
             if (downloadWindow) {

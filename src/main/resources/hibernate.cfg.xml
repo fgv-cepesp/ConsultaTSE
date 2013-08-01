@@ -25,7 +25,7 @@
 <hibernate-configuration>
 	<session-factory>
 		<!-- DESENVOLVIMENTO -->
-		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/consultaTSE?autoReconnect=true</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/consultatse?autoReconnect=true</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
 

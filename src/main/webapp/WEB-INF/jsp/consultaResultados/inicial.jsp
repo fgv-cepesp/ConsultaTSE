@@ -267,6 +267,8 @@ function validarAnosSemAlerta()
 		$('#anosDisponiveisPlaceholder').hide();
 		$('#anosDisponiveisUneditable').text( commaJoin(anos) ).show();
 		
+		_gaq.push(['_trackEvent', 'ConsultaTSE.Anos', 'Anos', commaJoin(anos)]);
+		
 		// configurar botoes
 		
 		btnEdit.removeAttr('disabled', 'disabled').removeClass('disabled');
@@ -347,13 +349,12 @@ function popularColunasFixas(campos) {
     		dl.attr('id', grupo + 'Fixed');
     		$("<dt/>").text(nomeGrupo).appendTo(dl);
     		
-    		// fake
-    		$("<option/>").attr('selected', 'selected' ).text(par.valor).val(par.chave).appendTo(l);
         } else {
         	dl = $('#' + grupo + 'Fixed');
         }
         
         $("<dd/>").text(nomeCol).appendTo(dl);
+		$("<option/>").attr('selected', 'selected' ).text(par.valor).val(par.chave).appendTo(l);
    });
 }
 
@@ -363,9 +364,11 @@ function popularColunasOpcionaisFake() {
     
     // pegar os campos
 	$.each($('.multiselectOpcionais'), function() {
-		$.each($(this).val(), function(index, value){
-			$("<option/>").attr('selected', 'selected' ).text(value).val(value).appendTo(l);
-		});
+		if($(this).val() != null) {
+			$.each($(this).val(), function(index, value){
+				$("<option/>").attr('selected', 'selected' ).text(value).val(value).appendTo(l);
+			});
+		}
 	});
     
 }
@@ -383,7 +386,7 @@ function popularColunasOpcionais(campos) {
         
         var valorParts = par.valor.split(':');
         var nomeGrupo = valorParts[0];
-        var nomeCol = valorParts[1].trim();
+        var nomeCol = $.trim(valorParts[1]);
         grupo = grupo.replace("#", "").replace("#", "");
         var id = '#' + grupo + 'Opcionais'; 
         
@@ -393,7 +396,7 @@ function popularColunasOpcionais(campos) {
         	$("<h4/>").text(nomeGrupo).appendTo(container);
         	
         	// criando elementos usando o template
-        	var clone = $('#anosTemplate').clone();
+        	var clone = $('#colunasOptTemplate').clone();
         	clone.show();
         	clone.removeAttr('id');
         	
@@ -468,7 +471,7 @@ function configuraAutoComplete() {
 	
     $('#filtroPartidoNovo').autoSuggest('<c:url value="/consulta/partidosAnos"/>',
             {
-                startText: "Escolha o partido para filtro",
+                startText: "Se desejar, digite aqui a sigla de um ou mais partidos.",
                 emptyText: "Não existem resultados",
                 extraParamsDynamic: function(string){  return "&" + selectedAsMultipleParameter($('#anosDisponiveis'), 'anosList');},
                 selectedItemProp: "valor",
@@ -481,7 +484,7 @@ function configuraAutoComplete() {
     
     $('#filtroCandidato').autoSuggest('<c:url value="/consulta/candidatosAnosCargo"/>',
             {
-                startText: "Escolha os candidatos para filtro",
+                startText: "Se desejar, digite aqui o nome de um ou mais candidatos.",
                 emptyText: "Não existem resultados",
                 extraParamsDynamic: function(string){  
                 	return "&" + selectedAsMultipleParameter($('#anosDisponiveis'), 'anosList')
@@ -579,6 +582,8 @@ $(function(){
     
     $('#filtrosObrigatoriosEditar').on('click', function (e) {
 		e.preventDefault();
+		
+		_gaq.push(['_trackEvent', 'ConsultaTSE', 'Editar', 'Filtros Obrigatorios']);
     	
 		var btnEdit = $('#filtrosObrigatoriosEditar');
 		var btnCont = $('#filtrosObrigatoriosContinuar');
@@ -629,6 +634,8 @@ $(function(){
     
     $('#anosEditar').on('click', function (e) {
 		e.preventDefault();
+		
+		_gaq.push(['_trackEvent', 'ConsultaTSE', 'Editar', 'Anos']);
     	
 		var btnEdit = $('#anosEditar');
 		var btnCont = $('#anosContinuar');
@@ -720,32 +727,40 @@ $(function(){
     
     $('#butQuery').click(function(e) {
     	e.preventDefault();
-    	
+    	var startTime = new Date().getTime();
     	$('#butQuery').button('loading');
     	
-    	setTimeout(function() { $('#butQuery').button('reset'); }, 10000);
+    	setTimeout(function() { $('#butQuery').button('reset'); }, 300000);
     	
-    	popularColunasOpcionaisFake();
     	try {
-
-    		//var preparingFileModal = $("#preparing-file-modal");    		 
-            //preparingFileModal.dialog({ modal: true });
-	
+    		popularColunasOpcionaisFake();
+    		
 	        $.fileDownload('<c:url value="/resultados.csv"/>', {
 				httpMethod: "POST",
 				data: $('#formConsulta').serialize(),
 				dataType: 'text/csv',
 			    successCallback: function (url) {
-			    	$('#butQuery').button('complete');
+			    	var elapsedTime = (new Date().getTime()) - startTime;
+			    	_gaq.push(['_trackEvent', 'ConsultaTSE', 'Download', 'resultados.csv', elapsedTime]);
+			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados.csv']);
+			    	$('#butQuery').button('reset');
 			    },
-			    failCallback: function (html, url) {
-			        alert('O download falhou.');
-			        $('#butQuery').button('complete');
+			    failCallback: function (htmlStr, url) {
+			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados-ERRO.csv']);
+			    	$('#errorModalBody').html( htmlStr );
+			    	
+			    	var errorBody = $('#errorModalBody').children('#contentBody');
+			    	$('#errorModalBody').html( errorBody );
+			    	
+			    	
+			    	$('#errorModal').modal('show'); 
+			        $('#butQuery').button('reset');
 			    }
 	        });
 	        return false;
     	}
         catch (err) {
+        	_gaq.push(['_trackPageview', '/consultaResultados/resultados-EXCEPTION.csv']);
             alert("Houve algum erro na geracao do arquivo.");
             return;
         }
@@ -758,7 +773,7 @@ $(function(){
   <div class="row-fluid">
     <!-- Docs nav
     ================================================== -->
-      <div class="span3 well sidebar-nav" data-spy="affix" id="sidebar">
+      <div class="well sidebar-nav" data-spy="affix" id="sidebar">
         <ul class="nav nav-list scroll-sidebar">
           <li class="active"><a href="#inicio"><i class="icon-chevron-right"></i> Início</a></li>
           <li><a href="#filtrosObrigatorios"><i class="icon-chevron-right"></i> Filtros obrigatórios</a></li>
@@ -794,7 +809,8 @@ $(function(){
       		  <div class="control-group">
 			    <label class="control-label" for="filtroCargo">Cargo</label>
 			    <div class="controls">
-			      <select id="filtroCargo" name="filtroCargo" required title="Cargo é um campo obrigatório.">
+			      <select id="filtroCargo" name="filtroCargo" required title="Cargo é um campo obrigatório."
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'Cargo', this.options[this.selectedIndex].text]);">
 	                    <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
 	                        <option value="${cargo.chave}">${cargo.valor}</option>
 	                    </c:forEach>
@@ -803,9 +819,10 @@ $(function(){
 			    </div>
 			  </div>
 			  <div class="control-group">
-			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional</label>
+			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional <a href="#myModal" role="button" data-toggle="modal"><i class="icon-question-sign"></i></a></label>
 			    <div class="controls">
-			        <select name="nivelAgregacaoRegional" required>
+			        <select name="nivelAgregacaoRegional" required
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'AgregacaoRegional', this.options[this.selectedIndex].text]);">
 	                    <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
 	                        <option value="${nar.chave}">${nar.valor}</option>
 	                    </c:forEach>
@@ -816,7 +833,8 @@ $(function(){
 			  <div class="control-group">
 			    <label class="control-label" for="nivelAgregacaoPolitica">Agregação política</label>
 			    <div class="controls">
-			      <select name="nivelAgregacaoPolitica" required>
+			      <select name="nivelAgregacaoPolitica" required
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'AgregacaoPolitica', this.options[this.selectedIndex].text]);">>
 	                    <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
 	                        <option value="${nap.chave}">${nap.valor}</option>
 	                    </c:forEach>
@@ -876,8 +894,10 @@ $(function(){
 	   		<div class="btn-group multiselect-group" id="anosTemplate" style="display: none;">
 				<select multiple="multiple" class="multiselect" required title="Este campo é obrigatório.">
 				</select>
-				<button class="btn multiselect-all">Selecionar todos</button>
-				<button class="btn multiselect-clean">Limpar seleção</button>
+				<button class="btn multiselect-all" 
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Todos', 'Anos']);">Selecionar todos</button>
+				<button class="btn multiselect-clean"
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Limpar', 'Anos']);">Limpar seleção</button>
 			</div>
 					    
 	</section>
@@ -888,11 +908,13 @@ $(function(){
       		<div class="page-header">
       			<h1>Colunas fixas e opcionais</h1>
       		</div>
-      	
 
-			<p>Dependendo das agregações ecolhidas anteriormente a consulta
-				pode trazer diferentes colunas. Algumas colunas são fixas e outras
-				opcionais. Aqui você pode escolher as colunas opicionais desejadas.</p>
+			<p>Dependendo da agregação ecolhida a consulta
+				pode trazer diferentes colunas. Algumas colunas são fixas, 
+				quando identificam a unicidade de cada informação, e outras
+				são opcionais e podem ser escolhidos de acordo com a necessidade
+				de sua pesquisa. Aqui você pode escolher as colunas opcionais desejadas.
+				<a href="<c:url value='/ajuda' />" target="_blank">Veja aqui as descrições das opções</a>.</p>
 	
 			<div id="colunasInfo">
 				<div class="alert alert-info">
@@ -901,14 +923,13 @@ $(function(){
 			</div>
 			
 			<div id="colunasForm" style="display: none;">
-				        <h3>Colunas Fixas</h3>
-				        	<div class="row-fluid  show-grid" id="colunasFixasContainer"></div>
-							<select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
-						<hr>				        
 				        <h3>Colunas Opcionais</h3>
 				        <div class="control-group" id="colunasOpcionaisContainer"></div>
 				        	<select id="camposEscolhidos" name="camposEscolhidos[]"  class="multiselect" multiple="multiple" style="display: none;"></select>
 				        
+				        <h3>Colunas Fixas</h3>
+				        	<div class="row-fluid  show-grid" id="colunasFixasContainer"></div>
+							<select id="camposFixos" name="camposFixos[]" multiple="multiple" style="display: none;"></select>
 	      		<div class="control-group">
 				  	<button class="btn btn-primary" id="colunasContinuar">Continuar</button>
 				</div>
@@ -918,7 +939,19 @@ $(function(){
 	      	<div class="span3" id="colunasDefTemplate" style="display: none; ">
 				<dl>
 				</dl>
-			</div>   
+			</div>  
+			
+			
+			
+			<!-- Multiselect template -->
+	   		<div class="btn-group multiselect-group" id="colunasOptTemplate" style="display: none;">
+				<select multiple="multiple" class="multiselect" required title="Este campo é obrigatório.">
+				</select>
+				<button class="btn multiselect-all" 
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Todos', 'colunasOpcionais']);">Selecionar todos</button>
+				<button class="btn multiselect-clean"
+			      	onclick="_gaq.push(['_trackEvent', 'ConsultaTSE', 'Limpar', 'colunasOpcionais']);">Limpar seleção</button>
+			</div> 
       
 		</section>
 		
@@ -976,6 +1009,7 @@ $(function(){
 				os filtros selecionados. O arquivo
 				<strong>.csv</strong> pode ser aberto com editores de planilhas
 				eletrônicas, como MS Excel ou OpenOffice Calc.
+				<a href="<c:url value='/ajuda' />" target="_blank">Veja aqui as descrições das variáveis</a>.
 			</p>
 
 			<div id="consultaInfo">
@@ -994,6 +1028,51 @@ $(function(){
       
 		</section>
 		
+		<!-- Modal -->
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Falha no download</h3>
+  </div>
+  <div class="modal-body" id="errorModalBody">
+	
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+  </div>
+</div>
+		
+		<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Divisão Regional</h3>
+  </div>
+  <div class="modal-body">
+
+
+Com exce&ccedil;&atilde;o das Unidades da Federa&ccedil;&atilde;o (tamb&eacute;m conhecidas como "Estados") e os munic&iacute;pios que s&atilde;o classifica&ccedil;&otilde;es administrativas definidas pelos respectivos legislativos e homologadas pelo TSE, o &oacute;rg&atilde;o respons&aacute;vel pela divis&atilde;o regional do Brasil &eacute; o Instituto Brasileiro de Geografia e Estat&iacute;stica (IBGE). 
+(<a href="http://www.ibge.gov.br/home/geociencias/geografia/default_div_int.shtm" target="blank" >mais...</a>) 
+<br/>O IBGE define atualmente 3 categorias:
+<ul>
+<li>
+<b>Macroregi&atilde;o:</b> Divide o pa&iacute;s em grandes blocos em fun&ccedil;&atilde;o de sua posi&ccedil;&atilde;o geogr&aacute;fica - Sul, Sudeste, Centro-Oeste, Norte e Nordeste. Essa classifica&ccedil;&atilde;o existe desde 1970 e substitui classifica&ccedil;&otilde;es anteriores (1913 e 1945). Consiste em um agrupamento de UFs.
+</li>
+<li>
+<b>Microregi&atilde;o:</b> Um agrupamento de munic&iacute;pios lim&iacute;trofes. Para fins estat&iacute;sticos e com base em similaridades econômicas e sociais, o IBGE divide os diversos estados da federa&ccedil;&atilde;o brasileira em microrregi&otilde;es.
+</li>
+<li>
+<b>Mesoregi&atilde;o:</b> A Divis&atilde;o Regional do Brasil em mesorregi&otilde;es, partindo de determina&ccedil;&otilde;es mais amplas a n&iacute;vel conjuntural, buscou identificar &aacute;reas individualizadas em cada uma das Unidades Federadas, tomadas como universo de an&aacute;lise e definiu as mesorregi&otilde;es com base nas seguintes dimens&otilde;es: o processo social como determinante, o quadro natural como condicionante e a rede de comunica&ccedil;&atilde;o e de lugares como elemento da articula&ccedil;&atilde;o espacial. Um exemplo t&iacute;pico de mesoregi&atilde;o s&atilde;o as regi&otilde;es metropolitanas. A mesoregi&atilde;o &eacute; um agrupamento de microregi&otilde;es.
+</li>
+</ul>
+
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
+  </div>
+</div>
+			
 		</form>
 	  
 	</div>	

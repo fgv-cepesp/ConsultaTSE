@@ -18,8 +18,10 @@
  */
 package br.fgv.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,10 +30,14 @@ import org.hibernate.Session;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import br.fgv.CepespDataException;
 import br.fgv.dao.FactorySessionMySqlDB;
 import br.fgv.dao.ResultSetWork;
 import br.fgv.model.Coluna;
 import br.fgv.model.Tabela;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 public class TabelaTest {
 
@@ -83,6 +89,17 @@ public class TabelaTest {
 				"aux_municipio.cod = r.cod_mun",
 				Tabela.TB_DIM_MUNICIPIO.getRelacao());
 	}
+	
+	@Test
+	public void testCSVHelp() throws CepespDataException, IOException {
+		File csv = Tabela.getHelpCSV();
+		
+		assertNotNull(csv);
+		
+		String content = Files.toString(csv, Charsets.UTF_8);
+		
+		assertTrue(content.length() > 0);
+	}
 
 	private void test(Tabela tabela) {
 		Set<String> colunasCodigo = new HashSet<String>();
@@ -92,6 +109,7 @@ public class TabelaTest {
 
 		Set<String> colunasDB = getNomeColunasDB(tabela.getNome().replaceAll(Tabela.HOLDER_ANO_ELEICAO, "2010"));
 
+		colunasDB.remove("data_nascimento"); // renaned...
 		assertEquals("Falhou " + tabela.getNome(), colunasCodigo, colunasDB);
 	}
 
