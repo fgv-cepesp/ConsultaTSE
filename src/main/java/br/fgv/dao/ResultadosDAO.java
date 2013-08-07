@@ -27,9 +27,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+
+import javassist.compiler.TokenId;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -38,6 +44,7 @@ import org.hibernate.Session;
 import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
+import br.fgv.model.Coluna;
 import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.CSVBuilder;
@@ -254,7 +261,14 @@ public class ResultadosDAO {
 	String getStringQueryDim(String queryFato, String anoEleicao,
 			String[] camposEscolhidos, AgregacaoPolitica agregacaoPolitica) {
 		
-		Set<String> tabelasARelacionar = new HashSet<String>(camposEscolhidos.length);
+		SortedSet<String> tabelasARelacionar = new TreeSet<String>(new Comparator<String>() {
+						public int compare(String o1, String o2) {
+							Tabela t1 = Tabela.byName(o1);
+							Tabela t2 = Tabela.byName(o2);
+							return t1.compareTo(t2);
+						}
+					});
+		
 		for (String campo : camposEscolhidos) {
 			String tabela = campo.substring(0, campo.indexOf("."));
 			if(Tabela.byName(tabela) != null)
@@ -262,7 +276,39 @@ public class ResultadosDAO {
 		}
 		
 		
-		List<String> camposFiltrados = new ArrayList<String>();
+		SortedSet<String> camposFiltrados = new TreeSet<String>(new Comparator<String>() {
+			public int compare(String campo1, String campo2) {
+				campo1 = zonaWorkaround(campo1);
+				campo2 = zonaWorkaround(campo2);
+				
+				System.out.println(campo1);
+				System.out.println(campo2);
+				
+				String nomeTab1 = campo1.substring(0, campo1.indexOf('.'));
+				String nomeCol1 = campo1.substring(campo1.indexOf('.') + 1);
+				
+				String nomeTab2 = campo2.substring(0, campo2.indexOf('.'));
+				String nomeCol2 = campo2.substring(campo2.indexOf('.') + 1);
+				
+				Tabela t1 = Tabela.byName(nomeTab1);
+				Tabela t2 = Tabela.byName(nomeTab2);
+				
+				if(nomeTab1.equals(nomeTab2)) {
+					// compara coluna
+					Coluna c1 = t1.getColuna(nomeCol1);
+					Coluna c2 = t2.getColuna(nomeCol2);
+					return c1.compareTo(c2);
+				}
+
+				return t1.compareTo(t2);
+			}
+
+			private String zonaWorkaround(String campo) {
+				if(campo.startsWith("zona"))
+					return TB_DIM_MUNICIPIO.getNome() + "." + CO_DIM_MUNICIPIO_NOME.getNome();
+				return campo;
+			}
+		});
 		for (String c : camposEscolhidos) {
 			if(c.startsWith("zona.")) {
 				camposFiltrados.add("zona");
@@ -274,7 +320,7 @@ public class ResultadosDAO {
 		
 		QueryBuilder qb = new QueryBuilder();
 		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").
-			valor(CO_FACT_VOTOS_MUN_TURNO + " AS \"Turno\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
+			valor(CO_FACT_VOTOS_MUN_TURNO + " AS \"turno\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
 			._from_().par(queryFato)._as_().valor(REF_FACT);
 		
 		for (String nomeTabela : tabelasARelacionar) {
