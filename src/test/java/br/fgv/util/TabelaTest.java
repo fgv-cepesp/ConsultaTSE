@@ -110,7 +110,7 @@ public class TabelaTest {
 		Set<String> colunasDB = getNomeColunasDB(tabela.getNome().replaceAll(Tabela.HOLDER_ANO_ELEICAO, "2010"));
 
 		colunasDB.remove("data_nascimento"); // renaned...
-		assertEquals("Falhou " + tabela.getNome(), colunasCodigo, colunasDB);
+		assertEquals( colunasCodigo, colunasDB);
 	}
 
 	private Set<String> getNomeColunasDB(String tabela) {

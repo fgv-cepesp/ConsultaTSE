@@ -18,11 +18,12 @@
  */
 package br.fgv.model;
 
-public class Coluna {
+public class Coluna implements Comparable<Coluna>{
 
 	private final String nome;
 	private final String nomeDescritivo;
 	private final Disponibilidade disponivel;
+	private int order;
 
 	public Coluna(String nome, String nomeDescritivo) {
 		this(nome, nomeDescritivo, Disponibilidade.DESCONHECIDA);
@@ -72,5 +73,19 @@ public class Coluna {
 	@Override
 	public String toString() {
 		return getNome();
+	}
+
+	public void setOrder(int i) {
+		this.order = i;
+	}
+
+	public int compareTo(Coluna other) {
+		if (this.order < other.order) {
+            return -1;
+        }
+        if (this.order > other.order) {
+            return 1;
+        }
+        return 0;
 	}
 }

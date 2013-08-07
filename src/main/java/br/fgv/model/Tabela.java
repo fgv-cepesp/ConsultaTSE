@@ -50,7 +50,7 @@ import br.fgv.util.Par;
 
 import com.google.common.io.ByteStreams;
 
-public class Tabela {
+public class Tabela implements Comparable<Tabela>{
 	
 	private static final Logger LOGGER = Logger.getLogger(Tabela.class);
 	
@@ -108,7 +108,9 @@ public class Tabela {
 	public static final Coluna CO_DIM_CANDIDATOS_NACIONALIDADE_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_NASC_UF;
 	public static final Coluna CO_DIM_CANDIDATOS_NASC_COD_MUN;
+	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD_OLD;
 	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD;
+	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_DES;
 	
 	public static final Tabela TB_DIM_CARGO;
 	public static final Coluna CO_DIM_CARGO_DS;
@@ -190,6 +192,10 @@ public class Tabela {
 	private final String nomeDescritivo;
 	private final List<Coluna> colunas;
 	private final String relacao;
+
+	private int order;
+
+	private Map<String, Coluna> colunasByName;
 
 	/*
 	 * Aqui criamos as tabelas e suas colunas ...
@@ -295,6 +301,8 @@ public class Tabela {
 		CO_DIM_CANDIDATOS_NASC_UF = new Coluna("nasc_uf", "UF de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
+		CO_DIM_CANDIDATOS_RESULTADO_DES = new Coluna("resultado_des", "Descrição Resultado", DISPONIVEL);
+		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
 		
 		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CANDIDATOS_SURROGATEKEY);
@@ -319,7 +327,9 @@ public class Tabela {
 		c.add(CO_DIM_CANDIDATOS_NACIONALIDADE_COD);
 		c.add(CO_DIM_CANDIDATOS_NASC_UF);
 		c.add(CO_DIM_CANDIDATOS_NASC_COD_MUN);
+		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD_OLD);
 		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD);
+		c.add(CO_DIM_CANDIDATOS_RESULTADO_DES);
 
 		final String dim_candidatos = "aux_candidatos_" + HOLDER_ANO_ELEICAO;
 		TB_DIM_CANDIDATOS = new Tabela(dim_candidatos, "Candidato", c,
@@ -483,10 +493,25 @@ public class Tabela {
 	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas, String relacao) {
 		this.nome = nome;
 		this.nomeDescritivo = nomeDescritivo;
-		this.colunas = Collections.unmodifiableList(colunas);
+		this.colunas = Collections.unmodifiableList(addOrder(colunas));
 		this.relacao = relacao;
+		this.order = __tabelas.size();
+		
+		Map<String, Coluna> __colunasByName = new HashMap<String, Coluna>();
+		for (Coluna coluna : colunas) {
+			__colunasByName.put(coluna.getNome(), coluna);
+		}
+		
+		this.colunasByName = Collections.unmodifiableMap(__colunasByName);
 		
 		__tabelas.put(nome, this);
+	}
+
+	private List<Coluna> addOrder(List<Coluna> colunas) {
+		for (int i = 0; i < colunas.size(); i++) {
+			colunas.get(i).setOrder(i);
+		}
+		return colunas;
 	}
 
 	public String getNome() {
@@ -503,6 +528,10 @@ public class Tabela {
 
 	public List<Coluna> getColunas() {
 		return this.colunas;
+	}
+	
+	public Coluna getColuna(String name) {
+		return colunasByName.get(name);
 	}
 	
 	@Override
@@ -599,5 +628,15 @@ public class Tabela {
 			LOGGER.error("Erro ao aguardar montar CSV de ajuda.", e);
 		}
 		return csvFile;
+	}
+
+	public int compareTo(Tabela other) {
+		if (this.order < other.order) {
+            return -1;
+        }
+        if (this.order > other.order) {
+            return 1;
+        }
+        return 0;
 	}
 }

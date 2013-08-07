@@ -125,36 +125,36 @@ public class ResultadosDAOTest {
 		args.setFiltroRegional(empty);
 		
 		
-		assertEquals(SELECT_ + "macro, partido, " +
+		assertEquals(SELECT_ + "turno, macro, partido, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
 				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda, " +
 				"sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by macro, partido order by macro, partido", 
+				"WHERE cod_cargo = xxFiltroCargo group by macro, partido, turno order by macro, partido, turno", 
 				dao.getStringQueryFato(args, "2010"));
 		
 		args.setNivelRegional(AgregacaoRegional.fromInt("2"));
 
-		assertEquals(SELECT_ + "uf, partido, " +
+		assertEquals(SELECT_ + "turno, uf, partido, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
 				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda, " +
 				"sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by uf, partido order by uf, partido", 
+				"WHERE cod_cargo = xxFiltroCargo group by uf, partido, turno order by uf, partido, turno", 
 				dao.getStringQueryFato(args, "2010"));
 		
 		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.CANDIDATO);
 		
-		assertEquals(SELECT_ + "uf, candidato_sk, " +
+		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk order by uf, candidato_sk", 
+				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno", 
 				dao.getStringQueryFato(args, "2010"));
 		
-		assertEquals(SELECT_ + "uf, candidato_sk, " +
+		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk order by uf, candidato_sk", 
+				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno", 
 				dao.getStringQueryFato(args, "2010"));
 		
 		args.setFiltroCandidato(ef);
@@ -162,12 +162,12 @@ public class ResultadosDAOTest {
 		args.setFiltroRegional(ab);
 		args.setNivelFiltroRegional(AgregacaoRegional.MICRO_REGIAO);
 		
-		assertEquals(SELECT_ + "uf, candidato_sk, " +
+		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal " +
 				"FROM voto_mun_2010 " +
 				"WHERE cod_cargo = xxFiltroCargo " +
 				"AND micro in (aaa, bbb)  AND partido in (ccc, ddd)  " +
-				"group by uf, candidato_sk order by uf, candidato_sk", 
+				"group by uf, candidato_sk, turno order by uf, candidato_sk, turno", 
 				dao.getStringQueryFato(args, "2010"));
 	}
 	
@@ -176,8 +176,8 @@ public class ResultadosDAOTest {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 		
-		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.PARTIDO));
-		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", dim_partidos.sigla_Partido, voto_nominal, voto_legenda, voto_total " +
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"Turno\", voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.PARTIDO));
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"Turno\", dim_partidos.sigla_Partido, voto_nominal, voto_legenda, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
 				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.PARTIDO));		
 	}
@@ -187,8 +187,8 @@ public class ResultadosDAOTest {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 		
-		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", voto_nominal FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.CANDIDATO));
-		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", dim_partidos.sigla_Partido, voto_nominal " +
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"Turno\", voto_nominal FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.CANDIDATO));
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"Turno\", dim_partidos.sigla_Partido, voto_nominal " +
 				"FROM ( xxQueryFato ) as r " +
 				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.CANDIDATO));		
 	}
