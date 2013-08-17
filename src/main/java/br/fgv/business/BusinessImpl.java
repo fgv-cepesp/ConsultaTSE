@@ -93,7 +93,7 @@ public class BusinessImpl {
 				Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
 		
 		List<Par> fixosUfZona = new ArrayList<Par>(Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
-		fixosUfZona.add(new Par("zona.blah", "Estados:Zona"));
+		fixosUfZona.add(new Par("zona.blah", "Estado:Zona"));
 		hashCamposFixosRegional.put(AgregacaoRegional.UF_ZONA, 
 				fixosUfZona);
 
