@@ -49,7 +49,7 @@
     </appender>
  
 	<category name="br.fgv" additivity="false">
-		<priority value="DEBUG" />		
+		<priority value="INFO" />		
 		<appender-ref ref="stdout" />
 		<appender-ref ref="DAILY" />
 	</category>
