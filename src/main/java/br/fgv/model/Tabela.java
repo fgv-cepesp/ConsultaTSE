@@ -280,7 +280,7 @@ public class Tabela implements Comparable<Tabela>{
 		/* Colunas da tabela DIM CANDIDATOS */
 		CO_DIM_CANDIDATOS_SURROGATEKEY = new Coluna("surrogatekey");
 		CO_DIM_CANDIDATOS_NOME = new Coluna("nome_Candidato", "Nome", DISPONIVEL);
-		CO_DIM_CANDIDATOS_TITULO = new Coluna("titulo", "Título", DISPONIVEL);
+		CO_DIM_CANDIDATOS_TITULO = new Coluna("titulo", "Título", FIXO);
 		CO_DIM_CANDIDATOS_NR_VOTAVEL = new Coluna("nr_votavel", "Número", FIXO);
 		CO_DIM_CANDIDATOS_UF = new Coluna("uf", "UF", OCULTA);
 		CO_DIM_CANDIDATOS_SG_UE = new Coluna("SG_UE", "Sigla da Unidade Eleitoral", DISPONIVEL);
