@@ -281,9 +281,6 @@ public class ResultadosDAO {
 				campo1 = zonaWorkaround(campo1);
 				campo2 = zonaWorkaround(campo2);
 				
-				System.out.println(campo1);
-				System.out.println(campo2);
-				
 				String nomeTab1 = campo1.substring(0, campo1.indexOf('.'));
 				String nomeCol1 = campo1.substring(campo1.indexOf('.') + 1);
 				
@@ -312,6 +309,8 @@ public class ResultadosDAO {
 		for (String c : camposEscolhidos) {
 			if(c.startsWith("zona.")) {
 				camposFiltrados.add("zona");
+			} else if(c.startsWith("votos.")) {
+				// nao inclui
 			} else {
 				camposFiltrados.add(c);
 			}
