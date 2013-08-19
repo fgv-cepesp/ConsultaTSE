@@ -28,7 +28,7 @@
     <script src="bootstrap/js/bootstrap.js"></script>
 	<script src="js/jquery.scrollTo-min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
-	<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
+	<script type="text/javascript" src="js/jquery.autoSuggest.w-delete_patch.js"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js' />" type="text/javascript" ></script>
 		
 		
