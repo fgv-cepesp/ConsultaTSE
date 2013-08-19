@@ -93,7 +93,7 @@ public class BusinessImpl {
 				Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
 		
 		List<Par> fixosUfZona = new ArrayList<Par>(Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
-		fixosUfZona.add(new Par("zona.blah", "Estados:Zona"));
+		fixosUfZona.add(new Par("zona.blah", "Estado:Zona"));
 		hashCamposFixosRegional.put(AgregacaoRegional.UF_ZONA, 
 				fixosUfZona);
 
@@ -131,19 +131,31 @@ public class BusinessImpl {
 		Map<AgregacaoPolitica, List<Par>> hashCamposFixosPolitico = new HashMap<AgregacaoPolitica, List<Par>>();
 
 		hashCamposFixosPolitico.put(AgregacaoPolitica.PARTIDO,
-				Tabela.TB_DIM_PARTIDOS.getColunas(FIXO));
+				incluiVotos(AgregacaoPolitica.PARTIDO, Tabela.TB_DIM_PARTIDOS.getColunas(FIXO)));
 
 		hashCamposFixosPolitico.put(AgregacaoPolitica.CANDIDATO,
-				Tabela.TB_DIM_CANDIDATOS.getColunas(FIXO));
+				incluiVotos(AgregacaoPolitica.CANDIDATO, Tabela.TB_DIM_CANDIDATOS.getColunas(FIXO)));
 
 		hashCamposFixosPolitico.put(AgregacaoPolitica.COLIGACAO,
-				Tabela.TB_DIM_COLIGACOES.getColunas(FIXO));
+				incluiVotos(AgregacaoPolitica.COLIGACAO, Tabela.TB_DIM_COLIGACOES.getColunas(FIXO)));
 		
 		CAMPOS_FIXOS_POLITICO = Collections.unmodifiableMap(hashCamposFixosPolitico);
 	}
 
 	public BusinessImpl(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
+	}
+	
+	private static List<Par> incluiVotos(AgregacaoPolitica agregacao,
+			List<Par> colunas) {
+		List<Par> comVotos = new ArrayList<Par>(colunas);
+		comVotos.add(new Par("votos.blah", "Resultado:Voto nominal"));
+		if(AgregacaoPolitica.PARTIDO.equals(agregacao)) {
+			comVotos.add(new Par("votos.bleh", "Resultado:Voto legenda"));
+			comVotos.add(new Par("votos.bluh", "Resultado:Voto total"));
+		}
+		
+		return Collections.unmodifiableList(comVotos);
 	}
 
 	public List<Par> getAnosDisponiveis() {

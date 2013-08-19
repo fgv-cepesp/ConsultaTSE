@@ -28,7 +28,7 @@
     <script src="bootstrap/js/bootstrap.js"></script>
 	<script src="js/jquery.scrollTo-min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
-	<script type="text/javascript" src="js/jquery.autoSuggest.w.js"></script>
+	<script type="text/javascript" src="js/jquery.autoSuggest.w-delete_patch.js"></script>
 	<script src="<c:url value='/js/jquery.fileDownload.js' />" type="text/javascript" ></script>
 		
 		
@@ -325,17 +325,19 @@ function popularColunasFixas(campos) {
 	$.each(campos, function(indice, par) {
         
         // verifica se já aninhamento da coluna
-        var chaveParts = par.chave.split('.');
-        var grupo = chaveParts[0];
-        //var elemento = indiceParts[1];
+        // var chaveParts = par.chave.split('.');
+        // var grupo = chaveParts[0];
+        // var elemento = indiceParts[1];
         
         var valorParts = par.valor.split(':');
         var nomeGrupo = valorParts[0];
         var nomeCol = valorParts[1];
         
+        var idGrupo = nomeGrupo.replace(/ /g,'') + 'Fixed'; 
+        
         var dl;
         
-        if($('#' + grupo + 'Fixed').length == 0) {
+        if($('#' + idGrupo).length == 0) {
         	// nao existe, tem que criar!
         	
         	// criando elementos usando o template
@@ -346,11 +348,11 @@ function popularColunasFixas(campos) {
     		
     		clone.appendTo($('#colunasFixasContainer'));
     		
-    		dl.attr('id', grupo + 'Fixed');
+    		dl.attr('id', idGrupo);
     		$("<dt/>").text(nomeGrupo).appendTo(dl);
     		
         } else {
-        	dl = $('#' + grupo + 'Fixed');
+        	dl = $('#' + idGrupo);
         }
         
         $("<dd/>").text(nomeCol).appendTo(dl);
