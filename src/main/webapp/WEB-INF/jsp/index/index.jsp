@@ -41,12 +41,12 @@
 		<p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um cargo eletivo. As consultas podem ser
 		       também agregadas por partido e nível regional.</p>
 		<p>
-			<a class="btn" href="consultaResultados">Consultar &raquo;</a>
+			<a class="btn btn-info" href="consultaResultados">Consultar &raquo;</a>
 		</p>
 	</div>
 	<!-- <div class="span4">
 		<h2>Eleições por candidato</h2>
-		<p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um ou mais candidatos. 
+		<p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um ou mais candidatos.
 		É possível acompanhar seu desempenho ao longo dos anos.</p>
 		<p>
 			<a class="btn" href="#">Em breve!</a>

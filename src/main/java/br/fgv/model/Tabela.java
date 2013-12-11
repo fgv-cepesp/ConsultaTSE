@@ -51,13 +51,13 @@ import br.fgv.util.Par;
 import com.google.common.io.ByteStreams;
 
 public class Tabela implements Comparable<Tabela>{
-	
+
 	private static final Logger LOGGER = Logger.getLogger(Tabela.class);
-	
+
 	public static final String HOLDER_ANO_ELEICAO = "#ANO_ELEICAO#";
 
-	/* 
-	 * Tabela fact (votos) 
+	/*
+	 * Tabela fact (votos)
 	 */
 	public static final Tabela TB_FACT_VOTOS_MUN;
 
@@ -84,7 +84,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_PARTIDOS_SIGLA;
 	public static final Coluna CO_DIM_PARTIDOS_NOME;
 
-	
+
 	public static final Tabela TB_DIM_CANDIDATOS;
 	public static final Coluna CO_DIM_CANDIDATOS_CARGO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC;
@@ -111,7 +111,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD_OLD;
 	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_DES;
-	
+
 	public static final Tabela TB_DIM_CARGO;
 	public static final Coluna CO_DIM_CARGO_DS;
 	public static final Coluna CO_DIM_CARGO_CD;
@@ -119,13 +119,13 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Tabela TB_DIM_MACROREGIAO;
 	public static final Coluna CO_DIM_MACROREGIAO_NOME;
 	public static final Coluna CO_DIM_MACROREGIAO_COD;
-	
+
 	public static final Tabela TB_DIM_ESTADOS;
 	public static final Coluna CO_DIM_ESTADOS_ID;
 	public static final Coluna CO_DIM_ESTADOS_NOME;
 	public static final Coluna CO_DIM_ESTADOS_IBGE;
 	public static final Coluna CO_DIM_ESTADOS_SIGLA;
-	
+
 	public static final Tabela TB_DIM_MESOREGIAO;
 	public static final Coluna CO_DIM_MESOREGIAO_COD;
 	public static final Coluna CO_DIM_MESOREGIAO_ID;
@@ -152,13 +152,13 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_MUNICIPIO_MICRO;
 	public static final Coluna CO_DIM_MUNICIPIO_COD;
 	public static final Coluna CO_DIM_MUNICIPIO_NOME;
-	
+
 	public static final Tabela TB_DIM_VOTAVEIS;
 	public static final Coluna CO_DIM_VOTAVEIS_NR_VOTAVEL;
 	public static final Coluna CO_DIM_VOTAVEIS_TITULO;
 	public static final Coluna CO_DIM_VOTAVEIS_SURROGATEKEY;
 	public static final Coluna CO_DIM_VOTAVEIS_NOME_CANDIDATO;
-	
+
 	public static final Tabela TB_DIM_COLIGACOES;
 	public static final Coluna CO_DIM_COLIGACOES_ID;
 	public static final Coluna CO_DIM_COLIGACOES_ANO;
@@ -166,7 +166,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_COLIGACOES_CARGO_COD;
 	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO;
 	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_DES;
-	
+
 	public static final Tabela TB_SIS_ANO_CARGO;
 	public static final Coluna CO_SIS_ANO_CARGO_ANO;
 	public static final Coluna CO_SIS_ANO_CARGO_COD_CARGO;
@@ -182,12 +182,12 @@ public class Tabela implements Comparable<Tabela>{
 	public static final String VOTO_NOMINAL = "voto_nominal";
 	public static final String VOTO_LEGENDA = "voto_legenda";
 	public static final String VOTO_TOTAL = "voto_total";
-	
+
 	public static final String REF_FACT = "r";
-	
+
 	private static final Map<String, Tabela> tabelas;
 	private static Map<String, Tabela> __tabelas = new HashMap<String, Tabela>();
-	
+
 	private final String nome;
 	private final String nomeDescritivo;
 	private final List<Coluna> colunas;
@@ -218,7 +218,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_FACT_VOTOS_MUN_UF = new Coluna("uf");
 		CO_FACT_VOTOS_MUN_PARTIDO = new Coluna("partido");
 		CO_FACT_VOTOS_MUN_CANDIDATO_SK = new Coluna("candidato_sk");
-		
+
 		List<Coluna> c = new ArrayList<Coluna>();
 		c.add(CO_FACT_VOTOS_MUN_ANO);
 		c.add(CO_FACT_VOTOS_MUN_COLIGACAO_ID);
@@ -275,7 +275,7 @@ public class Tabela implements Comparable<Tabela>{
 		TB_DIM_COLIGACOES = new Tabela(dim_coligacoes, "Coligação", c,
 				EQ(TB_CO(dim_coligacoes, CO_DIM_COLIGACOES_ID), REF(CO_FACT_VOTOS_MUN_COLIGACAO_ID, REF_FACT))
 			);
-		
+
 
 		/* Colunas da tabela DIM CANDIDATOS */
 		CO_DIM_CANDIDATOS_SURROGATEKEY = new Coluna("surrogatekey");
@@ -303,7 +303,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_DES = new Coluna("resultado_des", "Descrição Resultado", FIXO);
 		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
-		
+
 		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CANDIDATOS_SURROGATEKEY);
 		c.add(CO_DIM_CANDIDATOS_NOME);
@@ -352,7 +352,7 @@ public class Tabela implements Comparable<Tabela>{
 		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MACROREGIAO_NOME);
 		c.add(CO_DIM_MACROREGIAO_COD);
-		
+
 		final String dim_macroregiao = "aux_macroregiao";
 		TB_DIM_MACROREGIAO = new Tabela(dim_macroregiao,"Macro-região", c,
 				EQ(TB_CO(dim_macroregiao, CO_DIM_MACROREGIAO_COD), REF(CO_FACT_VOTOS_MUN_MACRO, REF_FACT)));
@@ -362,7 +362,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_ESTADOS_NOME = new Coluna("nome_Estado", "Nome", DISPONIVEL);
 		CO_DIM_ESTADOS_IBGE = new Coluna("ibge", "Código IBGE", FIXO);
 		CO_DIM_ESTADOS_SIGLA = new Coluna("sigla_Estado", "Sigla UF", DISPONIVEL);
-		
+
 		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_ESTADOS_ID);
 		c.add(CO_DIM_ESTADOS_NOME);
@@ -385,7 +385,7 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_DIM_MESOREGIAO_ID);
 		c.add(CO_DIM_MESOREGIAO_SIGLA_UF);
 		c.add(CO_DIM_MESOREGIAO_NOME);
-		
+
 		final String dim_mesoregiao = "aux_mesoregiao";
 		TB_DIM_MESOREGIAO = new Tabela(dim_mesoregiao,"Meso-região", c,
 				EQ(TB_CO(dim_mesoregiao, CO_DIM_MESOREGIAO_ID), REF(CO_FACT_VOTOS_MUN_MESO, REF_FACT)));
@@ -407,7 +407,7 @@ public class Tabela implements Comparable<Tabela>{
 				EQ(TB_CO(dim_microregiao, CO_DIM_MICROREGIAO_ID), REF(CO_FACT_VOTOS_MUN_MICRO, REF_FACT)));
 
 		/* Colunas da tabela DIM MUNICIPIO */
-				
+
 		CO_DIM_MUNICIPIO_SIGLA_UF = new Coluna("sigla_UF", "Sigla UF", FIXO);
 		CO_DIM_MUNICIPIO_IBGE = new Coluna("ibge", "Código IBGE", FIXO);
 		CO_DIM_MUNICIPIO_UF = new Coluna("uf");
@@ -421,7 +421,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_MUNICIPIO_MICRO = new Coluna("micro");
 		CO_DIM_MUNICIPIO_COD = new Coluna("cod","Código TSE", DISPONIVEL);
 		CO_DIM_MUNICIPIO_NOME = new Coluna("nome_Municipio","Nome", DISPONIVEL);
-		
+
 		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_MUNICIPIO_SIGLA_UF);
 		c.add(CO_DIM_MUNICIPIO_IBGE);
@@ -458,7 +458,7 @@ public class Tabela implements Comparable<Tabela>{
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");
 		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cod_cargo");
-		
+
 		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANO_CARGO_ANO);
 		c.add(CO_SIS_ANO_CARGO_COD_CARGO);
@@ -472,7 +472,7 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_SIS_ANOS_ANO);
 
 		TB_SIS_ANOS = new Tabela("sis_anos", c);
-		
+
 		// Fecho o mapa de tabelas
 		tabelas = Collections.unmodifiableMap(__tabelas);
 		__tabelas = null;
@@ -489,21 +489,21 @@ public class Tabela implements Comparable<Tabela>{
 	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas) {
 		this(nome, nomeDescritivo, colunas, null);
 	}
-	
+
 	public Tabela(String nome, String nomeDescritivo, List<Coluna> colunas, String relacao) {
 		this.nome = nome;
 		this.nomeDescritivo = nomeDescritivo;
 		this.colunas = Collections.unmodifiableList(addOrder(colunas));
 		this.relacao = relacao;
 		this.order = __tabelas.size();
-		
+
 		Map<String, Coluna> __colunasByName = new HashMap<String, Coluna>();
 		for (Coluna coluna : colunas) {
 			__colunasByName.put(coluna.getNome(), coluna);
 		}
-		
+
 		this.colunasByName = Collections.unmodifiableMap(__colunasByName);
-		
+
 		__tabelas.put(nome, this);
 	}
 
@@ -529,16 +529,16 @@ public class Tabela implements Comparable<Tabela>{
 	public List<Coluna> getColunas() {
 		return this.colunas;
 	}
-	
+
 	public Coluna getColuna(String name) {
 		return colunasByName.get(name);
 	}
-	
+
 	@Override
 	public String toString() {
 		return getNome();
 	}
-	
+
 	public List<Par> getColunas(Disponibilidade disponibilidade) {
 		List<Par> l = new ArrayList<Par>();
 		String prefixo = getNome() + ".";
@@ -548,24 +548,24 @@ public class Tabela implements Comparable<Tabela>{
 				l.add(new Par(prefixo + c.getNome(), prefixoDescritivo
 					+ c.getNomeDescritivo()));
 		}
-		
+
 		return Collections.unmodifiableList(l);
 	}
-	
+
 	public static Tabela byName(String nome) {
 		return tabelas.get(nome);
 	}
 
 	public static List<AjudaTabela> getHelp() {
 		/* Estrutura assim
-		 * 
+		 *
 		 * # Estados
 		 * ## UF: descricao
 		 * ### detalhes
 		 */
-		
+
 		List<AjudaTabela> l = new ArrayList<AjudaTabela>();
-		
+
 		l.add(new AjudaTabela(TB_DIM_PARTIDOS));
 		l.add(new AjudaTabela(TB_DIM_CANDIDATOS));
 //		l.add(new AjudaTabela(TB_DIM_CARGO));
@@ -576,8 +576,8 @@ public class Tabela implements Comparable<Tabela>{
 		l.add(new AjudaTabela(TB_DIM_MUNICIPIO));
 		l.add(new AjudaTabela(TB_DIM_COLIGACOES));
 //		l.add(new AjudaTabela(TB_DIM_VOTAVEIS));
-		
-		
+
+
 		return l;
 	}
 
@@ -586,30 +586,30 @@ public class Tabela implements Comparable<Tabela>{
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		List<AjudaTabela> l = getHelp();
 		File csvFile = null;
-		
+
 		try {
-			
+
 			final CSVBuilder csv = CSVBuilder.getInstance();
-			
+
 			FutureTask<File> future = new FutureTask<File>(
 	                new Callable<File>()
 	                {
 	                    public File call()
 	                    {
 	                    	File tmpFile = null;
-	                    	try {	                    	
+	                    	try {
 	                    		tmpFile = File.createTempFile("ajuda", ".csv");
 								ByteStreams.copy(csv.getAsInputStream(), new FileOutputStream(tmpFile));
 								csv.close();
 							} catch (IOException e) {
 								LOGGER.error("Exception ao criar arquivo CSV.");
 							}
-	                    	
+
 	                    	return tmpFile;
 	                    }
 	                });
 	        executor.execute(future);
-			
+
 			csv.elemento("Grupo", "Coluna no CSV", "Nome no formulário", "Descrição");
 			csv.linha();
 			for (AjudaTabela ajudaTabela : l) {
@@ -619,7 +619,7 @@ public class Tabela implements Comparable<Tabela>{
 				}
 			}
 			csv.finaliza();
-			
+
 			csvFile = future.get();
 			executor.shutdown();
 		} catch (IOException e) {
