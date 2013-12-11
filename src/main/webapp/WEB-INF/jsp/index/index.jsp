@@ -29,7 +29,7 @@
 
 
 <div class="hero-unit">
-	<h1 align="center">Bem-vindo ao CEPESP Data!</h1>
+	<h1 align="center">Bem-vindo ao CEPESPDATA</h1>
 	<p>O Centro de Política e Economia do Setor Público (<a href="http://cepesp.fgv.br" target="_blank">CEPESP</a>) da
 		Fundação Getulio Vargas (<a href="http://wwww.fgv.br" target="_blank">FGV</a>) disponibiliza uma série
 		de bases de dados pesquisáveis. Veja abaixo as bases atuais.</p>
