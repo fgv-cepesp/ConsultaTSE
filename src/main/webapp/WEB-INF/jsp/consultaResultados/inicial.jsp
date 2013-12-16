@@ -507,6 +507,42 @@ function limparConsulta() {
 
 }
 
+
+function limparTudo() {
+	var btnEdit = $('#filtrosObrigatoriosEditar');
+	var btnCont = $('#filtrosObrigatoriosContinuar');
+	btnCont.removeAttr('disabled', 'disabled').removeClass('disabled');
+
+	if(btnEdit.hasClass('disabled')) {
+		return;
+	}
+
+	// apagar outros filtros!!
+    limparAnos();
+	limparColunas();
+	limparSelectFiltroRegional();
+	limparConsulta();
+	limparFiltrosOpcionais();
+
+
+	var selCargo = $('select[name="filtroCargo"]');
+	var selRegional = $('select[name="nivelAgregacaoRegional"]');
+	var selPolitico = $('select[name="nivelAgregacaoPolitica"]');
+
+	selCargo.show();
+	$('#filtroCargoText').hide();
+
+	selRegional.show();
+	$('#nivelAgregacaoRegionalText').hide();
+
+	selPolitico.show();
+	$('#nivelAgregacaoPoliticaText').hide();
+
+	btnEdit.addClass('disabled');
+
+	refreshScroll();
+}
+
 $(function(){
 
     //************************************************************************
@@ -587,38 +623,7 @@ $(function(){
 
 		_gaq.push(['_trackEvent', 'ConsultaTSE', 'Editar', 'Filtros Obrigatorios']);
 
-		var btnEdit = $('#filtrosObrigatoriosEditar');
-		var btnCont = $('#filtrosObrigatoriosContinuar');
-		btnCont.removeAttr('disabled', 'disabled').removeClass('disabled');
-
-    	if(btnEdit.hasClass('disabled')) {
-    		return;
-    	}
-
-    	// apagar outros filtros!!
-    	    limparAnos();
-    		limparColunas();
-    		limparSelectFiltroRegional();
-    		limparConsulta();
-    		limparFiltrosOpcionais();
-
-
-    	var selCargo = $('select[name="filtroCargo"]');
-    	var selRegional = $('select[name="nivelAgregacaoRegional"]');
-    	var selPolitico = $('select[name="nivelAgregacaoPolitica"]');
-
-    	selCargo.show();
-		$('#filtroCargoText').hide();
-
-		selRegional.show();
-		$('#nivelAgregacaoRegionalText').hide();
-
-		selPolitico.show();
-		$('#nivelAgregacaoPoliticaText').hide();
-
-		btnEdit.addClass('disabled');
-
-		refreshScroll();
+		limparTudo();
     });
 
     //************************************************************************
@@ -1023,6 +1028,7 @@ $(function(){
 	      	<div id="consultaForm" style="display: none;">
 	      		<p>
 				  <button class="btn btn-large btn-primary" type="submit" id="butQuery" data-loading-text="Consultando...">Efetuar consulta</button>
+				  <button class="btn btn-large btn-warning" id="butLimpar" onclick="limparTudo();$.scrollTo($('#filtrosObrigatorios'), 800);return false;">Limpar</button>
 				</p>
 			</div>
 
