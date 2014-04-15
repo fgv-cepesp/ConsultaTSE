@@ -30,29 +30,29 @@ import br.fgv.dao.FactorySessionMySqlDB;
 import br.fgv.util.Par;
 
 public class BusinessImplTest {
-	
+
 	private BusinessImpl businessImpl;
 
 	public BusinessImplTest() {
 		Session session = FactorySessionMySqlDB.create();
 		this.businessImpl = new BusinessImpl(new DaoFactoryImpl(session));
 	}
-	
+
 	@Test
 	public void testCamposDisponiveis() {
 		FormResultAux t = this.businessImpl.getCamposDisponiveis("1", "1");
 		assertNotNull(t);
-		
-		assertEquals(2, t.getCamposFixosXX().size());
+
+		assertEquals(5, t.getCamposFixosXX().size());
 	}
-	
+
 	@Test
 	public void testCamposDisponiveisVazio() {
 		List<Par> l = this.businessImpl.getCamposDisponiveis((AgregacaoRegional)null, null);
 		assertNotNull(l);
 		assertEquals(0, l.size());
 	}
-	
+
 	@Test
 	public void testCamposFixosVazio() {
 		List<Par> l = this.businessImpl.getCamposFixos(null, null);
@@ -65,21 +65,21 @@ public class BusinessImplTest {
 		List<Par> l = this.businessImpl.getCamposDisponiveis(null,
 				AgregacaoPolitica.PARTIDO);
 		assertEquals(2, l.size());
-		
+
 		l = this.businessImpl.getCamposDisponiveis(null,
 				AgregacaoPolitica.CANDIDATO);
-		assertEquals(17, l.size());
+		assertEquals(16, l.size());
 	}
 
 	@Test
 	public void testCamposFixosPolitica() {
 		List<Par> l = this.businessImpl.getCamposFixos(null,
 				AgregacaoPolitica.PARTIDO);
-		assertEquals(1, l.size());
-		
+		assertEquals(4, l.size());
+
 		l = this.businessImpl.getCamposFixos(null,
 				AgregacaoPolitica.CANDIDATO);
-		assertEquals(1, l.size());
+		assertEquals(4, l.size());
 	}
 
 	@Test
@@ -87,15 +87,15 @@ public class BusinessImplTest {
 		List<Par> l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MACRO_REGIAO, null);
 		assertEquals(1, l.size());
-		
+
 		l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.UF, null);
 		assertEquals(2, l.size());
-		
+
 		l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.UF_ZONA, null);
 		assertEquals(2, l.size()); // XXX: deveria ser 3?
-		
+
 		l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MESO_REGIAO, null);
 		assertEquals(1, l.size());
@@ -103,7 +103,7 @@ public class BusinessImplTest {
 		l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MICRO_REGIAO, null);
 		assertEquals(1, l.size());
-		
+
 		l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MUNICIPIO, null);
 		assertEquals(5, l.size());
@@ -114,18 +114,18 @@ public class BusinessImplTest {
 		List<Par> l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MACRO_REGIAO, null);
 		assertEquals(1, l.size());
-		
+
 		assertEquals("aux_macroregiao.cod_Macro", l.get(0).getChave());
 		assertEquals("Macro-região: Código", l.get(0).getValor());
-		
+
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF, null);
 		assertEquals(1, l.size());
-		
+
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF_ZONA, null);
 		assertEquals(2, l.size());
-		
+
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MESO_REGIAO, null);
 		assertEquals(2, l.size());
@@ -133,7 +133,7 @@ public class BusinessImplTest {
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MICRO_REGIAO, null);
 		assertEquals(2, l.size());
-		
+
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MUNICIPIO, null);
 		assertEquals(2, l.size());
@@ -143,14 +143,14 @@ public class BusinessImplTest {
 	public void testCamposDisponiveisCombinado() {
 		List<Par> l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
-		assertEquals(18, l.size());
+		assertEquals(17, l.size());
 	}
 
 	@Test
 	public void testCamposFixosCombinado() {
 		List<Par> l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
-		assertEquals(2, l.size());
+		assertEquals(5, l.size());
 	}
 
 	@Test
@@ -158,6 +158,6 @@ public class BusinessImplTest {
 		assertEquals("2099_Presidente_MacroRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "1", "1", "1"));
 		assertEquals("2099_DeputadoFederal_MacroRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "1", "1", "6"));
 		assertEquals("2099_DeputadoFederal_MesoRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "4", "1", "6"));
-		
+
 	}
 }

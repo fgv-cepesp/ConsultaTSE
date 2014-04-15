@@ -24,17 +24,17 @@ import static br.fgv.model.Tabela.VOTO_TOTAL;
 import br.fgv.model.Tabela;
 
 public enum AgregacaoPolitica {
-	
-	PARTIDO(Tabela.CO_FACT_VOTOS_MUN_PARTIDO.getNome(), "Partido", 1, VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL), 
-	CANDIDATO(Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK.getNome(), "Candidato", 2, VOTO_NOMINAL), 
+
+	PARTIDO(Tabela.CO_FACT_VOTOS_MUN_PARTIDO.getNome(), "Partido", 1, VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL),
+	CANDIDATO(Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK.getNome(), "Candidato", 2, VOTO_NOMINAL, VOTO_TOTAL),
 	COLIGACAO(Tabela.CO_FACT_VOTOS_MUN_COLIGACAO_ID.getNome(), "Coligação", 3, VOTO_NOMINAL, VOTO_LEGENDA, VOTO_TOTAL);
-	
-	
+
+
 	private final String nomeDescritivo;
 	private final int nivel;
 	private final String nome;
 	private String[] colunas;
-	
+
 
 	private AgregacaoPolitica(String nome, String nomeDescritivo, int nivel, String ... colunas) {
 		this.nome = nome;
@@ -42,7 +42,7 @@ public enum AgregacaoPolitica {
 		this.nivel = nivel;
 		this.colunas = colunas;
 	}
-	
+
 	public static AgregacaoPolitica fromInt(int nivel) {
 		for (AgregacaoPolitica e : AgregacaoPolitica.values()) {
 			if(e.getNivel() == nivel) {
@@ -51,7 +51,7 @@ public enum AgregacaoPolitica {
 		}
 		return null;
 	}
-	
+
 	public static AgregacaoPolitica fromInt(String nivel) {
 		return fromInt(Integer.parseInt(nivel));
 	}
