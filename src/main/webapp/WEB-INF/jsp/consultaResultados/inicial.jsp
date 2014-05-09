@@ -788,7 +788,7 @@ $(function(){
           <li><a href="#colunas"><i class="icon-chevron-right"></i> Colunas fixas e opcionais</a></li>
           <li><a href="#filtrosOpcionais"><i class="icon-chevron-right"></i> Filtros opcionais</a></li>
           <li><a href="#consulta"><i class="icon-chevron-right"></i> Resultado</a></li>
-          <li><a href="#variaveis"><i class="icon-chevron-right"></i> Variáveis</a></li>
+          <!-- <li><a href="#variaveis"><i class="icon-chevron-right"></i> Variáveis</a></li> -->
         </ul>
       </div>
 
@@ -1016,7 +1016,8 @@ $(function(){
 				O botão abaixo efetuará a consulta. Isto pode demorar de acordo com
 				os filtros selecionados. O arquivo
 				<strong>.csv</strong> pode ser aberto com editores de planilhas
-				eletrônicas, como MS Excel ou OpenOffice Calc.
+				eletrônicas, como MS Excel ou OpenOffice Calc. O botão <a href="<c:url value='/ajuda' />">descrições
+						das variáveis</a> exibirá as variáveis presentes no arquivo resultado.
 			</p>
 
 			<div id="consultaInfo">
@@ -1029,29 +1030,7 @@ $(function(){
 	      		<p>
 				  <button class="btn btn-large btn-primary" type="submit" id="butQuery" data-loading-text="Consultando...">Efetuar consulta</button>
 				  <button class="btn btn-large btn-warning" id="butLimpar" onclick="limparTudo();$.scrollTo($('#filtrosObrigatorios'), 800);return false;">Limpar</button>
-				</p>
-			</div>
-
-
-
-		</section>
-
-		<!-- Efetuar consulta
-        ================================================== -->
-      	<section id=variaveis>
-      		<div class="page-header">
-      			<h1>Variáveis</h1>
-      		</div>
-
-			<p>
-					Clique no botão abaixo para abrir uma página com as
-					<a href="<c:url value='/ajuda' />" target="_blank">descrições
-						das variáveis</a> presentes no arquivo resultado.
-			</p>
-
-	      	<div>
-	      		<p>
-	      			<a class="btn btn-success" href="<c:url value='/ajuda' />" target="_blank">Descrições das Variáveis</a>
+				  <a class="btn" href="<c:url value='/ajuda' />" target="_blank">Descrições das Variáveis</a>
 				</p>
 			</div>
 

@@ -41,45 +41,45 @@ import com.google.common.base.Joiner;
 import com.google.common.io.Closeables;
 
 public class CSVBuilder extends InputStream implements Runnable {
-	
+
 	private long start = System.currentTimeMillis();
-	
+
 	private int BUFFER = 2048;
 
 	private static final Logger LOGGER = Logger.getLogger(CSVBuilder.class);
 	private static final Joiner JOINER = Joiner.on("\",\"").useForNull("null");
 
-	// 
+	//
 	private Writer out;
 	private PipedInputStream pis = new MonitoredPipedInputStream(BUFFER);
-	
+
 	private volatile int linhas = 0;
 	private volatile int linhasAnterior = 0;
-	
+
 	private int colunasTotal = -1;
 	private int colunas = 0;
-	
+
 	// alto popular
 	private ResultSetWork ra;
 	private ResultSet rs;
 	private volatile boolean continuarPopulando = true;
 
 	private boolean isDbOpen = true;
-	
+
 	private CSVBuilder() throws IOException {
 			OutputStream os = new MonitoredPipedOutputStream(this.pis);
 
 			out = new OutputStreamWriter(
-					new BufferedOutputStream(os), Charsets.UTF_8);
+					new BufferedOutputStream(os), Charsets.ISO_8859_1);
 
 	}
-	
+
 	// auto popular com thread!!
 	public void setSource(ResultSetWork ra, ResultSet rs) {
 		this.ra = ra;
 		this.rs = rs;
 	}
-	
+
 	// auto popular (usar thread)
 	public void run() {
 		try {
@@ -92,30 +92,30 @@ public class CSVBuilder extends InputStream implements Runnable {
 					LOGGER.info("Parando escrita do CSV...");
 					break;
 				}
-				
+
 				for (int i = 0; i < colCount; i++) {
 					elemento(rs.getString(i + 1));
 				}
 				linha();
 			}
 			LOGGER.info("Concluiu popular CSV. Tentando finalizar...");
-			
+
 			finaliza();
 		} catch (Exception e) {
 			throw new RuntimeException(
 					"Falhou ao criar arquivo csv.", e);
 		}
 	}
-	
+
 	private Thread t;
 	private Timer timer;
-	
+
 	public void start() {
-		
+
 		// start the CSVBuilder thread
 		t = new Thread(this, genThreadName("CSVBuilder"));
 		t.start();
-		
+
 		///////
 		// Cancel TIMER
 		// we will need to setup a timeout to the CSV writer..
@@ -139,7 +139,7 @@ public class CSVBuilder extends InputStream implements Runnable {
 
 	private volatile boolean isStopPendente = true;
 	private Object stopFlag = new Object();
-	
+
 	public void stop() {
 		synchronized (stopFlag) {
 			if(t != null && isStopPendente) {
@@ -156,7 +156,7 @@ public class CSVBuilder extends InputStream implements Runnable {
 					// TODO: handle exception
 				}
 				t = null;
-			}			
+			}
 		}
 	}
 
@@ -201,21 +201,21 @@ public class CSVBuilder extends InputStream implements Runnable {
 		}
 		return this;
 	}
-	
+
 	private volatile boolean isFinalizadoPendente = true;
 	private final Object finalizaFlag = new Object();
 
 	public void finaliza() throws IOException, CepespDataException {
 		synchronized (finalizaFlag) {
-			
+
 			if (timer != null) timer.cancel();
-			
+
 			if(isFinalizadoPendente) {
 				isFinalizadoPendente = false;
-				
+
 				// fecha recursos de leitura
 				this.closeDBResources();
-				
+
 				// verifica coluna
 				if (colunasTotal < 0) {
 					colunasTotal = colunas;
@@ -234,7 +234,7 @@ public class CSVBuilder extends InputStream implements Runnable {
 				colunas = 0;
 
 				Closeables.closeQuietly(this.out);
-				
+
 				if (LOGGER.isInfoEnabled()) {
 					LOGGER.info("CSV criado com " + getNumColunas() + " colunas e "
 							+ getNumLinhas() + " linhas. Tempo (s): " + (System.currentTimeMillis() - start)/1000.0);
@@ -250,9 +250,9 @@ public class CSVBuilder extends InputStream implements Runnable {
 	public int getNumColunas() {
 		return colunasTotal;
 	}
-	
+
 	private final Object dbFlag = new Object();
-	
+
 	public void closeDBResources() {
 		synchronized (dbFlag) {
 			if(this.isDbOpen && this.rs != null) {
@@ -264,10 +264,10 @@ public class CSVBuilder extends InputStream implements Runnable {
 					LOGGER.warn("Falhou fechar DB da criacao de CSV.", e);
 				}
 				this.ra.close();
-				
+
 				this.rs = null;
 				this.ra = null;
-			}	
+			}
 		}
 	}
 
@@ -276,67 +276,67 @@ public class CSVBuilder extends InputStream implements Runnable {
 		// read the pis
 		return this.pis.read();
 	}
-	
+
 	private volatile boolean isClosePendente = true;
 	private final Object closeFlag = new Object();
-	
+
 	@Override
 	public void close() throws IOException {
 		synchronized (closeFlag) {
 			if(isClosePendente) {
 
 				LOGGER.info("Closing CSVBuilder...");
-				
+
 				Closeables.closeQuietly(this.pis);
-				
+
 				stop();
-				
+
 				LOGGER.info("Comecando a fechar recursos ainda abertos.");
 				Closeables.closeQuietly(this.out);
-				
+
 				this.closeDBResources();
-				
+
 				super.close();
-				
+
 				LOGGER.info("Close concluido!");
 				this.isClosePendente = false;
 			}
 		}
 	}
-	
+
 	@Override
 	protected void finalize() throws Throwable {
 		LOGGER.info("Executando finalize...");
 		this.close();
 		super.finalize();
 	}
-	
+
 	private class MonitoredPipedOutputStream extends PipedOutputStream {
-		
+
 		public MonitoredPipedOutputStream(PipedInputStream in) throws IOException {
 			super(in);
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			LOGGER.info("Closing MonitoredPipedOutputStream");
 			super.close();
 		}
 	}
-	
+
 	private class MonitoredPipedInputStream extends PipedInputStream {
-		
+
 		public MonitoredPipedInputStream(int size) throws IOException {
 			super(size);
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			LOGGER.info("Closing MonitoredPipedInputStream");
 			super.close();
 		}
 	}
-	
+
 	private String genThreadName(String suffix) {
 		return Thread.currentThread().getName() + "." + suffix;
 	}
