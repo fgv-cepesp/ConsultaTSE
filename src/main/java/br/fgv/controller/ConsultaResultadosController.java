@@ -45,6 +45,7 @@ import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
 import br.fgv.business.BusinessImpl;
 import br.fgv.business.FormResultAux;
+import br.fgv.dao.ResultadosDAO;
 import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
@@ -54,7 +55,7 @@ import com.google.common.io.Closeables;
 
 @Resource
 public class ConsultaResultadosController {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(ConsultaResultadosController.class);
 
 	private final Result result;
@@ -82,36 +83,43 @@ public class ConsultaResultadosController {
 	public void ajuda() {
 		result.include("ajudaTabela", Tabela.getHelp());
 	}
-	
+
+	@Get
+	@Path(priority = 1, value = "/etl")
+	public void etl() {
+		result.include("mcand", business.getDadosCargaCand());
+		result.include("mvoto", business.getDadosCargaVoto());
+	}
+
 	@Get
 	@Path(priority = 1, value = "/ajudaCsv")
 	public Download ajudaCsv() throws CepespDataException {
 
-		
+
 		File retFile = Tabela.getHelpCSV();
 
 		return new FileDownload(retFile, "text/csv", "ajuda_cepesp-data.csv", true);
-		
+
 	}
 
 	@Get
 	@Path("/consulta/camposDisponiveis")
 	public void camposDisponiveisList(String nivelAgregacaoRegional,
 			String nivelAgregacaoPolitica) {
-		
+
 		final FormResultAux f = business.getCamposDisponiveis(nivelAgregacaoRegional,
 				nivelAgregacaoPolitica);
-		
+
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Nivel regional: " + nivelAgregacaoRegional +
 					" Nivel politica: " + nivelAgregacaoPolitica +
 					" Campos disponíveis:\n" + f);
 		}
-		
+
 		result.use(Results.json()).from(f)
 			.include("camposOpcionais","camposFixos")
 			.serialize();
-		
+
 	}
 
 	@Get
@@ -123,7 +131,7 @@ public class ConsultaResultadosController {
 		result.use(Results.json()).from(business.getCargosPorAno(ano))
 				.serialize();
 	}
-	
+
 	@Get
 	@Path("/consulta/anos")
 	public void anosParaCargo(String cargo) {
@@ -193,15 +201,15 @@ public class ConsultaResultadosController {
 			String nivelFiltroRegional, String as_values_regional,
 			String as_values_candidatos, String as_values_partidos)
 			throws CepespDataException {
-		
+
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Controller preparando para delegar criacao do CSV");
 		}
-		
+
 		List<String> fp = trataLista(as_values_partidos);
 		List<String> fr = trataLista(as_values_regional);
 		List<String> fc = trataLista(as_values_candidatos);
-		
+
 
 		return resultadosCSV(anosEscolhidos, filtroCargo, nivelAgregacaoRegional,
 				nivelAgregacaoPolitica, camposEscolhidos, camposFixos,
@@ -229,14 +237,14 @@ public class ConsultaResultadosController {
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, List<String> filtroRegional,
 			List<String> filtroPartido, List<String> filtroCandidato) throws CepespDataException {
-		
+
 		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
 			LOGGER.debug(">>> campos fixos " + Arrays.toString(camposFixos.toArray()));
 			LOGGER.debug(">>> campos escolhidos " + Arrays.toString(camposEscolhidos.toArray()));
 		}
-		
-		
+
+
 		camposFixos = camposFixos == null ? Collections.<String>emptyList()
 				: camposFixos;
 		camposEscolhidos = camposEscolhidos == null ? Collections.<String>emptyList()
@@ -247,12 +255,12 @@ public class ConsultaResultadosController {
 				: filtroPartido;
 		filtroCandidato = filtroCandidato == null ? Collections.<String>emptyList()
 				: filtroCandidato;
-		
+
 		List<String> c = new ArrayList<String>();
 		c.addAll(camposFixos);
 		c.addAll(camposEscolhidos);
 		String[] campos = c.toArray(new String[c.size()]);
-		
+
 		ArgumentosBusca args = new ArgumentosBusca();
 		Collections.sort(anosEscolhidos);
 		args.setAnoEleicao(anosEscolhidos.toArray(new String[anosEscolhidos.size()]));
@@ -260,10 +268,10 @@ public class ConsultaResultadosController {
 		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt(nivelAgregacaoPolitica));
 		args.setNivelRegional(AgregacaoRegional.fromInt(nivelAgregacaoRegional));
 		args.setCamposEscolhidos(campos);
-		
-		
+
+
 		args.setNivelFiltroRegional(AgregacaoRegional.fromInt(nivelFiltroRegional));
-		
+
 
 		String[] fr = filtroRegional.toArray(new String[filtroRegional.size()]);
 		String[] fp = filtroPartido.toArray(new String[filtroPartido.size()]);
@@ -273,46 +281,46 @@ public class ConsultaResultadosController {
 		args.setFiltroRegional(fr);
 		args.setFiltroPartido(fp);
 		args.setFiltroCandidato(fc);
-		
+
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Argumentos da busca: " + args.toString());
 		}
-		
-		
+
+
 		String nameFile = business.getSugestaoNomeArquivo(Joiner.on("-").join(anosEscolhidos),
 				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Comecando consulta propriamente, tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
-			
+
 		}
 		Download d = new CloseableInputStreamDownload(business.getLinkResult(args), "text/csv", nameFile, true, 0);
 		Cookie cookie = new Cookie("fileDownload", "true");
 		cookie.setPath("/");
         response.addCookie(cookie);
-        
+
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("<<< Download preparado. Tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
 		}
-		
+
 		return d;
 	}
-	
+
 	private static class CloseableInputStreamDownload extends InputStreamDownload{
-		
+
 		private InputStream stream;
-		
+
 		public CloseableInputStreamDownload(InputStream input, String contentType, String fileName, boolean doDownload, long size) {
 			super(input, contentType, fileName, doDownload, size);
 			this.stream = input;
 		}
-		
+
 		@Override
 		public void write(HttpServletResponse response) throws IOException {
 			try {
 				super.write(response);
 			} catch(IOException e) {
-				throw new IOException("Exception durante download. Vamos tentar fechar CSVBuilder." , e); 
+				throw new IOException("Exception durante download. Vamos tentar fechar CSVBuilder." , e);
 			} finally {
 				Closeables.closeQuietly(stream);
 			}

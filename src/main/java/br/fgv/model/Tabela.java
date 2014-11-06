@@ -153,7 +153,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_MUNICIPIO_COD;
 	public static final Coluna CO_DIM_MUNICIPIO_NOME;
 
-	public static final Tabela TB_DIM_VOTAVEIS;
+//	public static final Tabela TB_DIM_VOTAVEIS;
 	public static final Coluna CO_DIM_VOTAVEIS_NR_VOTAVEL;
 	public static final Coluna CO_DIM_VOTAVEIS_TITULO;
 	public static final Coluna CO_DIM_VOTAVEIS_SURROGATEKEY;
@@ -453,7 +453,7 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_DIM_VOTAVEIS_SURROGATEKEY);
 		c.add(CO_DIM_VOTAVEIS_NOME_CANDIDATO);
 
-		TB_DIM_VOTAVEIS = new Tabela("aux_votaveis", c);
+//		TB_DIM_VOTAVEIS = new Tabela("aux_votaveis", c);
 
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");

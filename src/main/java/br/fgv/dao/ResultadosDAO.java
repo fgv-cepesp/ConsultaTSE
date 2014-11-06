@@ -18,24 +18,66 @@
  */
 package br.fgv.dao;
 
-import static br.fgv.model.Tabela.*;
-import static br.fgv.util.QueryBuilder.*;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_CARGO_COD;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_NOME;
+import static br.fgv.model.Tabela.CO_DIM_CANDIDATOS_TITULO;
+import static br.fgv.model.Tabela.CO_DIM_CARGO_CD;
+import static br.fgv.model.Tabela.CO_DIM_CARGO_DS;
+import static br.fgv.model.Tabela.CO_DIM_ESTADOS_ID;
+import static br.fgv.model.Tabela.CO_DIM_ESTADOS_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_COD;
+import static br.fgv.model.Tabela.CO_DIM_MACROREGIAO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_ID;
+import static br.fgv.model.Tabela.CO_DIM_MESOREGIAO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_ID;
+import static br.fgv.model.Tabela.CO_DIM_MICROREGIAO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_COD;
+import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_NOME;
+import static br.fgv.model.Tabela.CO_DIM_MUNICIPIO_SIGLA_UF;
+import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_ANO;
+import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_COD;
+import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_SIGLA;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_COD_CARGO;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_QNT_VOTOS;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_TIPO_VOTAVEL;
+import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_TURNO;
+import static br.fgv.model.Tabela.CO_SIS_ANOS_ANO;
+import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_ANO;
+import static br.fgv.model.Tabela.CO_SIS_ANO_CARGO_COD_CARGO;
+import static br.fgv.model.Tabela.REF_FACT;
+import static br.fgv.model.Tabela.TB_DIM_CANDIDATOS;
+import static br.fgv.model.Tabela.TB_DIM_CARGO;
+import static br.fgv.model.Tabela.TB_DIM_ESTADOS;
+import static br.fgv.model.Tabela.TB_DIM_MACROREGIAO;
+import static br.fgv.model.Tabela.TB_DIM_MESOREGIAO;
+import static br.fgv.model.Tabela.TB_DIM_MICROREGIAO;
+import static br.fgv.model.Tabela.TB_DIM_MUNICIPIO;
+import static br.fgv.model.Tabela.TB_DIM_PARTIDOS;
+import static br.fgv.model.Tabela.TB_FACT_VOTOS_MUN;
+import static br.fgv.model.Tabela.TB_SIS_ANOS;
+import static br.fgv.model.Tabela.TB_SIS_ANO_CARGO;
+import static br.fgv.model.Tabela.VOTO_LEGENDA;
+import static br.fgv.model.Tabela.VOTO_LEGENDA_COD;
+import static br.fgv.model.Tabela.VOTO_NOMINAL;
+import static br.fgv.model.Tabela.VOTO_NOMINAL_COD;
+import static br.fgv.model.Tabela.VOTO_TOTAL;
+import static br.fgv.util.QueryBuilder.EQ;
+import static br.fgv.util.QueryBuilder.IFF;
+import static br.fgv.util.QueryBuilder._ORDER_BY_;
+import static br.fgv.util.QueryBuilder.a;
+import static br.fgv.util.QueryBuilder.p;
+import static br.fgv.util.QueryBuilder.s;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
-
-import javassist.compiler.TokenId;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -86,6 +128,8 @@ public class ResultadosDAO {
 
 		return list;
 	}
+
+
 
 	public List<Par> getAnosDisponiveisList() {
 		List<Par> pares = new ArrayList<Par>();
@@ -634,5 +678,39 @@ public class ResultadosDAO {
 
 		Query query = getSession().createSQLQuery(queryStr);
 		return getParChaveList(query);
+	}
+
+	public List<Date> getDataCarga() {
+		StringBuilder select = new StringBuilder();
+		select.append("SELECT distinct data_etl FROM info_cepespdata.datas");
+
+		Query query = getSession().createSQLQuery(select.toString());
+
+		@SuppressWarnings("unchecked")
+		List<Date> datas = (List<Date>)query.list();
+
+		return datas;
+	}
+
+	public Date getDataCand(String carga, int ano) {
+		StringBuilder select = new StringBuilder();
+		select.append("select data_tse_cand from info_cepespdata.datas where data_etl = '" + carga + "' and ano_eleicao = " + ano);
+
+		Query query = getSession().createSQLQuery(select.toString());
+
+		List<Date> datas = (List<Date>)query.list();
+
+		return datas.get(0);
+	}
+
+	public Date getDataVoto(String carga, int ano) {
+		StringBuilder select = new StringBuilder();
+		select.append("select data_tse_voto from info_cepespdata.datas where data_etl = '" + carga + "' and ano_eleicao = " + ano);
+
+		Query query = getSession().createSQLQuery(select.toString());
+
+		List<Date> datas = (List<Date>)query.list();
+
+		return datas.get(0);
 	}
 }

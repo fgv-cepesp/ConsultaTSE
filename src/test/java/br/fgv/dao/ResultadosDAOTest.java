@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -356,5 +357,28 @@ public class ResultadosDAOTest {
 
 		is.close();
 		assertNotEquals(28, lines.size());
+	}
+
+	@Test
+	public void testDatasCarga() throws CepespDataException, IOException {
+		List<Date> datas = dao.getDataCarga();
+		assertTrue(datas.size() > 0);
+
+	}
+
+
+	@Test
+	public void testDatasCand() throws CepespDataException, IOException {
+		Date data = dao.getDataCand(dao.getDataCarga().get(0).toString(), 2010);
+		assertNotNull(data);
+
+	}
+
+
+	@Test
+	public void testDatasVoto() throws CepespDataException, IOException {
+		Date data = dao.getDataVoto(dao.getDataCarga().get(0).toString(), 2010);
+		assertNotNull(data);
+
 	}
 }

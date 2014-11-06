@@ -160,4 +160,11 @@ public class BusinessImplTest {
 		assertEquals("2099_DeputadoFederal_MesoRegiao_Partido.csv", businessImpl.getSugestaoNomeArquivo("2099", "4", "1", "6"));
 
 	}
+
+	@Test
+	public void testMatrizETL() {
+		String[][] m = businessImpl.getDadosCargaCand();
+
+		assertNotNull(m);
+	}
 }

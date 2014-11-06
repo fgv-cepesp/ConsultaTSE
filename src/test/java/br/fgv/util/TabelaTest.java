@@ -59,12 +59,12 @@ public class TabelaTest {
 		test(Tabela.TB_DIM_MESOREGIAO);
 		test(Tabela.TB_DIM_MICROREGIAO);
 		test(Tabela.TB_DIM_MUNICIPIO);
-		test(Tabela.TB_DIM_VOTAVEIS);
+//		test(Tabela.TB_DIM_VOTAVEIS);
 		test(Tabela.TB_SIS_ANO_CARGO);
 		test(Tabela.TB_SIS_ANOS);
 
 	}
-	
+
 	@Test
 	public void testRelacionamento() {
 		assertEquals(
@@ -89,15 +89,15 @@ public class TabelaTest {
 				"aux_municipio.cod = r.cod_mun",
 				Tabela.TB_DIM_MUNICIPIO.getRelacao());
 	}
-	
+
 	@Test
 	public void testCSVHelp() throws CepespDataException, IOException {
 		File csv = Tabela.getHelpCSV();
-		
+
 		assertNotNull(csv);
-		
+
 		String content = Files.toString(csv, Charsets.UTF_8);
-		
+
 		assertTrue(content.length() > 0);
 	}
 
