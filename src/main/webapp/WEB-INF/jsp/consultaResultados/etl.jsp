@@ -56,8 +56,6 @@
 
 		<h2>Carga de Candidatos</h2>
 
-		<p>Na tabela abaixo, a primeira linha indica a data de uma importação (datas na primeira linha), onde a mais recente é a corrente. A primeira coluna indica um ano de eleição. A célula indica a data em que, para aquela importação e aquela eleição, os dados foram gerados pelo TSE.</p>
-
 		<c:set var="i" value="0" scope="page" />
 		<c:set var="j" value="0" scope="page" />
 
@@ -105,8 +103,6 @@
 
 
 	    <h2>Carga de Votos</h2>
-
-		<p>Na tabela abaixo, a primeira linha indica a data de uma importação (datas na primeira linha), onde a mais recente é a corrente. A primeira coluna indica um ano de eleição. A célula indica a data em que, para aquela importação e aquela eleição, os dados foram gerados pelo TSE.</p>
 
 		<c:set var="i" value="0" scope="page" />
 		<c:set var="j" value="0" scope="page" />
