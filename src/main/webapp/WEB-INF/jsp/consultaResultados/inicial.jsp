@@ -798,6 +798,7 @@ $(function(){
 		        <h2>Resultados de eleições por cargo</h2>
 		        <p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um cargo eletivo. As consultas podem ser
 		       também agregadas por partido e nível regional.</p>
+		       <small><a href="/etl">Notas sobre os dados</a></small>
 		        <p><a class="btn btn-primary btn-large" href="#filtrosObrigatorios">Começar &raquo;</a></p>
 		      </div>
 	      </section>
