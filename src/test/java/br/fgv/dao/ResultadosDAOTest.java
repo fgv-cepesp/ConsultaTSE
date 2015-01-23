@@ -299,7 +299,7 @@ public class ResultadosDAOTest {
 
 	@Test
 	public void testGetAnos() {
-		assertEquals(3, dao.getAnosParaCargoList("1").size());
+		assertEquals(5, dao.getAnosParaCargoList("1").size());
 	}
 
 	@Test
@@ -327,7 +327,7 @@ public class ResultadosDAOTest {
 		}
 
 		is.close();
-		assertEquals(28, lines.size());
+		assertEquals(27, lines.size());
 	}
 
 	@Test

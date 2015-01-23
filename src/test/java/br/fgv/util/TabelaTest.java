@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.junit.BeforeClass;
@@ -62,6 +64,7 @@ public class TabelaTest {
 //		test(Tabela.TB_DIM_VOTAVEIS);
 		test(Tabela.TB_SIS_ANO_CARGO);
 		test(Tabela.TB_SIS_ANOS);
+		test(Tabela.TB_DIM_LEGENDAS);
 
 	}
 
@@ -102,14 +105,14 @@ public class TabelaTest {
 	}
 
 	private void test(Tabela tabela) {
-		Set<String> colunasCodigo = new HashSet<String>();
+		SortedSet<String> colunasCodigo = new TreeSet<String>();
 		for (Coluna tc : tabela.getColunas()) {
 			colunasCodigo.add(tc.getNome());
 		}
 
-		Set<String> colunasDB = getNomeColunasDB(tabela.getNome().replaceAll(Tabela.HOLDER_ANO_ELEICAO, "2010"));
+		SortedSet<String> colunasDB = new TreeSet<String>(getNomeColunasDB(tabela.getNome().replaceAll(Tabela.HOLDER_ANO_ELEICAO, "2010")));
 
-		colunasDB.remove("data_nascimento"); // renaned...
+		colunasDB.remove("turno_c"); // renaned...
 		assertEquals( colunasCodigo, colunasDB);
 	}
 

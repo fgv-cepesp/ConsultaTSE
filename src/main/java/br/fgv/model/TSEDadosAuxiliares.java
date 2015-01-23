@@ -27,7 +27,7 @@ import br.fgv.business.AgregacaoRegional;
 import br.fgv.util.Par;
 
 public abstract class TSEDadosAuxiliares {
-	
+
 	private static final List<Par> NIVEL_AGREGACAO_REGIONAL;
 	private static final List<Par> NIVEL_AGREGACAO_POLITICA;
 
@@ -40,7 +40,7 @@ public abstract class TSEDadosAuxiliares {
 		l.add(new Par(Integer.toString(AgregacaoRegional.MICRO_REGIAO.getNivel()), AgregacaoRegional.MICRO_REGIAO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.UF_ZONA.getNivel()), AgregacaoRegional.UF_ZONA.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoRegional.MUNICIPIO.getNivel()), AgregacaoRegional.MUNICIPIO.getNomeDescritivo()));
-        
+
         NIVEL_AGREGACAO_REGIONAL = Collections.unmodifiableList(l);
 
 		///////////////////////////////
@@ -48,14 +48,14 @@ public abstract class TSEDadosAuxiliares {
 		l.add(new Par("", "--Selecionar---"));
 		l.add(new Par(Integer.toString(AgregacaoPolitica.PARTIDO.getNivel()), AgregacaoPolitica.PARTIDO.getNomeDescritivo()));
 		l.add(new Par(Integer.toString(AgregacaoPolitica.CANDIDATO.getNivel()), AgregacaoPolitica.CANDIDATO.getNomeDescritivo()));
-//		l.add(new Par(Integer.toString(AgregacaoPolitica.COLIGACAO.getNivel()), AgregacaoPolitica.COLIGACAO.getNomeDescritivo()));
-		
+		l.add(new Par(Integer.toString(AgregacaoPolitica.COLIGACAO.getNivel()), AgregacaoPolitica.COLIGACAO.getNomeDescritivo()));
+
 		NIVEL_AGREGACAO_POLITICA = Collections.unmodifiableList(l);
-		
+
 	}
-	
+
 	public static List<Par> getNivelAgregacaoRegional() {
-		
+
 		return NIVEL_AGREGACAO_REGIONAL;
 	}
 

@@ -157,6 +157,10 @@ public class ResultadosDAO {
 		String completeQuery = QueryBuilder.unionDistinct(queries)
 				+ _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
 
+		System.out.println(">> QUERY COMPLETA");
+		System.out.println(completeQuery);
+		System.out.println("<< QUERY COMPLETA");
+
 		List<Par> pares = new ArrayList<Par>();
 		List<Object[]> list = null;
 
@@ -284,9 +288,11 @@ public class ResultadosDAO {
 		qb.select_().comma(CO_FACT_VOTOS_MUN_TURNO, reg, pol);
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
 		qb.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
+		
 		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
 			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
 		}
+		
 		qb._from_().tabela(TB_FACT_VOTOS_MUN);
 
 		// WHERE

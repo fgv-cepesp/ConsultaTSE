@@ -75,7 +75,8 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_FACT_VOTOS_MUN_UF;
 	public static final Coluna CO_FACT_VOTOS_MUN_PARTIDO;
 	public static final Coluna CO_FACT_VOTOS_MUN_CANDIDATO_SK;
-	public static final Coluna CO_FACT_VOTOS_MUN_COLIGACAO_ID;
+	public static final Coluna CO_FACT_VOTOS_MUN_LEGENDA_SK;
+//	public static final Coluna CO_FACT_VOTOS_MUN_COLIGACAO_ID;
 
 	/* Tabelas "Dim" */
 	public static final Tabela TB_DIM_PARTIDOS;
@@ -88,7 +89,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Tabela TB_DIM_CANDIDATOS;
 	public static final Coluna CO_DIM_CANDIDATOS_CARGO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC;
-	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC_ORI;
+//	public static final Coluna CO_DIM_CANDIDATOS_DATA_NASC_ORI;
 	public static final Coluna CO_DIM_CANDIDATOS_SURROGATEKEY;
 	public static final Coluna CO_DIM_CANDIDATOS_NOME;
 	public static final Coluna CO_DIM_CANDIDATOS_TITULO;
@@ -100,7 +101,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_CANDIDATOS_PARTIDO_SIG;
 	public static final Coluna CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO;
 	public static final Coluna CO_DIM_CANDIDATOS_LEGENDA_DES;
-	public static final Coluna CO_DIM_CANDIDATOS_COLIGACAO_ID;
+//	public static final Coluna CO_DIM_CANDIDATOS_COLIGACAO_ID;
 	public static final Coluna CO_DIM_CANDIDATOS_OCUPACAO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_SEXO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD;
@@ -108,7 +109,7 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_CANDIDATOS_NACIONALIDADE_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_NASC_UF;
 	public static final Coluna CO_DIM_CANDIDATOS_NASC_COD_MUN;
-	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD_OLD;
+//	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD_OLD;
 	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_COD;
 	public static final Coluna CO_DIM_CANDIDATOS_RESULTADO_DES;
 
@@ -159,13 +160,12 @@ public class Tabela implements Comparable<Tabela>{
 	public static final Coluna CO_DIM_VOTAVEIS_SURROGATEKEY;
 	public static final Coluna CO_DIM_VOTAVEIS_NOME_CANDIDATO;
 
-	public static final Tabela TB_DIM_COLIGACOES;
-	public static final Coluna CO_DIM_COLIGACOES_ID;
-	public static final Coluna CO_DIM_COLIGACOES_ANO;
-	public static final Coluna CO_DIM_COLIGACOES_UE;
-	public static final Coluna CO_DIM_COLIGACOES_CARGO_COD;
-	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO;
-	public static final Coluna CO_DIM_COLIGACOES_LEGENDA_DES;
+	public static final Tabela TB_DIM_LEGENDAS;
+	public static final Coluna CO_DIM_LEGENDAS_SURROGATEKEY;
+	public static final Coluna CO_DIM_LEGENDAS_TIPO_LEGENDA;
+	public static final Coluna CO_DIM_LEGENDAS_COLIGACAO_SIG;
+	public static final Coluna CO_DIM_LEGENDAS_COLIGACAO_NOME;
+	public static final Coluna CO_DIM_LEGENDAS_COLIGACAO_COMPOSICAO;
 
 	public static final Tabela TB_SIS_ANO_CARGO;
 	public static final Coluna CO_SIS_ANO_CARGO_ANO;
@@ -204,7 +204,7 @@ public class Tabela implements Comparable<Tabela>{
 		/* Colunas da tabela FACT VOTOS */
 
 		CO_FACT_VOTOS_MUN_ANO = new Coluna("ano");
-		CO_FACT_VOTOS_MUN_COLIGACAO_ID = new Coluna("coligacao_id");
+//		CO_FACT_VOTOS_MUN_COLIGACAO_ID = new Coluna("coligacao_id");
 		CO_FACT_VOTOS_MUN_TURNO = new Coluna("turno");
 		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("cod_mun", "código do município");
 		CO_FACT_VOTOS_MUN_ZONA = new Coluna("zona");
@@ -218,10 +218,11 @@ public class Tabela implements Comparable<Tabela>{
 		CO_FACT_VOTOS_MUN_UF = new Coluna("uf");
 		CO_FACT_VOTOS_MUN_PARTIDO = new Coluna("partido");
 		CO_FACT_VOTOS_MUN_CANDIDATO_SK = new Coluna("candidato_sk");
+		CO_FACT_VOTOS_MUN_LEGENDA_SK = new Coluna("legenda_sk");
 
 		List<Coluna> c = new ArrayList<Coluna>();
 		c.add(CO_FACT_VOTOS_MUN_ANO);
-		c.add(CO_FACT_VOTOS_MUN_COLIGACAO_ID);
+//		c.add(CO_FACT_VOTOS_MUN_COLIGACAO_ID);
 		c.add(CO_FACT_VOTOS_MUN_TURNO);
 		c.add(CO_FACT_VOTOS_MUN_COD_MUN);
 		c.add(CO_FACT_VOTOS_MUN_ZONA);
@@ -235,6 +236,7 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_FACT_VOTOS_MUN_UF);
 		c.add(CO_FACT_VOTOS_MUN_PARTIDO);
 		c.add(CO_FACT_VOTOS_MUN_CANDIDATO_SK);
+		c.add(CO_FACT_VOTOS_MUN_LEGENDA_SK);
 
 		TB_FACT_VOTOS_MUN = new Tabela("voto_mun_" + HOLDER_ANO_ELEICAO, c);
 
@@ -255,27 +257,28 @@ public class Tabela implements Comparable<Tabela>{
 				EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_COD), REF(CO_FACT_VOTOS_MUN_PARTIDO, REF_FACT))
 				+ _AND_ + EQ(TB_CO(dim_partidos, CO_DIM_PARTIDOS_ANO), SQuote(HOLDER_ANO_ELEICAO)));
 
-		/* Colunas da tabela dim_coligacoes_por_cargo_ue */
-		CO_DIM_COLIGACOES_ID = new Coluna("coligacao_id");
-		CO_DIM_COLIGACOES_ANO = new Coluna("ano");
-		CO_DIM_COLIGACOES_UE = new Coluna("ue");
-		CO_DIM_COLIGACOES_CARGO_COD = new Coluna("cargo_cod");
-		CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Composição da Legenda", FIXO);
-		CO_DIM_COLIGACOES_LEGENDA_DES = new Coluna("legenda_des", "Descrição da Legenda", FIXO);
+
+		/* Colunas da tabela DIM LEGENDAS */
+		CO_DIM_LEGENDAS_SURROGATEKEY = new Coluna("surrogatekey");
+
+		CO_DIM_LEGENDAS_TIPO_LEGENDA = new Coluna("tipo_legenda", "Tipo da Legenda", DISPONIVEL);
+		CO_DIM_LEGENDAS_COLIGACAO_SIG = new Coluna("coligacao_sig", "Sigla da Coligação", DISPONIVEL);
+		CO_DIM_LEGENDAS_COLIGACAO_NOME = new Coluna("coligacao_nome", "Nome da Coligação", DISPONIVEL);
+		CO_DIM_LEGENDAS_COLIGACAO_COMPOSICAO = new Coluna("coligacao_composicao", "Composição da Coligação", DISPONIVEL);
+
 
 		c = new ArrayList<Coluna>();
-		c.add(CO_DIM_COLIGACOES_ID);
-		c.add(CO_DIM_COLIGACOES_ANO);
-		c.add(CO_DIM_COLIGACOES_UE);
-		c.add(CO_DIM_COLIGACOES_CARGO_COD);
-		c.add(CO_DIM_COLIGACOES_LEGENDA_COMPOSICAO);
-		c.add(CO_DIM_COLIGACOES_LEGENDA_DES);
 
-		String dim_coligacoes = "dim_coligacoes_por_cargo_ue";
-		TB_DIM_COLIGACOES = new Tabela(dim_coligacoes, "Coligação", c,
-				EQ(TB_CO(dim_coligacoes, CO_DIM_COLIGACOES_ID), REF(CO_FACT_VOTOS_MUN_COLIGACAO_ID, REF_FACT))
-			);
+		c.add(CO_DIM_LEGENDAS_SURROGATEKEY);
+		c.add(CO_DIM_LEGENDAS_TIPO_LEGENDA);
+		c.add(CO_DIM_LEGENDAS_COLIGACAO_SIG);
+		c.add(CO_DIM_LEGENDAS_COLIGACAO_NOME);
+		c.add(CO_DIM_LEGENDAS_COLIGACAO_COMPOSICAO);
 
+
+		final String dim_legendas = "aux_legendas_" + HOLDER_ANO_ELEICAO;
+		TB_DIM_LEGENDAS = new Tabela(dim_legendas, "Legenda", c,
+				EQ(TB_CO(dim_legendas, CO_DIM_LEGENDAS_SURROGATEKEY), REF(CO_FACT_VOTOS_MUN_LEGENDA_SK, REF_FACT)));
 
 		/* Colunas da tabela DIM CANDIDATOS */
 		CO_DIM_CANDIDATOS_SURROGATEKEY = new Coluna("surrogatekey");
@@ -290,10 +293,10 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_PARTIDO_SIG = new Coluna("partido_sig", "Sigla Partido", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Legenda Composisão", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_DES = new Coluna("legenda_des", "Legenda Des", DISPONIVEL);
-		CO_DIM_CANDIDATOS_COLIGACAO_ID = new Coluna("coligacao_id", OCULTA);
+//		CO_DIM_CANDIDATOS_COLIGACAO_ID = new Coluna("coligacao_id", OCULTA);
 		CO_DIM_CANDIDATOS_OCUPACAO_COD = new Coluna("ocupacao_cod", "Código Ocupação", DISPONIVEL);
 		CO_DIM_CANDIDATOS_DATA_NASC = new Coluna("data_nasc","Data Nascimento", DISPONIVEL);
-		CO_DIM_CANDIDATOS_DATA_NASC_ORI = new Coluna("data_nasc_original", OCULTA);
+//		CO_DIM_CANDIDATOS_DATA_NASC_ORI = new Coluna("data_nasc_original", OCULTA);
 		CO_DIM_CANDIDATOS_SEXO_COD = new Coluna("sexo_cod", "Código Sexo", DISPONIVEL);
 		CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD = new Coluna("grau_instrucao_cod", "Código Instrução");
 		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Código Estado Civil", DISPONIVEL);
@@ -302,7 +305,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_DES = new Coluna("resultado_des", "Descrição Resultado", FIXO);
-		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
+//		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
 
 		c = new ArrayList<Coluna>();
 		c.add(CO_DIM_CANDIDATOS_SURROGATEKEY);
@@ -317,17 +320,17 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_DIM_CANDIDATOS_PARTIDO_SIG);
 		c.add(CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO);
 		c.add(CO_DIM_CANDIDATOS_LEGENDA_DES);
-		c.add(CO_DIM_CANDIDATOS_COLIGACAO_ID);
+//		c.add(CO_DIM_CANDIDATOS_COLIGACAO_ID);
 		c.add(CO_DIM_CANDIDATOS_OCUPACAO_COD);
 		c.add(CO_DIM_CANDIDATOS_DATA_NASC);
-		c.add(CO_DIM_CANDIDATOS_DATA_NASC_ORI);
+//		c.add(CO_DIM_CANDIDATOS_DATA_NASC_ORI);
 		c.add(CO_DIM_CANDIDATOS_SEXO_COD);
 		c.add(CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD);
 		c.add(CO_DIM_CANDIDATOS_EST_CIVIL_COD);
 		c.add(CO_DIM_CANDIDATOS_NACIONALIDADE_COD);
 		c.add(CO_DIM_CANDIDATOS_NASC_UF);
 		c.add(CO_DIM_CANDIDATOS_NASC_COD_MUN);
-		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD_OLD);
+//		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD_OLD);
 		c.add(CO_DIM_CANDIDATOS_RESULTADO_COD);
 		c.add(CO_DIM_CANDIDATOS_RESULTADO_DES);
 
@@ -574,7 +577,7 @@ public class Tabela implements Comparable<Tabela>{
 		l.add(new AjudaTabela(TB_DIM_MESOREGIAO));
 		l.add(new AjudaTabela(TB_DIM_MICROREGIAO));
 		l.add(new AjudaTabela(TB_DIM_MUNICIPIO));
-		l.add(new AjudaTabela(TB_DIM_COLIGACOES));
+		l.add(new AjudaTabela(TB_DIM_LEGENDAS));
 //		l.add(new AjudaTabela(TB_DIM_VOTAVEIS));
 
 
