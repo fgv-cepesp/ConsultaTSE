@@ -29,12 +29,14 @@ public class ArgumentosBusca {
 	private String filtroCargo;
 	private AgregacaoRegional nivelRegional;
 	private AgregacaoPolitica nivelAgrecacaoPolitica;
-	
+
 	private String[] camposEscolhidos;
 	private String[] filtroPartido;
 	private String[] filtroCandidato;
 	private String[] filtroRegional;
 	private AgregacaoRegional nivelFiltroRegional;
+
+	private int turno;
 
 	public String[] getAnoEleicao() {
 		return anos;
@@ -91,7 +93,7 @@ public class ArgumentosBusca {
 	public void setFiltroCandidato(String[] filtroCandidato) {
 		this.filtroCandidato = filtroCandidato;
 	}
-	
+
 	public AgregacaoRegional getNivelFiltroRegional() {
 		return nivelFiltroRegional;
 	}
@@ -107,7 +109,15 @@ public class ArgumentosBusca {
 	public void setFiltroRegional(String[] filtroRegional) {
 		this.filtroRegional = filtroRegional;
 	}
-	
+
+	public int getTurno() {
+		return turno;
+	}
+
+	public void setTurno(int turno) {
+		this.turno = turno;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -115,6 +125,7 @@ public class ArgumentosBusca {
 			.append( "  Filtros obrigatórios:")
 			.append( "\n    - cargo: " ).append( filtroCargo )
 			.append( "\n    - nivelRegional: " ).append( nivelRegional )
+			.append( "\n    - turno: " ).append( turno )
 			.append( "\n    - nivelAgrecacaoPolitica: " ).append( nivelAgrecacaoPolitica )
 			.append( "\n Eleicoes: ")
 			.append( "\n    - anos: " ).append( Arrays.toString(anos) )
@@ -126,7 +137,7 @@ public class ArgumentosBusca {
 			.append( "\n    - nivelRegional: " ).append( nivelFiltroRegional )
 			.append( "\n    - regiao: " ).append( Arrays.toString(filtroRegional) )
 			.append("]\n");
-		
+
 		return sb.toString();
 	}
 

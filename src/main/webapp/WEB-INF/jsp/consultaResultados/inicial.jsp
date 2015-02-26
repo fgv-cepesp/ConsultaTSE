@@ -136,6 +136,18 @@ function selectedAsMultipleParameter(select, paramName)
 	return paramName + value.join('&' + paramName);
 }
 
+
+
+function habilitaTurno()
+{
+	var value = $('#filtroCargo').val();
+	if(value == 1 || value == 3 || value == 11) {
+		$('#filtroTurnoDiv').show();
+	} else {
+		$('#filtroTurnoDiv').hide();
+	}
+}
+
 //************************************************************************
 //
 //  Auxiliares dos Anos
@@ -819,7 +831,7 @@ $(function(){
 			    <label class="control-label" for="filtroCargo">Cargo</label>
 			    <div class="controls">
 			      <select id="filtroCargo" name="filtroCargo" required title="Cargo é um campo obrigatório."
-			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'Cargo', this.options[this.selectedIndex].text]);">
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'Cargo', this.options[this.selectedIndex].text]); habilitaTurno();">
 	                    <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
 	                        <option value="${cargo.chave}">${cargo.valor}</option>
 	                    </c:forEach>
@@ -827,6 +839,7 @@ $(function(){
                 	<span class="input-large uneditable-input" id="filtroCargoText" style="display: none;"></span>
 			    </div>
 			  </div>
+
 			  <div class="control-group">
 			    <label class="control-label" for="nivelAgregacaoRegional">Agregação regional <a href="#myModal" role="button" data-toggle="modal"><i class="icon-question-sign"></i></a></label>
 			    <div class="controls">
@@ -839,11 +852,12 @@ $(function(){
                 	<span class="input-large uneditable-input" id="nivelAgregacaoRegionalText" style="display: none;"></span>
 			    </div>
 			  </div>
+
 			  <div class="control-group">
 			    <label class="control-label" for="nivelAgregacaoPolitica">Agregação política</label>
 			    <div class="controls">
 			      <select name="nivelAgregacaoPolitica" required
-			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'AgregacaoPolitica', this.options[this.selectedIndex].text]);">>
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'AgregacaoPolitica', this.options[this.selectedIndex].text]);">
 	                    <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
 	                        <option value="${nap.chave}">${nap.valor}</option>
 	                    </c:forEach>
@@ -851,7 +865,21 @@ $(function(){
                 	<span class="input-large uneditable-input" id="nivelAgregacaoPoliticaText" style="display: none;"></span>
 			    </div>
 			  </div>
+
+			  <div id="filtroTurnoDiv" class="control-group"  style="display: none;">
+			    <label class="control-label" for="filtroTurno">Turno</label>
+			    <div class="controls">
+			      <select name="filtroTurno" required
+			      	onchange="_gaq.push(['_trackEvent', 'ConsultaTSE.FiltrosObrigatorios', 'Turno', this.options[this.selectedIndex].text]);">
+	                    <c:forEach items="${filtroTurnoList}" var="nap" varStatus="s">
+	                        <option value="${nap.chave}">${nap.valor}</option>
+	                    </c:forEach>
+                	</select>
+                	<span class="input-large uneditable-input" id="filtroTurnoText" style="display: none;"></span>
+			    </div>
+			  </div>
 			</div>
+
       		<div class="control-group">
       			<div class="controls">
 			  		<button class="btn btn-primary" id="filtrosObrigatoriosContinuar" data-loading-text="Validando...">Continuar</button>

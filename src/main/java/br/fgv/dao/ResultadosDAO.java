@@ -288,15 +288,16 @@ public class ResultadosDAO {
 		qb.select_().comma(CO_FACT_VOTOS_MUN_TURNO, reg, pol);
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
 		qb.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
-		
+
 		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
 			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
 		}
-		
+
 		qb._from_().tabela(TB_FACT_VOTOS_MUN);
 
 		// WHERE
-		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo());
+		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo())
+			._and_().eq(CO_FACT_VOTOS_MUN_TURNO, args.getTurno());
 
 			appendFiltroRegional(qb, args.getNivelFiltroRegional(), args.getFiltroRegional());
 			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, args.getFiltroPartido());

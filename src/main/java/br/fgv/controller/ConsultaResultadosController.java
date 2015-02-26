@@ -45,7 +45,6 @@ import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
 import br.fgv.business.BusinessImpl;
 import br.fgv.business.FormResultAux;
-import br.fgv.dao.ResultadosDAO;
 import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
@@ -76,6 +75,7 @@ public class ConsultaResultadosController {
 		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares
 				.getNivelAgregacaoPolitica());
 		result.include("filtroCargoList", business.getCargosDisponiveis());
+		result.include("filtroTurnoList", business.getTurnosDisponiveis());
 	}
 
 	@Get
@@ -196,7 +196,7 @@ public class ConsultaResultadosController {
 	@Post
 	@Path("/resultados.csv")
 	public Download resultadosCSVEntrada(List<String> anosEscolhidos, String filtroCargo,
-			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
+			String nivelAgregacaoRegional, String filtroTurno, String nivelAgregacaoPolitica,
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, String as_values_regional,
 			String as_values_candidatos, String as_values_partidos)
@@ -211,7 +211,7 @@ public class ConsultaResultadosController {
 		List<String> fc = trataLista(as_values_candidatos);
 
 
-		return resultadosCSV(anosEscolhidos, filtroCargo, nivelAgregacaoRegional,
+		return resultadosCSV(anosEscolhidos, filtroCargo, filtroTurno, nivelAgregacaoRegional,
 				nivelAgregacaoPolitica, camposEscolhidos, camposFixos,
 				nivelFiltroRegional, fr, fp, fc);
 	}
@@ -232,7 +232,7 @@ public class ConsultaResultadosController {
 
 	// @Post
 	// @Path("/resultados.csv")
-	public Download resultadosCSV(List<String> anosEscolhidos, String filtroCargo,
+	public Download resultadosCSV(List<String> anosEscolhidos, String filtroCargo, String turno,
 			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
 			List<String> camposEscolhidos, List<String> camposFixos,
 			String nivelFiltroRegional, List<String> filtroRegional,
@@ -269,14 +269,22 @@ public class ConsultaResultadosController {
 		args.setNivelRegional(AgregacaoRegional.fromInt(nivelAgregacaoRegional));
 		args.setCamposEscolhidos(campos);
 
+		int fcint = Integer.parseInt(filtroCargo);
+		int t = Integer.parseInt(turno);
+		if(fcint == 1 || fcint == 3 || fcint == 11) {
+			// keep
+		} else {
+			t = 1;
+		}
+		args.setTurno(t);
+
 
 		args.setNivelFiltroRegional(AgregacaoRegional.fromInt(nivelFiltroRegional));
 
 
 		String[] fr = filtroRegional.toArray(new String[filtroRegional.size()]);
 		String[] fp = filtroPartido.toArray(new String[filtroPartido.size()]);
-		String[] fc = filtroCandidato
-				.toArray(new String[filtroCandidato.size()]);
+		String[] fc = filtroCandidato.toArray(new String[filtroCandidato.size()]);
 
 		args.setFiltroRegional(fr);
 		args.setFiltroPartido(fp);

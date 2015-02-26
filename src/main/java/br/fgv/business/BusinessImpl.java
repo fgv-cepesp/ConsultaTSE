@@ -170,6 +170,13 @@ public class BusinessImpl {
 		return Collections.unmodifiableList(l);
 	}
 
+	public List<Par> getTurnosDisponiveis() {
+		List<Par> l = new ArrayList<Par>();
+		l.add(new Par("1", "1"));
+		l.add(new Par("2", "2"));
+		return Collections.unmodifiableList(l);
+	}
+
 	public List<Par> getCargosPorAno(String ano) {
 		List<Par> l = new ArrayList<Par>();
 		l.add(new Par("", "--Selecionar---"));
