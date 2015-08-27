@@ -18,7 +18,7 @@
  */
 package br.fgv.dao;
 
-import static br.fgv.model.Tabela.CO_DIM_PARTIDOS_SIGLA;
+import static br.fgv.model.Tabela.*;
 import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_CANDIDATO_SK;
 import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_COD_MUN;
 import static br.fgv.model.Tabela.CO_FACT_VOTOS_MUN_MACRO;
@@ -131,7 +131,7 @@ public class ResultadosDAOTest {
 				"sum(qnt_votos) as voto_total, " +
 				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by macro, partido, turno order by macro, partido, turno",
+				"WHERE cod_cargo = xxFiltroCargo AND turno = 0 group by macro, partido, turno order by macro, partido, turno",
 				dao.getStringQueryFato(args, "2010"));
 
 		args.setNivelRegional(AgregacaoRegional.fromInt("2"));
@@ -192,6 +192,17 @@ public class ResultadosDAOTest {
 		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", dim_partidos.sigla_Partido, voto_nominal, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
 				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.CANDIDATO));
+		
+	}
+	
+	@Test
+	public void testGetStringQueryDimCandidatoDesc() {
+		
+		String[] ocup = {TB_DIM_CANDIDATOS.getNome() + "." + CO_DIM_CANDIDATOS_OCUPACAO_COD};
+		
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", aux_candidatos_xxAnoEleicao.ocupacao_cod, voto_nominal, voto_total " +
+				"FROM ( xxQueryFato ) as r " +
+				"left join aux_candidatos_xxAnoEleicao on aux_candidatos_xxAnoEleicao.surrogatekey = r.candidato_sk", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ocup, AgregacaoPolitica.CANDIDATO));
 	}
 
 	@Test
@@ -252,7 +263,7 @@ public class ResultadosDAOTest {
 	public void testGetMunicipioList() {
 		List<Par> l = dao.getMunicipioList("A");
 		assertTrue(l.size() > 4500);
-		assertTrue(l.size() < 5000);
+		assertTrue(l.size() < 6000);
 		Par p = l.get(0);
 		assertTrue(p.getChave().matches("^\\d+$"));
 		assertTrue(p.getValor().matches("^.+$"));
@@ -311,6 +322,7 @@ public class ResultadosDAOTest {
 		ab.setFiltroCargo("7");
 		ab.setNivelAgrecacaoPolitica(AgregacaoPolitica.PARTIDO);
 		ab.setNivelRegional(AgregacaoRegional.UF);
+		ab.setTurno(1);
 
 		String[] partidos = {"43"};
 		ab.setFiltroPartido(partidos);

@@ -303,4 +303,20 @@ public class QueryBuilder {
 		
 		return "(" + UNION_ALL_JOINER.join(queries) + ")";
 	}
+
+	public void replaceAll(String from, String to) {
+		replaceAll(query, from, to);
+		
+	}
+	
+	public static void replaceAll(StringBuilder builder, String from, String to)
+	{
+	    int index = builder.indexOf(from);
+	    while (index != -1)
+	    {
+	        builder.replace(index, index + from.length(), to);
+	        index += to.length(); // Move to the end of the replacement
+	        index = builder.indexOf(from, index);
+	    }
+	}
 }

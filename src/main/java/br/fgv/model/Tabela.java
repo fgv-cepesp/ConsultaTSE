@@ -173,6 +173,28 @@ public class Tabela implements Comparable<Tabela>{
 
 	public static final Tabela TB_SIS_ANOS;
 	public static final Coluna CO_SIS_ANOS_ANO;
+	
+	public static final Tabela TB_DIM_OCUPACAO;
+	public static final Coluna CO_DIM_OCUPACAO_ID;
+	public static final Coluna CO_DIM_OCUPACAO_VALUE;
+	
+	private static final  Coluna CO_DIM_SEXO_ID;
+
+	private static final  Coluna CO_DIM_SEXO_VALUE;
+
+	private static final Tabela TB_DIM_SEXO;
+
+	private static final Coluna CO_DIM_ESTADOCIVIL_ID;
+
+	private static final Coluna CO_DIM_ESTADOCIVIL_VALUE;
+
+	private static final Tabela TB_DIM_ESTADOCIVIL;
+
+	private static final Coluna CO_DIM_NACIONALIDADE_ID;
+
+	private static final Coluna CO_DIM_NACIONALIDADE_VALUE;
+
+	private static final Tabela TB_DIM_NACIONALIDADE;
 
 
 	/*outras constantes*/
@@ -187,6 +209,8 @@ public class Tabela implements Comparable<Tabela>{
 
 	private static final Map<String, Tabela> tabelas;
 	private static Map<String, Tabela> __tabelas = new HashMap<String, Tabela>();
+
+
 
 	private final String nome;
 	private final String nomeDescritivo;
@@ -294,13 +318,13 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_LEGENDA_COMPOSICAO = new Coluna("legenda_composicao", "Legenda Composisão", DISPONIVEL);
 		CO_DIM_CANDIDATOS_LEGENDA_DES = new Coluna("legenda_des", "Legenda Des", DISPONIVEL);
 //		CO_DIM_CANDIDATOS_COLIGACAO_ID = new Coluna("coligacao_id", OCULTA);
-		CO_DIM_CANDIDATOS_OCUPACAO_COD = new Coluna("ocupacao_cod", "Código Ocupação", DISPONIVEL);
+		CO_DIM_CANDIDATOS_OCUPACAO_COD = new Coluna("ocupacao_cod", "Ocupação", DISPONIVEL, "dim_ocupacao");
 		CO_DIM_CANDIDATOS_DATA_NASC = new Coluna("data_nasc","Data Nascimento", DISPONIVEL);
 //		CO_DIM_CANDIDATOS_DATA_NASC_ORI = new Coluna("data_nasc_original", OCULTA);
-		CO_DIM_CANDIDATOS_SEXO_COD = new Coluna("sexo_cod", "Código Sexo", DISPONIVEL);
+		CO_DIM_CANDIDATOS_SEXO_COD = new Coluna("sexo_cod", "Sexo", DISPONIVEL, "dim_sexo");
 		CO_DIM_CANDIDATOS_GRAU_INSTRUCAO_COD = new Coluna("grau_instrucao_cod", "Código Instrução");
-		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Código Estado Civil", DISPONIVEL);
-		CO_DIM_CANDIDATOS_NACIONALIDADE_COD = new Coluna("nacionalidade_cod", "Código Nacionalidade", DISPONIVEL);
+		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Estado Civil", DISPONIVEL, "dim_estadocivil");
+		CO_DIM_CANDIDATOS_NACIONALIDADE_COD = new Coluna("nacionalidade_cod", "Nacionalidade", DISPONIVEL, "dim_nacionalidade");
 		CO_DIM_CANDIDATOS_NASC_UF = new Coluna("nasc_uf", "UF de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
@@ -467,6 +491,62 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_SIS_ANO_CARGO_COD_CARGO);
 
 		TB_SIS_ANO_CARGO = new Tabela("sis_ano_cargo", c);
+		
+		
+		//
+		CO_DIM_OCUPACAO_ID = new Coluna("id");
+		CO_DIM_OCUPACAO_VALUE = new Coluna("value", "ocupacao_des");
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_OCUPACAO_ID);
+		c.add(CO_DIM_OCUPACAO_VALUE);
+
+		String dim_ocupacao = "dim_ocupacao";
+		TB_DIM_OCUPACAO = new Tabela(dim_ocupacao, c,
+				EQ(TB_CO(dim_ocupacao, CO_DIM_OCUPACAO_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_OCUPACAO_COD));
+		//
+		
+
+		//
+		CO_DIM_SEXO_ID = new Coluna("id");
+		CO_DIM_SEXO_VALUE = new Coluna("value", "sexo_des");
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_SEXO_ID);
+		c.add(CO_DIM_SEXO_VALUE);
+
+		String dim_sexo = "dim_sexo";
+		TB_DIM_SEXO = new Tabela(dim_sexo, c,
+				EQ(TB_CO(dim_sexo, CO_DIM_SEXO_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_SEXO_COD));
+		//
+		
+
+		//
+		CO_DIM_ESTADOCIVIL_ID = new Coluna("id");
+		CO_DIM_ESTADOCIVIL_VALUE = new Coluna("value", "estadocivil_des");
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_ESTADOCIVIL_ID);
+		c.add(CO_DIM_ESTADOCIVIL_VALUE);
+
+		String dim_estadocivil = "dim_estadocivil";
+		TB_DIM_ESTADOCIVIL = new Tabela(dim_estadocivil, c,
+				EQ(TB_CO(dim_estadocivil, CO_DIM_ESTADOCIVIL_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_EST_CIVIL_COD));
+		//
+		
+
+		//
+		CO_DIM_NACIONALIDADE_ID = new Coluna("id");
+		CO_DIM_NACIONALIDADE_VALUE = new Coluna("value", "nacionalidade_des");
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_NACIONALIDADE_ID);
+		c.add(CO_DIM_NACIONALIDADE_VALUE);
+
+		String dim_nacionalidade = "dim_nacionalidade";
+		TB_DIM_NACIONALIDADE = new Tabela(dim_nacionalidade, c,
+				EQ(TB_CO(dim_nacionalidade, CO_DIM_NACIONALIDADE_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_NACIONALIDADE_COD));
+		//
 
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANOS_ANO = new Coluna("ano");

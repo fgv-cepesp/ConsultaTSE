@@ -75,7 +75,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -319,12 +321,8 @@ public class ResultadosDAO {
 							return t1.compareTo(t2);
 						}
 					});
+		
 
-		for (String campo : camposEscolhidos) {
-			String tabela = campo.substring(0, campo.indexOf("."));
-			if(Tabela.byName(tabela) != null)
-				tabelasARelacionar.add(tabela);
-		}
 
 
 		SortedSet<String> camposFiltrados = new TreeSet<String>(new Comparator<String>() {
@@ -357,16 +355,34 @@ public class ResultadosDAO {
 				return campo;
 			}
 		});
-		for (String c : camposEscolhidos) {
-			if(c.startsWith("zona.")) {
+		
+		Map<String, String> descricoes = new HashMap<String, String>();
+
+		for (String campo : camposEscolhidos) {
+			String tabela = campo.substring(0, campo.indexOf("."));
+			String coluna = campo.substring(campo.indexOf(".") + 1);
+			
+			Tabela t = Tabela.byName(tabela); 
+			if(t != null) {
+				tabelasARelacionar.add(tabela);
+				
+				Coluna c = t.getColuna(coluna);
+				if(c != null && c.hasDescricao()) {
+					tabelasARelacionar.add(c.getTabelaDescricao());
+					descricoes.put(campo, c.getDescricaoCol());
+				}
+			}
+			
+			if(campo.startsWith("zona.")) {
 				camposFiltrados.add("zona");
-			} else if(c.startsWith("votos.")) {
+			} else if(campo.startsWith("votos.")) {
 				// nao inclui
 			} else {
-				camposFiltrados.add(c);
+				camposFiltrados.add(campo);
 			}
-
+			
 		}
+		
 
 		QueryBuilder qb = new QueryBuilder();
 		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").
@@ -379,8 +395,14 @@ public class ResultadosDAO {
 	        	qb._left_join_().tabela(tabela)._on_().valor(replace(tabela.getRelacao(), anoEleicao));
 	        }
 		}
+		
+		for (String k : descricoes.keySet()) {
+			qb.replaceAll(k, k + ", " + descricoes.get(k));
+		}
 
 		String ret = qb.toString(anoEleicao);
+		
+		
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Query DIM:\t" + ret);

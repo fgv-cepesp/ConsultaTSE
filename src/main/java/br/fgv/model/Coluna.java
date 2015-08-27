@@ -24,6 +24,8 @@ public class Coluna implements Comparable<Coluna>{
 	private final String nomeDescritivo;
 	private final Disponibilidade disponivel;
 	private int order;
+	
+	private final String tabelaDescricao;
 
 	public Coluna(String nome, String nomeDescritivo) {
 		this(nome, nomeDescritivo, Disponibilidade.DESCONHECIDA);
@@ -37,6 +39,14 @@ public class Coluna implements Comparable<Coluna>{
 		this.nome = nome;
 		this.nomeDescritivo = nomeDescritivo;
 		this.disponivel = disponivel;
+		this.tabelaDescricao = null;
+	}
+
+	public Coluna(String nome, String nomeDescritivo, Disponibilidade disponivel, String tabelaDescricao) {
+		this.nome = nome;
+		this.nomeDescritivo = nomeDescritivo;
+		this.disponivel = disponivel;
+		this.tabelaDescricao = tabelaDescricao;
 	}
 
 	public Coluna(String nome, Disponibilidade disponivel) {
@@ -87,5 +97,20 @@ public class Coluna implements Comparable<Coluna>{
             return 1;
         }
         return 0;
+	}
+	
+	public boolean hasDescricao() {
+		if(this.tabelaDescricao == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	public String getTabelaDescricao() {
+		return tabelaDescricao;
+	}
+
+	public String getDescricaoCol() {
+		return getTabelaDescricao() +  "value as " + getNome().replace("_cod", "_des");
 	}
 }
