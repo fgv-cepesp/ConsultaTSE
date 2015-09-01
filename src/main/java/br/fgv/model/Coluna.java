@@ -111,6 +111,6 @@ public class Coluna implements Comparable<Coluna>{
 	}
 
 	public String getDescricaoCol() {
-		return getTabelaDescricao() +  "value as " + getNome().replace("_cod", "_des");
+		return getTabelaDescricao() +  ".value as " + getNome().replace("_cod", "_des");
 	}
 }

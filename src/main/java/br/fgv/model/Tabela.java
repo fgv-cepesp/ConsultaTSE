@@ -196,6 +196,12 @@ public class Tabela implements Comparable<Tabela>{
 
 	private static final Tabela TB_DIM_NACIONALIDADE;
 
+	private static final Coluna CO_DIM_IBGE_ID;
+
+	private static final Coluna CO_DIM_IBGE_VALUE;
+
+	private static final Tabela TB_DIM_IBGE;
+
 
 	/*outras constantes*/
 	public static final int VOTO_NOMINAL_COD = 1;
@@ -326,7 +332,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Estado Civil", DISPONIVEL, "dim_estadocivil");
 		CO_DIM_CANDIDATOS_NACIONALIDADE_COD = new Coluna("nacionalidade_cod", "Nacionalidade", DISPONIVEL, "dim_nacionalidade");
 		CO_DIM_CANDIDATOS_NASC_UF = new Coluna("nasc_uf", "UF de Nascimento", DISPONIVEL);
-		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL);
+		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL, "dim_ibge");
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_DES = new Coluna("resultado_des", "Descrição Resultado", FIXO);
 //		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
@@ -535,6 +541,8 @@ public class Tabela implements Comparable<Tabela>{
 		//
 		
 
+		
+
 		//
 		CO_DIM_NACIONALIDADE_ID = new Coluna("id");
 		CO_DIM_NACIONALIDADE_VALUE = new Coluna("value", "nacionalidade_des");
@@ -546,6 +554,20 @@ public class Tabela implements Comparable<Tabela>{
 		String dim_nacionalidade = "dim_nacionalidade";
 		TB_DIM_NACIONALIDADE = new Tabela(dim_nacionalidade, c,
 				EQ(TB_CO(dim_nacionalidade, CO_DIM_NACIONALIDADE_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_NACIONALIDADE_COD));
+		//
+		
+
+		//
+		CO_DIM_IBGE_ID = new Coluna("id");
+		CO_DIM_IBGE_VALUE = new Coluna("value", "ibge_des");
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_IBGE_ID);
+		c.add(CO_DIM_IBGE_VALUE);
+
+		String dim_ibge = "dim_ibge";
+		TB_DIM_IBGE = new Tabela(dim_ibge, c,
+				EQ(TB_CO(dim_ibge, CO_DIM_IBGE_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_NASC_COD_MUN));
 		//
 
 		/* Colunas da tabela SIS ANO CARGO */

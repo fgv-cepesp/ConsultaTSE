@@ -85,7 +85,13 @@ public class CSVBuilder extends InputStream implements Runnable {
 		try {
 			LOGGER.info("Iniciando criacao do CSV...");
 			int colCount = rs.getMetaData().getColumnCount();
-			elemento(ra.getColumnsName()).linha();
+			
+			String[] labelArr = new String[colCount];
+			for (int i = 0; i < colCount; i++) {
+				labelArr[i] = rs.getMetaData().getColumnLabel(i+1);
+			}
+			
+			elemento(labelArr).linha();
 
 			while (rs.next()) {
 				if(!continuarPopulando) {
