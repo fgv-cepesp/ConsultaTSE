@@ -202,6 +202,12 @@ public class Tabela implements Comparable<Tabela>{
 
 	private static final Tabela TB_DIM_IBGE;
 
+	private static final Coluna CO_DIM_SIT_CANDIDATURA_ID;
+
+	private static final Coluna CO_DIM_SIT_CANDIDATURA_VALUE;
+
+	private static final Tabela TB_DIM_SIT_CANDIDATURA;
+
 
 	/*outras constantes*/
 	public static final int VOTO_NOMINAL_COD = 1;
@@ -541,6 +547,18 @@ public class Tabela implements Comparable<Tabela>{
 		//
 		
 
+		//
+		CO_DIM_SIT_CANDIDATURA_ID = new Coluna("id");
+		CO_DIM_SIT_CANDIDATURA_VALUE = new Coluna("value", "sit_candidatura_des");
+
+		c = new ArrayList<Coluna>();
+		c.add(CO_DIM_SIT_CANDIDATURA_ID);
+		c.add(CO_DIM_SIT_CANDIDATURA_VALUE);
+
+		String dim_sit_candidatura = "dim_sit_candidatura";
+		TB_DIM_SIT_CANDIDATURA = new Tabela(dim_sit_candidatura, c,
+				EQ(TB_CO(dim_sit_candidatura, CO_DIM_SIT_CANDIDATURA_ID), TB_DIM_CANDIDATOS + "." +  CO_DIM_CANDIDATOS_SIT_CANDIDATURA_COD));
+		//
 		
 
 		//
