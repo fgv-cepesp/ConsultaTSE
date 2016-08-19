@@ -1,0 +1,31 @@
+<!-- Este arquivo deve ficar em ~/.m2/settings.xml -->
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+      <server>
+          <id>cepesp-dev</id>
+          <username>cepespdata</username>
+          <password>senha do servidor</password>
+      </server>
+    </servers>
+    
+    <profiles>
+	    <profile>
+    		<id>cepesp-dev</id>
+			<properties>
+				<cepesp.server.url>http://localhost:8080/manager</cepesp.server.url>
+				<cepesp.db.user>usuario do banco</cepesp.db.user>
+				<cepesp.db.passwd>senha do banco</cepesp.db.passwd>
+				<cepespdata.analytics>UA-39540607-2</cepespdata.analytics>
+			</properties>
+		</profile>
+	</profiles>
+
+  <activeProfiles>
+    <activeProfile>cepesp-dev</activeProfile>
+  </activeProfiles>    
+    
+</settings>
