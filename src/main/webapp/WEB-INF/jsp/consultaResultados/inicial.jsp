@@ -742,6 +742,22 @@ $(function(){
     //  Binds da consulta
     //
     //************************************************************************
+    
+	var serializeToObject = function(form) {
+	    var object = {};
+	    var array = form.serializeArray();
+	    $.each(array, function() {
+	        if (object[this.name] !== undefined) {
+	            if (!object[this.name].push) {
+	            	object[this.name] = [object[this.name]];
+	            }
+	            object[this.name].push(this.value || '');
+	        } else {
+	        	object[this.name] = this.value || '';
+	        }
+	    });
+	    return object;
+	};
 
 
     $('#butQuery').click(function(e) {
@@ -750,7 +766,9 @@ $(function(){
     	$('#butQuery').button('loading');
 
     	setTimeout(function() { $('#butQuery').button('reset'); }, 300000);
-
+    	
+    	mixpanel.track('Query Performed', serializeToObject($('#formConsulta')));
+    	
     	try {
     		popularColunasOpcionaisFake();
 
@@ -786,7 +804,7 @@ $(function(){
     });
     refreshScroll();
     setTimeout(function() { $('body').scrollspy(); }, 2000);
-
+    
 });
 </script>
   <div class="row-fluid">
