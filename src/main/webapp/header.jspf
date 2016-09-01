@@ -57,6 +57,31 @@
 	</script>
 	<!-- end Mixpanel -->
 	
+	<!-- start Jaco -->
+	<script type="text/javascript">
+		(function(e, t) {
+		    function r(e, t) {
+		        e[t] = function() {
+		            e.push([ t ].concat(Array.prototype.slice.call(arguments, 0)));
+		        };
+		    }
+		    var n = "JacoRecorder";
+		    (function(e, t, i, s) {
+		        if (!i.__VERSION) {
+		            e[n] = i;
+		            var o = [ "init", "identify", "startRecording", "stopRecording", "removeUserTracking", "setUserInfo" ];
+		            for (var u = 0; u < o.length; u++) r(i, o[u]);
+		            i.__VERSION = 2, i.__INIT_TIME = 1 * new Date;
+		            var a = t.createElement("script");
+		            a.async = !0, a.setAttribute("crossorigin", "anonymous"), a.src = s;
+		            var f = t.getElementsByTagName("head")[0];
+		            f.appendChild(a);
+		        }
+		    })(e, t, e[n] || [], "//recorder-assets.getjaco.com/recorder_v2.js");
+		}).call(window, window, document), window.JacoRecorder.push([ "init", "b7daf4cd-5491-49aa-bd47-a0574a853c11", {} ]);
+	</script>
+	<!-- end Jaco -->
+	
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
