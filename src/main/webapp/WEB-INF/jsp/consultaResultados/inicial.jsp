@@ -743,19 +743,24 @@ $(function(){
     //
     //************************************************************************
     
-	var serializeToObject = function(form) {
+	var serializeToObject = function(form, startTime) {
 	    var object = {};
 	    var array = form.serializeArray();
-	    $.each(array, function() {
-	        if (object[this.name] !== undefined) {
-	            if (!object[this.name].push) {
-	            	object[this.name] = [object[this.name]];
+	    var elapsedTime = (new Date().getTime()) - startTime;
+	    elapsedTime /= 1000;
+	    elapsedTime += 's';
+	    $.each(array, function(index, item) {
+	        if (object[item.name] !== undefined) {
+	            if (!object[item.name].push) {
+	            	object[item.name] = [object[item.name]];
 	            }
-	            object[this.name].push(this.value || '');
+	            object[item.name].push(item.value || '');
 	        } else {
-	        	object[this.name] = this.value || '';
+	        	object[item.name] = item.value || '';
 	        }
 	    });
+	    object.tempo = elapsedTime;
+	    
 	    return object;
 	};
 
@@ -767,8 +772,6 @@ $(function(){
 
     	setTimeout(function() { $('#butQuery').button('reset'); }, 300000);
     	
-    	mixpanel.track('Query Performed', serializeToObject($('#formConsulta')));
-    	
     	try {
     		popularColunasOpcionaisFake();
 
@@ -777,12 +780,16 @@ $(function(){
 				data: $('#formConsulta').serialize(),
 				dataType: 'text/csv',
 			    successCallback: function (url) {
+			    	mixpanel.track('Query Performed', serializeToObject($('#formConsulta'), startTime));
+			    	
 			    	var elapsedTime = (new Date().getTime()) - startTime;
 			    	_gaq.push(['_trackEvent', 'ConsultaTSE', 'Download', 'resultados.csv', elapsedTime]);
 			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados.csv']);
 			    	$('#butQuery').button('reset');
 			    },
 			    failCallback: function (htmlStr, url) {
+			    	mixpanel.track('Query Error', serializeToObject($('#formConsulta'), startTime));
+			    	
 			    	_gaq.push(['_trackPageview', '/consultaResultados/resultados-ERRO.csv']);
 			    	$('#errorModalBody').html( htmlStr );
 
@@ -797,6 +804,8 @@ $(function(){
 	        return false;
     	}
         catch (err) {
+        	mixpanel.track('Query Exception', serializeToObject($('#formConsulta'), startTime));
+        	
         	_gaq.push(['_trackPageview', '/consultaResultados/resultados-EXCEPTION.csv']);
             alert("Houve algum erro na geracao do arquivo.");
             return;
