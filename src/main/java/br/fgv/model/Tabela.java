@@ -40,13 +40,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import br.fgv.util.ColumnField;
 import org.apache.log4j.Logger;
 
 import br.fgv.CepespDataException;
 import br.fgv.model.AjudaTabela.ItemAjuda;
 import br.fgv.model.Coluna.Disponibilidade;
 import br.fgv.util.CSVBuilder;
-import br.fgv.util.Par;
 
 import com.google.common.io.ByteStreams;
 
@@ -662,17 +662,18 @@ public class Tabela implements Comparable<Tabela>{
 		return getNome();
 	}
 
-	public List<Par> getColunas(Disponibilidade disponibilidade) {
-		List<Par> l = new ArrayList<Par>();
-		String prefixo = getNome() + ".";
-		String prefixoDescritivo = getNomeDescritivo() + ": ";
+	public List<ColumnField> getColunas(Disponibilidade disponibilidade) {
+		List<ColumnField> l = new ArrayList<ColumnField>();
+
 		for (Coluna c : getColunas()) {
-			if(disponibilidade.equals(c.getDisponibilidade()))
-				l.add(new Par(prefixo + c.getNome(), prefixoDescritivo
-					+ c.getNomeDescritivo()));
+			if(disponibilidade.equals(c.getDisponibilidade())) {
+				ColumnField field = new ColumnField(this);
+				field.setName(c.getNome());
+				field.setDescription(c.getNomeDescritivo());
+			}
 		}
 
-		return Collections.unmodifiableList(l);
+		return l;
 	}
 
 	public static Tabela byName(String nome) {

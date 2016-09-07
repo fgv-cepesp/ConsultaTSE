@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.junit.BeforeClass;
@@ -65,13 +66,13 @@ public class ResultadosDAOTest {
 
 	@Test
 	public void testGetAnosDisponiveisList() {
-		List<Par> l = dao.getAnosDisponiveisList();
+		List<Integer> l = dao.getAnosDisponiveisList();
 		assertTrue(l.size() > 0);
 	}
 
 	@Test
 	public void testCargosDisponiveisList() {
-		List<Par> l = dao.getCargosPorAnoList("2010");
+		Map<String, String> l = dao.getCargosPorAnoList("2010");
 		assertEquals(5, l.size());
 
 		l = dao.getCargosPorAnoList("2008");
@@ -118,12 +119,12 @@ public class ResultadosDAOTest {
 		ArgumentosBusca args = new ArgumentosBusca();
 		args.setAnoEleicao(anos);
 		args.setFiltroCargo("xxFiltroCargo");
-		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt("1"));
-		args.setNivelRegional(AgregacaoRegional.fromInt("1"));
+		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.findByNivel(1));
+		args.setNivelRegional(AgregacaoRegional.findByNivel(1));
 
-		args.setFiltroCandidato(empty);
-		args.setFiltroPartido(empty);
-		args.setFiltroRegional(empty);
+		args.setCandidados(empty);
+		args.setPartidos(empty);
+		args.setRegioes(empty);
 
 
 		assertEquals(SELECT_ + "turno, macro, partido, " +
@@ -134,7 +135,7 @@ public class ResultadosDAOTest {
 				"WHERE cod_cargo = xxFiltroCargo AND turno = 0 group by macro, partido, turno order by macro, partido, turno",
 				dao.getStringQueryFato(args, "2010"));
 
-		args.setNivelRegional(AgregacaoRegional.fromInt("2"));
+		args.setNivelRegional(AgregacaoRegional.findByNivel(2));
 
 		assertEquals(SELECT_ + "turno, uf, partido, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, " +
@@ -158,10 +159,10 @@ public class ResultadosDAOTest {
 				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno",
 				dao.getStringQueryFato(args, "2010"));
 
-		args.setFiltroCandidato(ef);
-		args.setFiltroPartido(cd);
-		args.setFiltroRegional(ab);
-		args.setNivelFiltroRegional(AgregacaoRegional.MICRO_REGIAO);
+		args.setCandidados(ef);
+		args.setPartidos(cd);
+		args.setRegioes(ab);
+		args.setFiltroNivelRegional(AgregacaoRegional.MICRO_REGIAO);
 
 		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, sum(qnt_votos) as voto_total " +
@@ -299,7 +300,7 @@ public class ResultadosDAOTest {
 		assertEquals("abc", dao.aplicarFiltros("abc", args));
 
 		String[] filtroCandidato = {"c1", "c2"};
-		args.setFiltroCandidato(filtroCandidato);
+		args.setCandidados(filtroCandidato);
 		assertEquals("SELECT  *  FROM (abc) T WHERE T.titulo in (c1, c2) ", dao.aplicarFiltros("abc", args));
 	}
 
@@ -325,7 +326,7 @@ public class ResultadosDAOTest {
 		ab.setTurno(1);
 
 		String[] partidos = {"43"};
-		ab.setFiltroPartido(partidos);
+		ab.setPartidos(partidos);
 
 		String[] campos = {"aux_estados.ibge"};
 		ab.setCamposEscolhidos(campos);
@@ -353,7 +354,7 @@ public class ResultadosDAOTest {
 		ab.setNivelRegional(AgregacaoRegional.UF);
 
 		String[] partidos = {"43"};
-		ab.setFiltroPartido(partidos);
+		ab.setPartidos(partidos);
 
 		String[] campos = {"aux_estados.ibge"};
 		ab.setCamposEscolhidos(campos);

@@ -110,7 +110,7 @@ public class ResultadosDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Integer> getAnosDisponiveis() {
+	public List<Integer> getAnosDisponiveisList() {
 		List<Integer> list = null;
 
 		try {
@@ -131,53 +131,28 @@ public class ResultadosDAO {
 		return list;
 	}
 
-
-
-	public List<Par> getAnosDisponiveisList() {
-		List<Par> pares = new ArrayList<Par>();
-		List<Integer> list = null;
-
-		list = getAnosDisponiveis();
-
-		for (Integer item : list) {
-			String i = String.valueOf(item);
-			pares.add(new Par(i, i));
-		}
-
-		return pares;
-	}
-
-	public List<Par> getCargosList() {
-		List<Integer> anos = getAnosDisponiveis();
-
+	public Map<String, String> getCargosList() {
+		List<Integer> anos = getAnosDisponiveisList();
 		List<String> queries = new ArrayList<String>();
 
-		for (Integer ano : anos) {
+		for (Integer ano : anos)
 			queries.add(getQueryCargosPorAnoList(Integer.toString(ano)));
-		}
 
-		String completeQuery = QueryBuilder.unionDistinct(queries)
-				+ _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
+		String completeQuery = QueryBuilder.unionDistinct(queries) + _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
 
 		System.out.println(">> QUERY COMPLETA");
 		System.out.println(completeQuery);
 		System.out.println("<< QUERY COMPLETA");
 
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
+		Map<String, String> pares = new HashMap<String, String>();
 
 		try {
-
 			Query query = getSession().createSQLQuery(completeQuery);
+			List<Object[]> list = (List<Object[]>) query.list();
 
-			list = (List<Object[]>) query.list();
+			for (Object[] item : list)
+				pares.put(String.valueOf(item[0]), String.valueOf(item[1]));
 
-			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1]);
-
-				pares.add(new Par(chave, valor));
-			}
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter cargos disponiveis.", e);
 		}
@@ -186,23 +161,16 @@ public class ResultadosDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Par> getCargosPorAnoList(String ano) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
+	public Map<String, String> getCargosPorAnoList(String ano) {
+		Map<String, String> pares = new HashMap<String, String>();
 
 		try {
 			String queryString = getQueryCargosPorAnoList(ano);
-
 			Query query = getSession().createSQLQuery(queryString);
+			List<Object[]> list = (List<Object[]>) query.list();
 
-			list = (List<Object[]>) query.list();
-
-			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1]);
-
-				pares.add(new Par(chave, valor));
-			}
+			for (Object[] item : list)
+				pares.put(String.valueOf(item[0]), String.valueOf(item[1]));
 
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter cargos disponiveis por ano.", e);
@@ -222,10 +190,7 @@ public class ResultadosDAO {
 		return qb.toString();
 	}
 
-	public List<Par> getAnosParaCargoList(String cargo) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Integer> list = null;
-
+	public List<Integer> getAnosParaCargoList(String cargo) {
 		try {
 			QueryBuilder qb = new QueryBuilder();
 
@@ -234,31 +199,18 @@ public class ResultadosDAO {
 				._where_().coluna(CO_SIS_ANO_CARGO_COD_CARGO)._eq_().valor(cargo)
 				._order_by_().coluna(CO_SIS_ANO_CARGO_ANO);
 
-
 			Query query = getSession().createSQLQuery(qb.toString());
 
-			list = (List<Integer>) query.list();
-
-			for (Integer item : list) {
-				String chave = String.valueOf(item);
-				String valor = String.valueOf(item);
-
-				pares.add(new Par(chave, valor));
-			}
-
+			return (List<Integer>) query.list();
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter cargos disponiveis por ano.", e);
+			throw e;
 		}
-
-		return pares;
 	}
 
-	QueryBuilder appendFiltroPolitico(QueryBuilder query, AgregacaoPolitica agregacaoPolitica,
-			String[] filtroPolitico) {
-
+	QueryBuilder appendFiltroPolitico(QueryBuilder query, AgregacaoPolitica agregacaoPolitica, String[] filtroPolitico) {
 		// nesses casos o nivel é fora do intervalo...
-		if (agregacaoPolitica == null || filtroPolitico == null
-				|| filtroPolitico.length == 0) {
+		if (agregacaoPolitica == null || filtroPolitico.length == 0) {
 			// do nothing
 		} else {
 			query._and_().valor(agregacaoPolitica.getNome()).in(filtroPolitico);
@@ -268,8 +220,7 @@ public class ResultadosDAO {
 	}
 
 	QueryBuilder appendFiltroRegional(QueryBuilder query, AgregacaoRegional agregacaoRegional, String[] filtroRegional) {
-
-		if(agregacaoRegional == null || filtroRegional == null || filtroRegional.length == 0){
+		if(agregacaoRegional == null || filtroRegional.length == 0){
 			// do nothing
 		} else {
 			query._and_().valor(agregacaoRegional.getCamposAgregar()).in(filtroRegional);
@@ -301,8 +252,10 @@ public class ResultadosDAO {
 		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo())
 			._and_().eq(CO_FACT_VOTOS_MUN_TURNO, args.getTurno());
 
-			appendFiltroRegional(qb, args.getNivelFiltroRegional(), args.getFiltroRegional());
-			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, args.getFiltroPartido());
+			List<String> regioes = args.getRegioes();
+			List<String> partidos = args.getPartidos();
+			appendFiltroRegional(qb, args.getNivelRegional(), regioes.toArray(new String[regioes.size()]));
+			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, partidos.toArray(new String[partidos.size()]));
 			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 
 		// GROUP BY
@@ -416,15 +369,13 @@ public class ResultadosDAO {
 	}
 
 	public ResultSetWork queryFato(ArgumentosBusca args) {
-
-		String[] anos = args.getAnoEleicao();
-
 		List<String> queries = new ArrayList<String>();
+		List<String> listCamposEscolhidos = args.getCamposEscolhidos();
+		String[] camposEscolhidos = listCamposEscolhidos.toArray(new String[listCamposEscolhidos.size()]);
 
-		for (String ano : anos) {
+		for (String ano : args.getAnosEleicoes()) {
 		    String queryFato = getStringQueryFato(args, ano);
-			String queryTotal = getStringQueryDim(queryFato, ano,
-					args.getCamposEscolhidos(), args.getNivelAgrecacaoPolitica());
+			String queryTotal = getStringQueryDim(queryFato, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
 			String queryFinal = aplicarFiltros(queryTotal, args);
 
 			queries.add(queryFinal);
@@ -451,10 +402,10 @@ public class ResultadosDAO {
 		// por agora, apenas filtro de candidato... os outros podem ser feito
 		// direto na fato.
 		QueryBuilder qb = new QueryBuilder();
-		String[] filtroCandidato = args.getFiltroCandidato();
-		if(filtroCandidato != null && filtroCandidato.length > 0) {
+		List<String> filtroCandidato = args.getCandidados();
+		if(filtroCandidato.size() > 0) {
 			qb.select_()._star_()._from_().declareRef(queryTotal, "T")
-				._where_().ref(CO_DIM_CANDIDATOS_TITULO, "T").in(filtroCandidato);
+				._where_().ref(CO_DIM_CANDIDATOS_TITULO, "T").in(filtroCandidato.toArray(new String[filtroCandidato.size()]));
 		} else {
 			return queryTotal;
 		}
@@ -507,14 +458,11 @@ public class ResultadosDAO {
 				._where_().ref(CO_DIM_CARGO_CD, a)._eq_().valor(codCargo);
 
 			Query query = getSession().createSQLQuery(qb.toString());
-
 			ret = (String) query.uniqueResult();
-			if(ret == null || ret.isEmpty()) {
-				LOGGER.error("Nao pude obter cargo para id: " + codCargo);
-			}
 
 		} catch (RuntimeException e) {
 			LOGGER.error("Exception ao tentar obter cargo para id: " + codCargo, e);
+			throw e;
 		}
 
 		return ret;

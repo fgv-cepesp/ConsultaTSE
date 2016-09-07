@@ -43,17 +43,17 @@ public enum AgregacaoPolitica {
 		this.colunas = colunas;
 	}
 
-	public static AgregacaoPolitica fromInt(int nivel) {
+	public static AgregacaoPolitica findByNivel(String nivel) {
+		return findByNivel(Integer.parseInt(nivel));
+	}
+
+	public static AgregacaoPolitica findByNivel(int nivel) {
 		for (AgregacaoPolitica e : AgregacaoPolitica.values()) {
 			if(e.getNivel() == nivel) {
 				return e;
 			}
 		}
 		return null;
-	}
-
-	public static AgregacaoPolitica fromInt(String nivel) {
-		return fromInt(Integer.parseInt(nivel));
 	}
 
 	public boolean equalsName(String otherName) {

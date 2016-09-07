@@ -33,3 +33,6 @@ target/**/*
 # IntelliJ IDE
 .idea/
 cepespdata.iml
+
+#NodeJS
+node_modules/

@@ -29,6 +29,7 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import br.fgv.util.ColumnField;
 import org.apache.log4j.Logger;
 
 import br.com.caelum.vraptor.Get;
@@ -49,7 +50,6 @@ import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
 
-import com.google.common.base.Joiner;
 import com.google.common.io.Closeables;
 
 @Resource
@@ -70,10 +70,8 @@ public class ConsultaResultadosController {
 	@Get
 	@Path(priority = 1, value = "/consultaResultados")
 	public void inicial() {
-		result.include("nivelAgregacaoRegionalList", TSEDadosAuxiliares
-				.getNivelAgregacaoRegional());
-		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares
-				.getNivelAgregacaoPolitica());
+		result.include("nivelAgregacaoRegionalList", TSEDadosAuxiliares.getNivelAgregacaoRegional());
+		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares.getNivelAgregacaoPolitica());
 		result.include("filtroCargoList", business.getCargosDisponiveis());
 		result.include("filtroTurnoList", business.getTurnosDisponiveis());
 	}
@@ -94,21 +92,15 @@ public class ConsultaResultadosController {
 	@Get
 	@Path(priority = 1, value = "/ajudaCsv")
 	public Download ajudaCsv() throws CepespDataException {
-
-
 		File retFile = Tabela.getHelpCSV();
-
 		return new FileDownload(retFile, "text/csv", "ajuda_cepesp-data.csv", true);
 
 	}
 
 	@Get
 	@Path("/consulta/camposDisponiveis")
-	public void camposDisponiveisList(String nivelAgregacaoRegional,
-			String nivelAgregacaoPolitica) {
-
-		final FormResultAux f = business.getCamposDisponiveis(nivelAgregacaoRegional,
-				nivelAgregacaoPolitica);
+	public void camposDisponiveisList(String nivelAgregacaoRegional, String nivelAgregacaoPolitica) {
+		final FormResultAux f = business.getCamposDisponiveis(nivelAgregacaoRegional, nivelAgregacaoPolitica);
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Nivel regional: " + nivelAgregacaoRegional +
@@ -135,10 +127,9 @@ public class ConsultaResultadosController {
 	@Get
 	@Path("/consulta/anos")
 	public void anosParaCargo(String cargo) {
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Anos para o cargo: " + cargo);
-		}
-		result.use(Results.json()).from(business.getAnosParaCargo(cargo))
+		if(LOGGER.isDebugEnabled()) LOGGER.debug("Anos para o cargo: " + cargo);
+		result.use(Results.json())
+				.from(business.getAnosParaCargo(cargo))
 				.serialize();
 	}
 
@@ -197,23 +188,21 @@ public class ConsultaResultadosController {
 	@Path("/resultados.csv")
 	public Download resultadosCSVEntrada(List<String> anosEscolhidos, String filtroCargo,
 			String nivelAgregacaoRegional, String filtroTurno, String nivelAgregacaoPolitica,
-			List<String> camposEscolhidos, List<String> camposFixos,
-			String nivelFiltroRegional, String as_values_regional,
-			String as_values_candidatos, String as_values_partidos)
+			List<String> camposOpcionais, String filtroRegional, String regioes,
+			String candidatos, String partidos)
 			throws CepespDataException {
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Controller preparando para delegar criacao do CSV");
 		}
 
-		List<String> fp = trataLista(as_values_partidos);
-		List<String> fr = trataLista(as_values_regional);
-		List<String> fc = trataLista(as_values_candidatos);
-
+		List<String> fr = trataLista(regioes);
+		List<String> fp = trataLista(partidos);
+		List<String> fc = trataLista(candidatos);
 
 		return resultadosCSV(anosEscolhidos, filtroCargo, filtroTurno, nivelAgregacaoRegional,
-				nivelAgregacaoPolitica, camposEscolhidos, camposFixos,
-				nivelFiltroRegional, fr, fp, fc);
+				nivelAgregacaoPolitica, camposOpcionais, filtroRegional,
+				fr, fp, fc);
 	}
 
 	private List<String> trataLista(String lista) {
@@ -233,41 +222,33 @@ public class ConsultaResultadosController {
 	// @Post
 	// @Path("/resultados.csv")
 	public Download resultadosCSV(List<String> anosEscolhidos, String filtroCargo, String turno,
-			String nivelAgregacaoRegional, String nivelAgregacaoPolitica,
-			List<String> camposEscolhidos, List<String> camposFixos,
-			String nivelFiltroRegional, List<String> filtroRegional,
-			List<String> filtroPartido, List<String> filtroCandidato) throws CepespDataException {
+			String agregacaoRegional, String agregacaoPolitica,
+			List<String> camposOpcionais, String filtroRegional, List<String> regioes,
+		  	List<String> partidos, List<String> candidatos)
+			throws CepespDataException {
 
 		long start = System.currentTimeMillis();
-		if(LOGGER.isDebugEnabled() && camposEscolhidos != null) {
-			LOGGER.debug(">>> campos fixos " + Arrays.toString(camposFixos.toArray()));
-			LOGGER.debug(">>> campos escolhidos " + Arrays.toString(camposEscolhidos.toArray()));
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug(">>> campos opcionais " + camposOpcionais);
 		}
 
-
-		camposFixos = camposFixos == null ? Collections.<String>emptyList()
-				: camposFixos;
-		camposEscolhidos = camposEscolhidos == null ? Collections.<String>emptyList()
-				: camposEscolhidos;
-		filtroRegional = filtroRegional == null ? Collections.<String>emptyList()
-				: filtroRegional;
-		filtroPartido = filtroPartido == null ? Collections.<String>emptyList()
-				: filtroPartido;
-		filtroCandidato = filtroCandidato == null ? Collections.<String>emptyList()
-				: filtroCandidato;
-
-		List<String> c = new ArrayList<String>();
-		c.addAll(camposFixos);
-		c.addAll(camposEscolhidos);
-		String[] campos = c.toArray(new String[c.size()]);
+		Collections.sort(anosEscolhidos);
+		AgregacaoPolitica nivelAgregacaoPolitica = AgregacaoPolitica.findByNivel(Integer.parseInt(agregacaoPolitica));
+		AgregacaoRegional nivelAgregacaoRegional = AgregacaoRegional.findByNivel(Integer.parseInt(agregacaoRegional));
+		AgregacaoRegional nivelFiltroRegional = AgregacaoRegional.findByNivel(Integer.parseInt(filtroRegional));
+		List<ColumnField> camposFixos = business.getCamposFixos(nivelAgregacaoRegional, nivelAgregacaoPolitica);
 
 		ArgumentosBusca args = new ArgumentosBusca();
-		Collections.sort(anosEscolhidos);
-		args.setAnoEleicao(anosEscolhidos.toArray(new String[anosEscolhidos.size()]));
-		args.setFiltroCargo(filtroCargo);
-		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.fromInt(nivelAgregacaoPolitica));
-		args.setNivelRegional(AgregacaoRegional.fromInt(nivelAgregacaoRegional));
-		args.setCamposEscolhidos(campos);
+		args.setNivelAgrecacaoPolitica(nivelAgregacaoPolitica);
+		args.setNivelRegional(nivelAgregacaoRegional);
+		args.setFiltroNivelRegional(nivelFiltroRegional);
+
+		for (String ano : anosEscolhidos) args.addAnoEleicao(ano);
+		for (ColumnField campo : camposFixos) args.addCampoEscolhido(campo.getKey());
+		for (String campo : camposOpcionais) args.addCampoEscolhido(campo);
+		for (String codCandidato : candidatos) args.addCanditado(codCandidato);
+		for (String codPartido : partidos) args.addPartido(codPartido);
+		for (String codRegiao : regioes) args.addRegiao(codRegiao);
 
 		int fcint = Integer.parseInt(filtroCargo);
 		int t = Integer.parseInt(turno);
@@ -278,25 +259,11 @@ public class ConsultaResultadosController {
 		}
 		args.setTurno(t);
 
-
-		args.setNivelFiltroRegional(AgregacaoRegional.fromInt(nivelFiltroRegional));
-
-
-		String[] fr = filtroRegional.toArray(new String[filtroRegional.size()]);
-		String[] fp = filtroPartido.toArray(new String[filtroPartido.size()]);
-		String[] fc = filtroCandidato.toArray(new String[filtroCandidato.size()]);
-
-		args.setFiltroRegional(fr);
-		args.setFiltroPartido(fp);
-		args.setFiltroCandidato(fc);
-
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Argumentos da busca: " + args.toString());
 		}
 
-
-		String nameFile = business.getSugestaoNomeArquivo(Joiner.on("-").join(anosEscolhidos),
-				nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
+		String nameFile = business.getSugestaoNomeArquivo(anosEscolhidos, nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
 
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Comecando consulta propriamente, tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);
@@ -314,8 +281,7 @@ public class ConsultaResultadosController {
 		return d;
 	}
 
-	private static class CloseableInputStreamDownload extends InputStreamDownload{
-
+	private static class CloseableInputStreamDownload extends InputStreamDownload {
 		private InputStream stream;
 
 		public CloseableInputStreamDownload(InputStream input, String contentType, String fileName, boolean doDownload, long size) {

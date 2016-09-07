@@ -1,120 +1,156 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib tableName="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>CEPESPDATA</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- Le styles -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 20px;
-        padding-bottom: 40px;
-      }
+    <link href="icheck/icheck.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
-      /* Custom container */
-      .container-narrow {
-        margin: 0 auto;
-        max-width: 700px;
-      }
-      .container-narrow > hr {
-        margin: 30px 0;
-      }
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', '${appData.analyticsCode}']);
+        _gaq.push(['_trackPageview']);
 
-     .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+        (function () {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
 
-	<script type="text/javascript">
+    </script>
 
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', '${appData.analyticsCode}']);
-	  _gaq.push(['_trackPageview']);
+    <!-- start Mixpanel -->
+    <script type="text/javascript">
+        (function (e, a) {
+            if (!a.__SV) {
+                var b = window;
+                try {
+                    var c, l, i, j = b.location, g = j.hash;
+                    c = function (a, b) {
+                        return (l = a.match(RegExp(b + "=([^&]*)"))) ? l[1] : null
+                    };
+                    g && c(g, "state") && (i = JSON.parse(decodeURIComponent(c(g, "state"))), "mpeditor" === i.action && (b.sessionStorage.setItem("_mpcehash", g), history.replaceState(i.desiredHash || "", e.title, j.pathname + j.search)))
+                } catch (m) {
+                }
+                var k, h;
+                window.mixpanel = a;
+                a._i = [];
+                a.init = function (b, c, f) {
+                    function e(b, a) {
+                        var c = a.split(".");
+                        2 == c.length && (b = b[c[0]], a = c[1]);
+                        b[a] = function () {
+                            b.push([a].concat(Array.prototype.slice.call(arguments,
+                                    0)))
+                        }
+                    }
 
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
+                    var d = a;
+                    "undefined" !== typeof f ? d = a[f] = [] : f = "mixpanel";
+                    d.people = d.people || [];
+                    d.toString = function (b) {
+                        var a = "mixpanel";
+                        "mixpanel" !== f && (a += "." + f);
+                        b || (a += " (stub)");
+                        return a
+                    };
+                    d.people.toString = function () {
+                        return d.toString(1) + ".people (stub)"
+                    };
+                    k = "disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                    for (h = 0; h < k.length; h++)e(d, k[h]);
+                    a._i.push([b, c, f])
+                };
+                a.__SV = 1.2;
+                b = e.createElement("script");
+                b.type = "text/javascript";
+                b.async = !0;
+                b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "file:" === e.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
+                c = e.getElementsByTagName("script")[0];
+                c.parentNode.insertBefore(b, c)
+            }
+        })(document, window.mixpanel || []);
+    </script>
+    <!-- end Mixpanel -->
 
-	</script>
-	
-	<!-- start Mixpanel -->
-	<script type="text/javascript">
-		(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
-		0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-		for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
-		mixpanel.init("df90b45e3ba3bfafb115fb7e397d3782");
-	</script>
-	<!-- end Mixpanel -->
-	
-	<!-- start Jaco -->
-	<script type="text/javascript">
-		(function(e, t) {
-		    function r(e, t) {
-		        e[t] = function() {
-		            e.push([ t ].concat(Array.prototype.slice.call(arguments, 0)));
-		        };
-		    }
-		    var n = "JacoRecorder";
-		    (function(e, t, i, s) {
-		        if (!i.__VERSION) {
-		            e[n] = i;
-		            var o = [ "init", "identify", "startRecording", "stopRecording", "removeUserTracking", "setUserInfo" ];
-		            for (var u = 0; u < o.length; u++) r(i, o[u]);
-		            i.__VERSION = 2, i.__INIT_TIME = 1 * new Date;
-		            var a = t.createElement("script");
-		            a.async = !0, a.setAttribute("crossorigin", "anonymous"), a.src = s;
-		            var f = t.getElementsByTagName("head")[0];
-		            f.appendChild(a);
-		        }
-		    })(e, t, e[n] || [], "//recorder-assets.getjaco.com/recorder_v2.js");
-		}).call(window, window, document), window.JacoRecorder.push([ "init", "b7daf4cd-5491-49aa-bd47-a0574a853c11", {} ]);
-	</script>
-	<!-- end Jaco -->
-	
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!-- start Jaco -->
+    <script type="text/javascript">
+        (function (e, t) {
+            function r(e, t) {
+                e[t] = function () {
+                    e.push([t].concat(Array.prototype.slice.call(arguments, 0)));
+                };
+            }
+
+            var n = "JacoRecorder";
+            (function (e, t, i, s) {
+                if (!i.__VERSION) {
+                    e[n] = i;
+                    var o = ["init", "identify", "startRecording", "stopRecording", "removeUserTracking", "setUserInfo"];
+                    for (var u = 0; u < o.length; u++) r(i, o[u]);
+                    i.__VERSION = 2, i.__INIT_TIME = 1 * new Date;
+                    var a = t.createElement("script");
+                    a.async = !0, a.setAttribute("crossorigin", "anonymous"), a.src = s;
+                    var f = t.getElementsByTagName("head")[0];
+                    f.appendChild(a);
+                }
+            })(e, t, e[n] || [], "//recorder-assets.getjaco.com/recorder_v2.js");
+        }).call(window, window, document), window.JacoRecorder.push(["init", "b7daf4cd-5491-49aa-bd47-a0574a853c11", {}]);
+    </script>
+    <!-- end Jaco -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
     <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="bootstrap/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="bootstrap/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="bootstrap/ico/favicon.png">
-  </head>
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="bootstrap/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="bootstrap/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="bootstrap/ico/favicon.png">
+</head>
 
-  <body data-target="#sidebar" >
-	<div class="container">
-      <div class="masthead">
-        <ul class="nav nav-pills pull-right" role="navigation" id="topmenu">
-          <li><a href="<c:url value="/"/>">Início</a></li>
-          <li class="dropdown">
-                      <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Eleições <b class="caret"></b></a>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
-                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<c:url value="/consultaResultados"/>">Eleições por cargo</a></li>
-                        <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Eleições por candidato (Breve!)</a></li> -->
-                      </ul>
-          </li>
-          <!-- <li class="disabled"><a href="#">Sobre</a></li>
-          <li class="disabled"><a href="#">Contato</a></li> -->
-        </ul>
-        <a href="<c:url value='/' />" class="nav brand"><img src="images/logoCepespData.png" alt="FGV - CEPESP Data" /></a>
+<body>
+    <div class="container container-main">
 
-      </div>
-    </div>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="<c:url value='/' />">
+                        <img src="images/logoCepespData.png" alt="FGV - CEPESP Data"/>
+                    </a>
+                </div>
 
-    <div class="container" id="contentBody">
-
-      <hr>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active"><a href="<c:url value="/"/>">Início</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Eleições <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<c:url value="/consultaResultados"/>">Eleições por cargo</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>

@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import br.fgv.util.ColumnField;
 import org.hibernate.Session;
 import org.junit.Test;
 
@@ -43,26 +44,26 @@ public class BusinessImplTest {
 		FormResultAux t = this.businessImpl.getCamposDisponiveis("1", "1");
 		assertNotNull(t);
 
-		assertEquals(5, t.getCamposFixosXX().size());
+		assertEquals(5, t.getFixedFields().size());
 	}
 
 	@Test
 	public void testCamposDisponiveisVazio() {
-		List<Par> l = this.businessImpl.getCamposDisponiveis((AgregacaoRegional)null, null);
+		List<ColumnField> l = this.businessImpl.getCamposDisponiveis((AgregacaoRegional)null, null);
 		assertNotNull(l);
 		assertEquals(0, l.size());
 	}
 
 	@Test
 	public void testCamposFixosVazio() {
-		List<Par> l = this.businessImpl.getCamposFixos(null, null);
+		List<ColumnField> l = this.businessImpl.getCamposFixos(null, null);
 		assertNotNull(l);
 		assertEquals(0, l.size());
 	}
 
 	@Test
 	public void testCamposDisponiveisPolitica() {
-		List<Par> l = this.businessImpl.getCamposDisponiveis(null,
+		List<ColumnField> l = this.businessImpl.getCamposDisponiveis(null,
 				AgregacaoPolitica.PARTIDO);
 		assertEquals(2, l.size());
 
@@ -73,7 +74,7 @@ public class BusinessImplTest {
 
 	@Test
 	public void testCamposFixosPolitica() {
-		List<Par> l = this.businessImpl.getCamposFixos(null,
+		List<ColumnField> l = this.businessImpl.getCamposFixos(null,
 				AgregacaoPolitica.PARTIDO);
 		assertEquals(4, l.size());
 
@@ -84,7 +85,7 @@ public class BusinessImplTest {
 
 	@Test
 	public void testCamposDisponiveisRegional() {
-		List<Par> l = this.businessImpl.getCamposDisponiveis(
+		List<ColumnField> l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MACRO_REGIAO, null);
 		assertEquals(1, l.size());
 
@@ -111,12 +112,12 @@ public class BusinessImplTest {
 
 	@Test
 	public void testCamposFixosRegional() {
-		List<Par> l = this.businessImpl.getCamposFixos(
+		List<ColumnField> l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MACRO_REGIAO, null);
 		assertEquals(1, l.size());
 
-		assertEquals("aux_macroregiao.cod_Macro", l.get(0).getChave());
-		assertEquals("Macro-região: Código", l.get(0).getValor());
+		assertEquals("aux_macroregiao.cod_Macro", l.get(0).getKey());
+		assertEquals("Macro-região: Código", l.get(0).getKey());
 
 		l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.UF, null);
@@ -141,14 +142,14 @@ public class BusinessImplTest {
 
 	@Test
 	public void testCamposDisponiveisCombinado() {
-		List<Par> l = this.businessImpl.getCamposDisponiveis(
+		List<ColumnField> l = this.businessImpl.getCamposDisponiveis(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
 		assertEquals(17, l.size());
 	}
 
 	@Test
 	public void testCamposFixosCombinado() {
-		List<Par> l = this.businessImpl.getCamposFixos(
+		List<ColumnField> l = this.businessImpl.getCamposFixos(
 				AgregacaoRegional.MACRO_REGIAO, AgregacaoPolitica.CANDIDATO);
 		assertEquals(5, l.size());
 	}

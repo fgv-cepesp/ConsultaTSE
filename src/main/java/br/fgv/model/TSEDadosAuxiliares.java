@@ -19,6 +19,7 @@
 package br.fgv.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,38 +29,28 @@ import br.fgv.util.Par;
 
 public abstract class TSEDadosAuxiliares {
 
-	private static final List<Par> NIVEL_AGREGACAO_REGIONAL;
-	private static final List<Par> NIVEL_AGREGACAO_POLITICA;
+	private static final List<AgregacaoRegional> NIVEL_AGREGACAO_REGIONAL = new ArrayList<AgregacaoRegional>();
+	private static final List<AgregacaoPolitica> NIVEL_AGREGACAO_POLITICA = new ArrayList<AgregacaoPolitica>();
 
 	static {
-		List<Par> l = new ArrayList<Par>();
-		l.add(new Par("", "--Selecionar---"));
-		l.add(new Par(Integer.toString(AgregacaoRegional.MACRO_REGIAO.getNivel()), AgregacaoRegional.MACRO_REGIAO.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoRegional.UF.getNivel()), AgregacaoRegional.UF.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoRegional.MESO_REGIAO.getNivel()), AgregacaoRegional.MESO_REGIAO.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoRegional.MICRO_REGIAO.getNivel()), AgregacaoRegional.MICRO_REGIAO.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoRegional.UF_ZONA.getNivel()), AgregacaoRegional.UF_ZONA.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoRegional.MUNICIPIO.getNivel()), AgregacaoRegional.MUNICIPIO.getNomeDescritivo()));
-
-        NIVEL_AGREGACAO_REGIONAL = Collections.unmodifiableList(l);
+        NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.MACRO_REGIAO);
+        NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.UF);
+        NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.MESO_REGIAO);
+        NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.MICRO_REGIAO);
+        NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.UF_ZONA);
+        NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.MUNICIPIO);
 
 		///////////////////////////////
-        l = new ArrayList<Par>();
-		l.add(new Par("", "--Selecionar---"));
-		l.add(new Par(Integer.toString(AgregacaoPolitica.PARTIDO.getNivel()), AgregacaoPolitica.PARTIDO.getNomeDescritivo()));
-		l.add(new Par(Integer.toString(AgregacaoPolitica.CANDIDATO.getNivel()), AgregacaoPolitica.CANDIDATO.getNomeDescritivo()));
-
-		NIVEL_AGREGACAO_POLITICA = Collections.unmodifiableList(l);
-
+        NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.PARTIDO);
+        NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.CANDIDATO);
 	}
 
-	public static List<Par> getNivelAgregacaoRegional() {
-
-		return NIVEL_AGREGACAO_REGIONAL;
+	public static List<AgregacaoRegional> getNivelAgregacaoRegional() {
+		return Collections.unmodifiableList(NIVEL_AGREGACAO_REGIONAL);
 	}
 
-	public static List<Par> getNivelAgregacaoPolitica() {
-		return NIVEL_AGREGACAO_POLITICA;
+	public static List<AgregacaoPolitica> getNivelAgregacaoPolitica() {
+		return Collections.unmodifiableList(NIVEL_AGREGACAO_POLITICA);
 	}
 
 }
