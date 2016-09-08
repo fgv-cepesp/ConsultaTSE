@@ -45,7 +45,7 @@ import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
 import br.fgv.business.BusinessImpl;
-import br.fgv.business.FormResultAux;
+import br.fgv.business.CollumnFieldsCollection;
 import br.fgv.model.TSEDadosAuxiliares;
 import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
@@ -100,7 +100,7 @@ public class ConsultaResultadosController {
 	@Get
 	@Path("/consulta/camposDisponiveis")
 	public void camposDisponiveisList(String nivelAgregacaoRegional, String nivelAgregacaoPolitica) {
-		final FormResultAux f = business.getCamposDisponiveis(nivelAgregacaoRegional, nivelAgregacaoPolitica);
+		final CollumnFieldsCollection f = business.getCamposDisponiveis(nivelAgregacaoRegional, nivelAgregacaoPolitica);
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Nivel regional: " + nivelAgregacaoRegional +
@@ -109,9 +109,8 @@ public class ConsultaResultadosController {
 		}
 
 		result.use(Results.json()).from(f)
-			.include("camposOpcionais","camposFixos")
+			.include("optionalFields", "fixedFields")
 			.serialize();
-
 	}
 
 	@Get
@@ -188,7 +187,7 @@ public class ConsultaResultadosController {
 	@Path("/resultados.csv")
 	public Download resultadosCSVEntrada(List<String> anosEscolhidos, String filtroCargo,
 			String nivelAgregacaoRegional, String filtroTurno, String nivelAgregacaoPolitica,
-			List<String> camposOpcionais, String filtroRegional, String regioes,
+			List<String> camposOpcionais, String filtroNivelRegional, String regioes,
 			String candidatos, String partidos)
 			throws CepespDataException {
 
@@ -201,7 +200,7 @@ public class ConsultaResultadosController {
 		List<String> fc = trataLista(candidatos);
 
 		return resultadosCSV(anosEscolhidos, filtroCargo, filtroTurno, nivelAgregacaoRegional,
-				nivelAgregacaoPolitica, camposOpcionais, filtroRegional,
+				nivelAgregacaoPolitica, camposOpcionais, filtroNivelRegional,
 				fr, fp, fc);
 	}
 

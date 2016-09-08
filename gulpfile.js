@@ -5,7 +5,9 @@ elixir.config.assetsPath = 'src/main/resources/web';
 const packages = {
     jquery: 'node_modules/jquery/dist/',
     bootstrap: 'node_modules/bootstrap/dist/',
-    icheck: 'node_modules/icheck/'
+    icheck: 'node_modules/icheck/',
+    tokenfield: 'node_modules/bootstrap-tokenfield/dist/',
+    typeahead: 'node_modules/typeahead.js/dist/'
 };
 
 elixir(function (mix) {
@@ -22,6 +24,13 @@ elixir(function (mix) {
         //.copy(packages.icheck + 'skins/flat/blue.css', elixir.config.publicPath + '/icheck/icheck.css')
         //.copy(packages.icheck + 'icheck.min.js', elixir.config.publicPath + '/icheck/icheck.min.js')
 
+        //Bootstrap Tokenfield
+        //.copy(packages.tokenfield + 'bootstrap-tokenfield.min.js', elixir.config.publicPath + '/bootstrap-tokenfield/js/')
+        //.copy(packages.tokenfield + 'css/', elixir.config.publicPath + '/bootstrap-tokenfield/css/')
+
+        .copy(packages.typeahead, elixir.config.assetsPath + '/js/typeahead')
+        .scripts('typeahead/*.js', elixir.config.publicPath + '/js/typeahead.js')
+
         .less('style.less', elixir.config.publicPath + '/css/style.css')
 
         .coffee([
@@ -37,6 +46,8 @@ elixir(function (mix) {
             'consulta/Query.coffee',
             'consulta/QueryView.coffee',
             'consulta/FilterView.coffee',
+            'consulta/ColumnField.coffee',
+            'consulta/Partido.coffee',
             'consulta/RequiredFieldsFilterView.coffee',
             'consulta/ElectionsFilterView.coffee',
             'consulta/ColumnsFilterView.coffee',

@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.fgv.model.Partido;
 import org.hibernate.Session;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -213,11 +214,11 @@ public class ResultadosDAOTest {
 
 	@Test
 	public void testGetPartidosPorAnoList() {
-		List<Par> l = dao.getPartidosPorAnoList("2010");
+		List<Partido> l = dao.getPartidosPorAnoList("2010");
 		assertEquals(30,l.size());
-		Par p = l.get(0);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^\\w+ \\(\\d+\\)$"));
+		Partido p = l.get(0);
+		assertTrue(String.valueOf(p.getCod()).matches("^\\d+$"));
+		assertTrue(p.getSigla().matches("^\\w+ \\(\\d+\\)$"));
 	}
 
 	@Test

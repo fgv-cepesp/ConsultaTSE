@@ -28,7 +28,6 @@ import org.junit.Test;
 
 import br.fgv.dao.DaoFactoryImpl;
 import br.fgv.dao.FactorySessionMySqlDB;
-import br.fgv.util.Par;
 
 public class BusinessImplTest {
 
@@ -41,7 +40,7 @@ public class BusinessImplTest {
 
 	@Test
 	public void testCamposDisponiveis() {
-		FormResultAux t = this.businessImpl.getCamposDisponiveis("1", "1");
+		CollumnFieldsCollection t = this.businessImpl.getCamposDisponiveis("1", "1");
 		assertNotNull(t);
 
 		assertEquals(5, t.getFixedFields().size());

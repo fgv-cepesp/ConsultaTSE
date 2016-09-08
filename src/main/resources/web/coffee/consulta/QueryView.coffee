@@ -18,6 +18,7 @@ class ConsultaTSE.QueryView extends ConsultaTSE.View
     this.requiredFieldsFilter.setColumnsFilter(this.columnsFilter)
 
     this.electionsFilter.setOptionalFilter(this.optionalFilter)
+    this.optionalFilter.setElectionsFilter(this.electionsFilter)
 
     this.startBtn.click (e) => this.onStartBtnClick(e)
 

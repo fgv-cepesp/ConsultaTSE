@@ -21,4 +21,4 @@
 <%@page isErrorPage="true"%>
 <h1>Ooopsss...</h1>
 
-<h2>Página não encontrada !</h2>
+<h2>P&aacute;gina n&atilde;o encontrada !</h2>

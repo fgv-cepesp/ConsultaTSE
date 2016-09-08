@@ -19,25 +19,12 @@
 
 --%>
 <%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib tableName="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib tableName="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <link type="text/css" rel="stylesheet" href="css/autoSuggest.css"/>
 
 <div class="row">
-
-    <aside class="aside-fixed">
-        <div class="aside-title">Filtros</div>
-
-        <ul class="nav nav-list scroll-sidebar">
-            <li class="active"><a href="#inicio" class="aside-item"><i class="icon-chevron-right"></i> Início</a></li>
-            <li><a href="#filtrosObrigatorios" class="aside-item"><i class="icon-chevron-right"></i> Filtros obrigatórios</a></li>
-            <li><a href="#eleicoes" class="aside-item"><i class="icon-chevron-right"></i> Eleições</a></li>
-            <li><a href="#colunas" class="aside-item"><i class="icon-chevron-right"></i> Colunas fixas e opcionais</a></li>
-            <li><a href="#filtrosOpcionais" class="aside-item"><i class="icon-chevron-right"></i> Filtros opcionais</a></li>
-            <li><a href="#consulta" class="aside-item"><i class="icon-chevron-right"></i> Resultado</a></li>
-        </ul>
-    </aside>
 
     <section class="col-md-12" id="consultaWrapper">
 
@@ -71,7 +58,7 @@
                             title="Cargo é um campo obrigatório.">
                         <option value="0">Selecione um Cargo</option>
                         <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
-                            <option value="${cargo.key}">${cargo.value}</option>
+                            <option value="${cargo.getKey()}">${cargo.getValue()}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -87,7 +74,7 @@
                     <select name="nivelAgregacaoRegional" class="form-control">
                         <option value="">Selecione uma Agregação Regional</option>
                         <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
-                            <option value="${nar.key}">${nar.value}</option>
+                            <option value="${nar.getNivel()}">${nar.getNomeDescritivo()}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -97,7 +84,7 @@
                     <select name="nivelAgregacaoPolitica" class="form-control" required>
                         <option value="">Selecione uma Agregação Política</option>
                         <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
-                            <option value="${nap.key}">${nap.value}</option>
+                            <option value="${nap.getNivel()}">${nap.getNomeDescritivo()}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -159,7 +146,7 @@
                         <a href="<c:url value='/ajuda' />" target="_blank">Veja aqui as descrições das opções</a>.</p>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <h3>Colunas Opcionais</h3>
 
                             <div class="form-group" data-component="optionalColumnsComponent">
@@ -167,7 +154,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <h3>Colunas Fixas</h3>
                             <div class="form-group" data-component="fixedColumnsComponent">
                                 <!-- Content dynamically inflated -->
@@ -181,7 +168,7 @@
             <section id="filtrosOpcionais" class="step" data-component="optionalFilters">
                 <h1>Filtros opcionais</h1>
 
-                <div id="filtrosOpcionaisInfo">
+                <div data-component="unavailable">
                     <div class="alert alert-info">
                         Antes, complete o passo <a href="#eleicoes" class="aside-item">Eleiçoes</a>.
                     </div>
@@ -196,18 +183,18 @@
 
                     <div class="form-group">
                         <label for="partidos">Partido político</label>
-                        <input type="text" name="partidos"/>
+                        <input type="text" name="partidos" class="form-control"/>
                     </div>
 
                     <div class="form-group">
                         <label for="candidados">Candidato</label>
-                        <input type="text" name="candidados"/>
+                        <input type="text" name="candidatos" class="form-control"/>
                     </div>
 
                     <h3>Região</h3>
                     <h4>Tipo de região</h4>
                     <div class="form-group">
-                        <select name="nivelFiltroRegional" id="nivelFiltroRegional" class="formLayout"></select>
+                        <select name="nivelFiltroRegional" class="form-control"></select>
                     </div>
                     <div class="form-group">
                         <div id="grupoFiltroRegional"></div>

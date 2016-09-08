@@ -19,8 +19,8 @@
 
 --%>
 <%@ page isErrorPage="true"%>
-<%@ taglib tableName="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib tableName="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
 <h1>UM ERRO ACONTECEU</h1>

@@ -2,6 +2,10 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
 
   getAnalyticsName: -> 'ConsultaTSE.Eleiçoes'
 
+  constructor: (container, query) ->
+    super(container, query)
+    this.initializeComponents()
+
   initializeComponents: ->
     super()
     this.anosComponent = this.findComponent('anosComponent')
@@ -9,7 +13,8 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
 
     this.reset()
 
-  setOptionalFilter: (filter) -> this.optionalFilter = filter
+  setOptionalFilter: (filter) ->
+    this.optionalFilter = filter
 
   reset: ->
     this.anosComponent.html('')
@@ -22,6 +27,14 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
   enable: ->
     super()
     this.update()
+
+  getElectionsYears: ->
+    yearslist = Array()
+    for year in this.getYears()
+      yearElement = jQuery(year)
+      if yearElement.prop('checked')
+        yearslist.push(parseInt(yearElement.val()))
+    return yearslist
 
   update: ->
     job = this.query.getJob()
@@ -58,6 +71,9 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
       this.anosDisponiveisAlert.show('slow')
     else
       this.anosDisponiveisAlert.hide('slow')
+
+    if this.optionalFilter?
+      this.optionalFilter.update()
 
   isValid: -> this.getSelectedYears().length > 0
 

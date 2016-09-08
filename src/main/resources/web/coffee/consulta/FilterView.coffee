@@ -3,22 +3,27 @@ class ConsultaTSE.FilterView extends ConsultaTSE.View
   constructor: (container, query) ->
     super(container)
     this.query = query
-    this.initializeComponents()
 
   initializeComponents: ->
     this.document = $('html, body')
-    this.unavailable = this.findComponent('unavailable')
-    this.content = this.findComponent('content')
+    this.getUnavailableMessage()
+    this.getContent().hide()
 
-    this.content.hide()
+  getUnavailableMessage: ->
+    if not this.unavailable? then this.unavailable = this.findComponent('unavailable')
+    return this.unavailable
+
+  getContent: ->
+    if not this.content? then this.content = this.findComponent('content')
+    return this.content
 
   enable: ->
-    if this.unavailable? then this.unavailable.hide('slow')
-    this.content.slideDown()
+    this.getUnavailableMessage().hide('slow')
+    this.getContent().slideDown()
 
   disable: ->
-    if this.unavailable? then this.unavailable.show('slow')
-    this.content.slideUp()
+    this.getUnavailableMessage().show('slow')
+    this.getContent().slideUp()
 
   onContinueBtnClick: ->
     if this.nextStep?

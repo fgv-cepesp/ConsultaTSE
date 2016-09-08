@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.fgv.model.Partido;
 import br.fgv.util.ColumnField;
 import com.google.common.base.Joiner;
 import org.apache.log4j.Logger;
@@ -113,12 +114,12 @@ public class BusinessImpl {
 			colunas.add(votoLegenda);
 
 			ColumnField votoTotal = new ColumnField("votos", "Resultado");
-			votoLegenda.setName("total");
-			votoLegenda.setDescription("Voto Total");
+			votoTotal.setName("total");
+			votoTotal.setDescription("Voto Total");
 			colunas.add(votoTotal);
 		}
 
-		return colunas;
+		return Collections.unmodifiableList(colunas);
 	}
 
 	public List<Integer> getAnosDisponiveis() {
@@ -145,35 +146,33 @@ public class BusinessImpl {
 		return daoFactory.getResultadosDAO().getCargosList();
 	}
 
-	public FormResultAux getCamposDisponiveis(String nivelAgregacaoRegional, String nivelAgregacaoPolitica) {
-		AgregacaoRegional regional = AgregacaoRegional.findByNivel(Integer.parseInt(nivelAgregacaoRegional));
-		AgregacaoPolitica politica = AgregacaoPolitica.findByNivel(Integer.parseInt(nivelAgregacaoPolitica));
+	public CollumnFieldsCollection getCamposDisponiveis(String nivelAgregacaoRegional, String nivelAgregacaoPolitica) {
+		AgregacaoRegional regional = AgregacaoRegional.findByNivel(nivelAgregacaoRegional);
+		AgregacaoPolitica politica = AgregacaoPolitica.findByNivel(nivelAgregacaoPolitica);
+
+		System.out.println("regional: " + regional);
+		System.out.println("politica: " + politica);
 
 		List<ColumnField> optionalFieds = this.getCamposDisponiveis(regional, politica);
 		List<ColumnField> fixedFields = this.getCamposFixos(regional, politica);
-		return new FormResultAux(optionalFieds, fixedFields);
+
+		return new CollumnFieldsCollection(optionalFieds, fixedFields);
 	}
 
 	public List<ColumnField> getCamposDisponiveis(AgregacaoRegional nivelAgregacaoRegional, AgregacaoPolitica nivelAgregacaoPolitica) {
-		List<ColumnField> l = new ArrayList<ColumnField>();
+		List<ColumnField> columnFields = new ArrayList<ColumnField>();
 
-		if(nivelAgregacaoRegional != null)
-			l.addAll(CAMPOS_DISPONIVEIS_REGIONAL.get(nivelAgregacaoRegional));
+		if(nivelAgregacaoRegional != null) columnFields.addAll(CAMPOS_DISPONIVEIS_REGIONAL.get(nivelAgregacaoRegional));
+		if(nivelAgregacaoPolitica != null) columnFields.addAll(CAMPOS_DISPONIVEIS_POLITICO.get(nivelAgregacaoPolitica));
 
-		if(nivelAgregacaoPolitica != null)
-			l.addAll(CAMPOS_DISPONIVEIS_POLITICO.get(nivelAgregacaoPolitica));
-
-		return Collections.unmodifiableList(l);
+		return columnFields;
 	}
 
 	public List<ColumnField> getCamposFixos(AgregacaoRegional nivelAgregacaoRegional, AgregacaoPolitica nivelAgregacaoPolitica) {
 		List<ColumnField> columns = new ArrayList<ColumnField>();
 
-		if(nivelAgregacaoRegional != null)
-			columns.addAll(CAMPOS_FIXOS_REGIONAL.get(nivelAgregacaoRegional));
-
-		if(nivelAgregacaoPolitica != null)
-			columns.addAll(CAMPOS_FIXOS_POLITICO.get(nivelAgregacaoPolitica));
+		if(nivelAgregacaoRegional != null) columns.addAll(CAMPOS_FIXOS_REGIONAL.get(nivelAgregacaoRegional));
+		if(nivelAgregacaoPolitica != null) columns.addAll(CAMPOS_FIXOS_POLITICO.get(nivelAgregacaoPolitica));
 
 		return columns;
 	}
@@ -219,12 +218,12 @@ public class BusinessImpl {
 		return str;
 	}
 
-	public List<Par> getPartidos(String string) {
+	public List<Partido> getPartidos(String ano) {
 		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
-				.getPartidosPorAnoList(string));
+				.getPartidosPorAnoList(new String[]{ano}));
 	}
 
-	public List<Par> getPartidos(String[] anosList) {
+	public List<Partido> getPartidos(String[] anosList) {
 		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
 				.getPartidosPorAnoList(anosList));
 	}

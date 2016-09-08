@@ -670,6 +670,7 @@ public class Tabela implements Comparable<Tabela>{
 				ColumnField field = new ColumnField(this);
 				field.setName(c.getNome());
 				field.setDescription(c.getNomeDescritivo());
+				l.add(field);
 			}
 		}
 

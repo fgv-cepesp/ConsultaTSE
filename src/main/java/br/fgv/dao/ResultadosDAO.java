@@ -81,6 +81,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.fgv.model.Partido;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -468,16 +469,12 @@ public class ResultadosDAO {
 		return ret;
 	}
 
-	public List<Par> getPartidosPorAnoList(String ano) {
-		String[] anos = {ano};
-		return getPartidosPorAnoList(anos);
+	public List<Partido> getPartidosPorAnoList(String s) {
+		return getPartidosPorAnoList(new String[] {s});
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Par> getPartidosPorAnoList(String[] anosList) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
-
+	public List<Partido> getPartidosPorAnoList(String[] anosList) {
+		List<Partido> partidos = new ArrayList<Partido>();
 		List<String> partialQueries = new ArrayList<String>(anosList.length);
 
 		for (String ano : anosList) {
@@ -494,23 +491,22 @@ public class ResultadosDAO {
 
 		try {
 
-
 			Query query = getSession().createSQLQuery(queryStr);
-
-			list = (List<Object[]>) query.list();
+			List<Object[]> list = (List<Object[]>) query.list();
 
 			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1] + " (" + item[0] + ")");
+				Partido p = new Partido();
+				p.setCod((Integer) item[0]);
+				p.setSigla(String.valueOf(item[1]));
 
-				pares.add(new Par(chave, valor));
+				partidos.add(p);
 			}
 
 		} catch (RuntimeException e) {
 			LOGGER.error("Exception ao tentar obter partidos por: " + Arrays.toString(anosList), e);
 		}
 
-		return pares;
+		return partidos;
 	}
 
 
@@ -633,6 +629,8 @@ public class ResultadosDAO {
 		return getCandidatosPorAnoList(filtro, anos, null);
 	}
 
+
+
 	public List<Par> getCandidatosPorAnoList(String filtro, String[] anos, String codCargo) {
 
 		List<String> partialQueries = new ArrayList<String>(anos.length);
@@ -690,4 +688,6 @@ public class ResultadosDAO {
 
 		return datas.get(0);
 	}
+
+
 }

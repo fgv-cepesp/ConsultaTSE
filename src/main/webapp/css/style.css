@@ -310,11 +310,6 @@
   border-top: #3c8dbc 4px solid;
   z-index: 99999999;
 }
-@media (max-width: 768px) {
-  .aside-fixed {
-    display: none;
-  }
-}
 .aside-fixed .aside-title {
   font-size: 20px;
   margin-bottom: 40px;
@@ -335,6 +330,20 @@
 .step .control-column {
   font-size: 14px;
   display: block;
+}
+#colunas ul {
+  display: inline-block;
+  vertical-align: top;
+}
+#colunas ul li {
+  font-size: 16px;
+}
+#colunas ul li.header {
+  list-style: none;
+  size: 20px;
+  color: #0073b7;
+  margin-left: -20px;
+  margin-bottom: 10px;
 }
 
 /*# sourceMappingURL=style.css.map */

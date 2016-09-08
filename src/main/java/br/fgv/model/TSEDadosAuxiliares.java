@@ -43,6 +43,7 @@ public abstract class TSEDadosAuxiliares {
 		///////////////////////////////
         NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.PARTIDO);
         NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.CANDIDATO);
+		NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.COLIGACAO);
 	}
 
 	public static List<AgregacaoRegional> getNivelAgregacaoRegional() {

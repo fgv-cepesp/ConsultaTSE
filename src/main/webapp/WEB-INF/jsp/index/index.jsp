@@ -19,8 +19,8 @@
 
 --%>
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%@ taglib tableName="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib tableName="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <link type="text/css" rel="stylesheet" href="css/autoSuggest.css" />
 

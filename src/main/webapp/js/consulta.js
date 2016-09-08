@@ -343,6 +343,7 @@
       this.requiredFieldsFilter.setElectionsFilter(this.electionsFilter);
       this.requiredFieldsFilter.setColumnsFilter(this.columnsFilter);
       this.electionsFilter.setOptionalFilter(this.optionalFilter);
+      this.optionalFilter.setElectionsFilter(this.electionsFilter);
       this.startBtn.click((function(_this) {
         return function(e) {
           return _this.onStartBtnClick(e);
@@ -384,28 +385,36 @@
     function FilterView(container, query) {
       FilterView.__super__.constructor.call(this, container);
       this.query = query;
-      this.initializeComponents();
     }
 
     FilterView.prototype.initializeComponents = function() {
       this.document = $('html, body');
-      this.unavailable = this.findComponent('unavailable');
-      this.content = this.findComponent('content');
-      return this.content.hide();
+      this.getUnavailableMessage();
+      return this.getContent().hide();
+    };
+
+    FilterView.prototype.getUnavailableMessage = function() {
+      if (this.unavailable == null) {
+        this.unavailable = this.findComponent('unavailable');
+      }
+      return this.unavailable;
+    };
+
+    FilterView.prototype.getContent = function() {
+      if (this.content == null) {
+        this.content = this.findComponent('content');
+      }
+      return this.content;
     };
 
     FilterView.prototype.enable = function() {
-      if (this.unavailable != null) {
-        this.unavailable.hide('slow');
-      }
-      return this.content.slideDown();
+      this.getUnavailableMessage().hide('slow');
+      return this.getContent().slideDown();
     };
 
     FilterView.prototype.disable = function() {
-      if (this.unavailable != null) {
-        this.unavailable.show('slow');
-      }
-      return this.content.slideUp();
+      this.getUnavailableMessage().show('slow');
+      return this.getContent().slideUp();
     };
 
     FilterView.prototype.onContinueBtnClick = function() {
@@ -439,19 +448,128 @@
 }).call(this);
 
 (function() {
+  ConsultaTSE.ColumnField = (function() {
+    function ColumnField() {}
+
+    ColumnField.prototype.getTableName = function() {
+      return this.table_name || "";
+    };
+
+    ColumnField.prototype.setTableName = function(tableName) {
+      return this.table_name = tableName;
+    };
+
+    ColumnField.prototype.getTableDescription = function() {
+      return this.table_description || "";
+    };
+
+    ColumnField.prototype.setTableDescription = function(description) {
+      return this.table_description = description;
+    };
+
+    ColumnField.prototype.getName = function() {
+      return this.name || "";
+    };
+
+    ColumnField.prototype.setName = function(name) {
+      return this.name = name;
+    };
+
+    ColumnField.prototype.getDescription = function() {
+      return this.description || "";
+    };
+
+    ColumnField.prototype.setDescription = function(description) {
+      return this.description = description;
+    };
+
+    ColumnField.prototype.getKey = function() {
+      return (this.getTableName()) + "." + (this.getName());
+    };
+
+    ColumnField.fromRemote = function(remote) {
+      var columnField;
+      columnField = new ConsultaTSE.ColumnField();
+      columnField.setName(remote.name);
+      columnField.setDescription(remote.description);
+      columnField.setTableName(remote.tableName);
+      columnField.setTableDescription(remote.tableDescription);
+      return columnField;
+    };
+
+    return ColumnField;
+
+  })();
+
+}).call(this);
+
+(function() {
+  ConsultaTSE.Partido = (function() {
+    function Partido() {}
+
+    Partido.prototype.setNome = function(nome) {
+      return this.nome = nome;
+    };
+
+    Partido.prototype.getNome = function() {
+      return this.nome || "";
+    };
+
+    Partido.prototype.setAno = function(ano) {
+      return this.ano = ano;
+    };
+
+    Partido.prototype.getAno = function() {
+      return this.ano || 0;
+    };
+
+    Partido.prototype.setCod = function(cod) {
+      return this.cod = cod;
+    };
+
+    Partido.prototype.getCod = function() {
+      return this.cod || 0;
+    };
+
+    Partido.prototype.setSigla = function(sigla) {
+      return this.sigla = sigla;
+    };
+
+    Partido.prototype.getSigla = function() {
+      return this.sigla || "";
+    };
+
+    Partido.FromRemote = function(remote) {
+      var partido;
+      partido = new ConsultaTSE.Partido();
+      partido.setCod(remote.cod);
+      partido.setAno(remote.ano);
+      partido.setSigla(remote.sigla);
+      partido.setNome(remote.nome);
+      return partido;
+    };
+
+    return Partido;
+
+  })();
+
+}).call(this);
+
+(function() {
   var extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
   ConsultaTSE.RequiredFieldsFilterView = (function(superClass) {
     extend(RequiredFieldsFilterView, superClass);
 
-    function RequiredFieldsFilterView() {
-      return RequiredFieldsFilterView.__super__.constructor.apply(this, arguments);
-    }
-
     RequiredFieldsFilterView.prototype.getAnalyticsName = function() {
       return 'ConsultaTSE.FiltrosObrigatorios';
     };
+
+    function RequiredFieldsFilterView(container, query) {
+      RequiredFieldsFilterView.__super__.constructor.call(this, container, query);
+      this.initializeComponents();
+    }
 
     RequiredFieldsFilterView.prototype.initializeComponents = function() {
       RequiredFieldsFilterView.__super__.initializeComponents.call(this);
@@ -572,13 +690,14 @@
   ConsultaTSE.ElectionsFilterView = (function(superClass) {
     extend(ElectionsFilterView, superClass);
 
-    function ElectionsFilterView() {
-      return ElectionsFilterView.__super__.constructor.apply(this, arguments);
-    }
-
     ElectionsFilterView.prototype.getAnalyticsName = function() {
       return 'ConsultaTSE.Eleiçoes';
     };
+
+    function ElectionsFilterView(container, query) {
+      ElectionsFilterView.__super__.constructor.call(this, container, query);
+      this.initializeComponents();
+    }
 
     ElectionsFilterView.prototype.initializeComponents = function() {
       ElectionsFilterView.__super__.initializeComponents.call(this);
@@ -604,6 +723,20 @@
     ElectionsFilterView.prototype.enable = function() {
       ElectionsFilterView.__super__.enable.call(this);
       return this.update();
+    };
+
+    ElectionsFilterView.prototype.getElectionsYears = function() {
+      var i, len, ref, year, yearElement, yearslist;
+      yearslist = Array();
+      ref = this.getYears();
+      for (i = 0, len = ref.length; i < len; i++) {
+        year = ref[i];
+        yearElement = jQuery(year);
+        if (yearElement.prop('checked')) {
+          yearslist.push(parseInt(yearElement.val()));
+        }
+      }
+      return yearslist;
     };
 
     ElectionsFilterView.prototype.update = function() {
@@ -663,9 +796,12 @@
     ElectionsFilterView.prototype.checkValidity = function() {
       ElectionsFilterView.__super__.checkValidity.call(this);
       if (this.hasTooMuchSelectedYears()) {
-        return this.anosDisponiveisAlert.show('slow');
+        this.anosDisponiveisAlert.show('slow');
       } else {
-        return this.anosDisponiveisAlert.hide('slow');
+        this.anosDisponiveisAlert.hide('slow');
+      }
+      if (this.optionalFilter != null) {
+        return this.optionalFilter.update();
       }
     };
 
@@ -690,8 +826,13 @@
   ConsultaTSE.ColumnsFilterView = (function(superClass) {
     extend(ColumnsFilterView, superClass);
 
-    function ColumnsFilterView() {
-      return ColumnsFilterView.__super__.constructor.apply(this, arguments);
+    ColumnsFilterView.prototype.getAnalyticsName = function() {
+      return 'ConsultaTSE.ColunasFixasEOpcionais';
+    };
+
+    function ColumnsFilterView(container, query) {
+      ColumnsFilterView.__super__.constructor.call(this, container, query);
+      this.initializeComponents();
     }
 
     ColumnsFilterView.prototype.initializeComponents = function() {
@@ -729,21 +870,19 @@
     };
 
     ColumnsFilterView.prototype.onGetCollumnsFilters = function(data) {
-      var group, i, j, keypair, len, len1, ref, ref1;
+      var columnField, columnFieldData, fixedFields, i, j, len, len1, optionalFields;
       this.reset();
-      ref = data.formResultAux.camposFixos;
-      for (i = 0, len = ref.length; i < len; i++) {
-        keypair = ref[i];
-        group = this.buildCollumnItem('camposEscolhidos', keypair.chave, keypair.valor);
-        this.fixedColumnsComponent.append(group);
-        ConsultaTSE.Components.iCheck.Load(group.find('.icheck'));
+      fixedFields = data.collumnFieldsCollection.fixedFields || [];
+      optionalFields = data.collumnFieldsCollection.optionalFields || [];
+      for (i = 0, len = fixedFields.length; i < len; i++) {
+        columnFieldData = fixedFields[i];
+        columnField = ConsultaTSE.ColumnField.fromRemote(columnFieldData);
+        this.addToFixedFields(columnField, true);
       }
-      ref1 = data.formResultAux.camposOpcionais;
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        keypair = ref1[j];
-        group = this.buildCollumnItem('camposFixos', keypair.chave, keypair.valor);
-        this.optionalColumnsComponent.append(group);
-        ConsultaTSE.Components.iCheck.Load(group.find('.icheck'));
+      for (j = 0, len1 = optionalFields.length; j < len1; j++) {
+        columnFieldData = optionalFields[j];
+        columnField = ConsultaTSE.ColumnField.fromRemote(columnFieldData);
+        this.addToOptionalFields(columnField, false);
       }
       return this.content.slideDown();
     };
@@ -752,8 +891,56 @@
       return true;
     };
 
-    ColumnsFilterView.prototype.buildCollumnItem = function(input, value, message) {
-      return jQuery("<label class='control-label control-column'>\n  <input type='checkbox' name='" + input + "[]' class='icheck' value='" + value + "' checked/>\n  " + message + "\n</label>");
+    ColumnsFilterView.prototype.getCategoryFor = function(columnField, fixed) {
+      var category, component;
+      component = fixed ? this.fixedColumnsComponent : this.optionalColumnsComponent;
+      category = component.find("ul[data-category='" + (columnField.getTableName()) + "']");
+      if ((category.length != null) && category.length === 0) {
+        category = this.buildCategory(columnField);
+        component.append(category);
+      }
+      return category;
+    };
+
+    ColumnsFilterView.prototype.addToFixedFields = function(columnField, fixed) {
+      var category, view;
+      view = this.buildFixedCollumnItem(columnField);
+      category = this.getCategoryFor(columnField, fixed);
+      return category.append(view);
+    };
+
+    ColumnsFilterView.prototype.addToOptionalFields = function(columnField, fixed) {
+      var category, view;
+      view = this.buildOptionalCollumnItem(columnField);
+      view.find('input').on('ifChanged', (function(_this) {
+        return function(event) {
+          return _this.onOptionalFieldChange(jQuery(event.currentTarget));
+        };
+      })(this));
+      category = this.getCategoryFor(columnField, fixed);
+      category.append(view);
+      return ConsultaTSE.Components.iCheck.Load(view.find('.icheck'));
+    };
+
+    ColumnsFilterView.prototype.onOptionalFieldChange = function(option) {
+      var checked;
+      checked = option.is('checked') ? {
+        'Selecionado': 'Deselecionado'
+      } : void 0;
+      this.trackInputChange("Coluna Opcional (" + checked + ")", option.val());
+      return this.checkValidity();
+    };
+
+    ColumnsFilterView.prototype.buildCategory = function(columnField) {
+      return jQuery("<ul data-category='" + (columnField.getTableName()) + "'>\n  <li class='header'>" + (columnField.getTableDescription()) + "</li>\n</ul>");
+    };
+
+    ColumnsFilterView.prototype.buildOptionalCollumnItem = function(columnField) {
+      return jQuery("<label class='control-label control-column'>\n  <input type='checkbox' name='camposOpcionais[]' class='icheck' value='" + (columnField.getKey()) + "' checked/>\n  " + (columnField.getDescription()) + "\n</label>");
+    };
+
+    ColumnsFilterView.prototype.buildFixedCollumnItem = function(columnField) {
+      return jQuery("<li>" + (columnField.getDescription()) + "</li>");
     };
 
     return ColumnsFilterView;
@@ -769,12 +956,84 @@
   ConsultaTSE.OptionalFiltersView = (function(superClass) {
     extend(OptionalFiltersView, superClass);
 
-    function OptionalFiltersView() {
-      return OptionalFiltersView.__super__.constructor.apply(this, arguments);
+    OptionalFiltersView.prototype.getAnalyticsName = function() {
+      return 'ConsultaTSE.FiltrosOpcionais';
+    };
+
+    function OptionalFiltersView(container, query) {
+      OptionalFiltersView.__super__.constructor.call(this, container, query);
+      this.cache = {};
+      this.partidosSuggestionsEngine = new Bloodhound({
+        local: this.cache.partidos,
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace
+      });
+      this.initializeComponents();
     }
 
     OptionalFiltersView.prototype.initializeComponents = function() {
-      return OptionalFiltersView.__super__.initializeComponents.call(this);
+      OptionalFiltersView.__super__.initializeComponents.call(this);
+      this.partidos = this.findInput('partidos');
+      this.candidatos = this.findInput('candidatos');
+      this.nivelRegiao = this.findInput('filtroNivelRegional');
+      this.partidosSuggestionsEngine.initialize();
+      this.partidos.tokenfield({
+        typeahead: [
+          null, {
+            source: this.partidosSuggestionsEngine.ttAdapter()
+          }
+        ]
+      });
+      return this.candidatos.tokenfield();
+    };
+
+    OptionalFiltersView.prototype.setElectionsFilter = function(filter) {
+      return this.electionsFilter = filter;
+    };
+
+    OptionalFiltersView.prototype.getElectionsYears = function() {
+      return this.electionsFilter.getElectionsYears();
+    };
+
+    OptionalFiltersView.prototype.loadPartidos = function() {
+      return $.get(ConsultaTSE.EndPoints.PartidosAnos, {
+        anosList: this.getElectionsYears()
+      }).done((function(_this) {
+        return function(data) {
+          return _this.loadPartidosSuggestions(data.list);
+        };
+      })(this));
+    };
+
+    OptionalFiltersView.prototype.loadCandidatos = function() {};
+
+    OptionalFiltersView.prototype.loadPartidosSuggestions = function(partidosList) {
+      var i, len, partido, partidoData;
+      this.partidosSuggestionsEngine.clear();
+      this.cache.partidos = Array();
+      for (i = 0, len = partidosList.length; i < len; i++) {
+        partidoData = partidosList[i];
+        partido = ConsultaTSE.Partido.FromRemote(partidoData);
+        this.cache.partidos.push(partido.getSigla());
+      }
+      this.partidosSuggestionsEngine.local = this.cache.partidos;
+      return this.partidosSuggestionsEngine.initialize(true);
+    };
+
+    OptionalFiltersView.prototype.reset = function() {
+      this.partidos.tokenfield('setTokens', []);
+      return this.candidatos.tokenfield('setTokens', []);
+    };
+
+    OptionalFiltersView.prototype.update = function() {
+      this.reset();
+      if (this.getElectionsYears().length > 0) {
+        this.loadPartidos();
+        this.loadCandidatos();
+        return this.enable();
+      } else {
+        return this.disable();
+      }
     };
 
     return OptionalFiltersView;

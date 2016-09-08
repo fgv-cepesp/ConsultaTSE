@@ -24,7 +24,6 @@ public class ColumnField implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -32,7 +31,6 @@ public class ColumnField implements Serializable {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -40,7 +38,6 @@ public class ColumnField implements Serializable {
     public String getTableName() {
         return tableName;
     }
-
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
@@ -48,7 +45,6 @@ public class ColumnField implements Serializable {
     public String getTableDescription() {
         return tableDescription;
     }
-
     public void setTableDescription(String tableDescription) {
         this.tableDescription = tableDescription;
     }

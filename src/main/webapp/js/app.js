@@ -33,6 +33,7 @@
       ConsultaTSE.EndPoints = {};
       ConsultaTSE.EndPoints.YearsForJob = config.endpoints.yearsForJob;
       ConsultaTSE.EndPoints.CollumnsFilters = config.endpoints.collumnsFilters;
+      ConsultaTSE.EndPoints.PartidosAnos = config.endpoints.partidosAnos;
     }
     return ConsultaTSE.Components.iCheck.Load();
   };

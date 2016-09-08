@@ -2,6 +2,10 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
 
   getAnalyticsName: -> 'ConsultaTSE.FiltrosObrigatorios'
 
+  constructor: (container, query) ->
+    super(container, query)
+    this.initializeComponents()
+
   initializeComponents: ->
     super()
     this.job = this.findInput('filtroCargo')
