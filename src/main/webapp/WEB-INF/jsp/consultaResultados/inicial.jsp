@@ -73,7 +73,7 @@
                     <select name="nivelAgregacaoRegional" class="form-control">
                         <option value="">Selecione uma Agregação Regional</option>
                         <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
-                            <option value="${nar.getNivel()}">${nar.getNomeDescritivo()}</option>
+                            <option value="${nar.nivel}">${nar.nomeDescritivo}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -83,7 +83,7 @@
                     <select name="nivelAgregacaoPolitica" class="form-control" required>
                         <option value="">Selecione uma Agregação Política</option>
                         <c:forEach items="${nivelAgregacaoPoliticaList}" var="nap" varStatus="s">
-                            <option value="${nap.getNivel()}">${nap.getNomeDescritivo()}</option>
+                            <option value="${nap.nivel}">${nap.nomeDescritivo}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -196,7 +196,7 @@
                         <select name="filtroNivelRegional" class="form-control">
                             <option value="">Selecione uma Região</option>
                             <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
-                                <option value="${nar.getNivel()}">${nar.getNomeDescritivo()}</option>
+                                <option value="${nar.nivel}">${nar.nomeDescritivo}</option>
                             </c:forEach>
                         </select>
                     </div>
