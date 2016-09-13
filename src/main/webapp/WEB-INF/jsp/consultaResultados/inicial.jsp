@@ -57,7 +57,7 @@
                             title="Cargo é um campo obrigatório.">
                         <option value="0">Selecione um Cargo</option>
                         <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
-                            <option value="${cargo.getKey()}">${cargo.getValue()}</option>
+                            <option value="${cargo.key}">${cargo.value}</option>
                         </c:forEach>
                     </select>
                 </div>
