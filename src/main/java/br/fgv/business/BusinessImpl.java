@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.fgv.model.Candidato;
 import br.fgv.model.Partido;
 import br.fgv.util.ColumnField;
 import com.google.common.base.Joiner;
@@ -229,7 +230,7 @@ public class BusinessImpl {
 	}
 
 
-	public Object getFiltroRegional(String q, String nivelRegional) {
+	public List<Par> getFiltroRegional(String q, String nivelRegional) {
 		Integer nivel = Integer.valueOf(nivelRegional);
 		List<Par> ret = new ArrayList<Par>();
 		if (nivel == 1) {
@@ -246,12 +247,12 @@ public class BusinessImpl {
 		return Collections.unmodifiableList(ret);
 	}
 
-	public List<Par> getCandidatos(String query, String ano) {
+	public List<Candidato> getCandidatos(String query, String ano) {
 		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
 				.getCandidatosPorAnoList(query, ano));
 	}
 
-	public List<Par> getCandidatos(String query, String[] anos, String cargo) {
+	public List<Candidato> getCandidatos(String query, String[] anos, String cargo) {
 		return Collections.unmodifiableList(daoFactory.getResultadosDAO()
 				.getCandidatosPorAnoList(query, anos, cargo));
 	}

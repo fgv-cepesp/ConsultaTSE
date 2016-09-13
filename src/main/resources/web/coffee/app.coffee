@@ -22,8 +22,11 @@ ConsultaTSE.InitializeServices = (config) ->
 
   if config.endpoints?
     ConsultaTSE.EndPoints = {}
-    ConsultaTSE.EndPoints.YearsForJob = config.endpoints.yearsForJob
-    ConsultaTSE.EndPoints.CollumnsFilters = config.endpoints.collumnsFilters
-    ConsultaTSE.EndPoints.PartidosAnos = config.endpoints.partidosAnos
+    ConsultaTSE.EndPoints.GetYearsForJob = (data) -> jQuery.get(config.endpoints.yearsForJob, data)
+    ConsultaTSE.EndPoints.GetCollumnsFilters = (data) -> jQuery.get(config.endpoints.collumnsFilters, data)
+    ConsultaTSE.EndPoints.GetPartidosAnos = (data) -> jQuery.get(config.endpoints.partidosAnos, data)
+    ConsultaTSE.EndPoints.GetNivelRegional = (data) -> jQuery.get(config.endpoints.nivelRegional, data)
+    ConsultaTSE.EndPoints.CandidatosAnosCargo = config.endpoints.candidatosAnosCargo
+    ConsultaTSE.EndPoints.FiltroRegionalQuery = config.endpoints.filtroRegionalQuery
 
   ConsultaTSE.Components.iCheck.Load()

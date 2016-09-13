@@ -34,7 +34,7 @@ public class TSEDadosAuxiliaresTest {
 	@Test
 	public void testGetNivelAgregacaoPolitica() {
 		List<AgregacaoPolitica> l = TSEDadosAuxiliares.getNivelAgregacaoPolitica();
-		assertEquals(2, l.size());
+		assertEquals(3, l.size());
 		AgregacaoPolitica partido = l.get(0);
 		assertEquals(AgregacaoPolitica.PARTIDO, partido);
 	}

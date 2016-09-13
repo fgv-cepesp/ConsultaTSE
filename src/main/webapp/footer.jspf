@@ -36,11 +36,12 @@
 		  endpoints: {
 		      yearsForJob: '<c:url value="/consulta/anos"/>',
               collumnsFilters: '<c:url value="/consulta/camposDisponiveis"/>',
-              partidosAnos: '<c:url value="/consulta/partidosAnos"/>'
+              partidosAnos: '<c:url value="/consulta/partidosAnos"/>',
+              candidatosAnosCargo: '<c:url value="/consulta/candidatosAnosCargo"/>',
+              filtroRegionalQuery: '<c:url value="/consulta/filtroRegionalQuery"/>',
           }
 	  };
 	  ConsultaTSE.InitializeServices(config);
-
       new ConsultaTSE.QueryView(jQuery('#consultaWrapper'))
   </script>
 </html>

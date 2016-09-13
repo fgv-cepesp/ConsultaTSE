@@ -81,6 +81,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.fgv.model.Candidato;
 import br.fgv.model.Partido;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -406,7 +407,7 @@ public class ResultadosDAO {
 		List<String> filtroCandidato = args.getCandidados();
 		if(filtroCandidato.size() > 0) {
 			qb.select_()._star_()._from_().declareRef(queryTotal, "T")
-				._where_().ref(CO_DIM_CANDIDATOS_TITULO, "T").in(filtroCandidato.toArray(new String[filtroCandidato.size()]));
+				._where_().ref(CO_DIM_CANDIDATOS_TITULO, "T").in(filtroCandidato);
 		} else {
 			return queryTotal;
 		}
@@ -624,15 +625,15 @@ public class ResultadosDAO {
 //		return getParList(query);
 //	}
 
-	public List<Par> getCandidatosPorAnoList(String filtro, String ano) {
+	public List<Candidato> getCandidatosPorAnoList(String filtro, String ano) {
 		String[] anos = {ano};
 		return getCandidatosPorAnoList(filtro, anos, null);
 	}
 
 
-
-	public List<Par> getCandidatosPorAnoList(String filtro, String[] anos, String codCargo) {
-
+	public List<Candidato> getCandidatosPorAnoList(String filtro, String[] anos, String codCargo)
+	{
+		List<Candidato> candidatos = new ArrayList<Candidato>();
 		List<String> partialQueries = new ArrayList<String>(anos.length);
 
 		for (String ano : anos) {
@@ -640,19 +641,26 @@ public class ResultadosDAO {
 
 			qb.select_()._distinct_().colunas(CO_DIM_CANDIDATOS_TITULO, CO_DIM_CANDIDATOS_NOME)
 				._from_().tabela(TB_DIM_CANDIDATOS)
-				._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro);
-			if(codCargo != null && codCargo.length() > 0) {
-				qb._and_().coluna(CO_DIM_CANDIDATOS_CARGO_COD)._eq_().valor(codCargo);
-			}
+				._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro)
+                ._and_().coluna(CO_DIM_CANDIDATOS_CARGO_COD)._eq_().valor(codCargo);
+
 			partialQueries.add(qb.toString(ano));
 		}
 
 
 		String queryStr = QueryBuilder.unionDistinct(partialQueries);
 
-
 		Query query = getSession().createSQLQuery(queryStr);
-		return getParChaveList(query);
+		List<Object[]> datas = (List<Object[]>) query.list();
+
+		for (Object[] row : datas) {
+			Candidato c = new Candidato();
+			c.setTitulo(String.valueOf(row[0]));
+			c.setNome(String.valueOf(row[1]));
+			candidatos.add(c);
+		}
+
+		return candidatos;
 	}
 
 	public List<Date> getDataCarga() {

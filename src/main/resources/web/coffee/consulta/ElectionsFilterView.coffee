@@ -18,6 +18,7 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
 
   reset: ->
     this.anosComponent.html('')
+    this.query.clearYears()
     this.anosDisponiveisAlert.hide()
 
   disable: ->
@@ -28,30 +29,27 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
     super()
     this.update()
 
-  getElectionsYears: ->
-    yearslist = Array()
-    for year in this.getYears()
-      yearElement = jQuery(year)
-      if yearElement.prop('checked')
-        yearslist.push(parseInt(yearElement.val()))
-    return yearslist
-
   update: ->
     job = this.query.getJob()
     if job isnt null
-      request = jQuery.get(ConsultaTSE.EndPoints.YearsForJob, {cargo: job.getId()})
+      request = ConsultaTSE.EndPoints.GetYearsForJob(cargo: job.getId())
       request.done (data) => this.onGetJobYears(data)
 
-  setYears: (years) ->
-    this.years = years
+  setYearsInputs: (years) ->
     ConsultaTSE.Components.iCheck.Load(years, 50)
-    this.years.on 'ifChanged', (event) => this.onYearSelected(jQuery(event.currentTarget))
+    years.on 'ifChanged', (event) => this.onYearChange(jQuery(event.currentTarget))
 
-  onYearSelected: (selected) ->
-    this.trackInputChange('AnoSelecionado', selected.val())
+  onYearChange: (selected) ->
+    year = parseInt(selected.val())
+
+    if selected.prop('checked')
+      this.trackInputChange('AnoSelecionado', year)
+      this.query.addYear(year)
+    else
+      this.trackInputChange('AnoDeselecionado', year)
+      this.query.removeYear(year)
+
     this.checkValidity()
-
-  getYears: -> this.years || []
 
   onGetJobYears: (data) ->
     this.reset()
@@ -59,7 +57,7 @@ class ConsultaTSE.ElectionsFilterView extends ConsultaTSE.FilterView
       group = this.buildYearItem(year)
       this.anosComponent.append(group)
 
-    this.setYears(this.anosComponent.find('input'))
+    this.setYearsInputs(this.anosComponent.find('input'))
 
   getSelectedYears: -> this.anosComponent.find('input:checked')
 

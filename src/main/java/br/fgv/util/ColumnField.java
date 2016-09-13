@@ -13,12 +13,12 @@ public class ColumnField implements Serializable {
 
     public ColumnField() {}
     public ColumnField(Tabela table) {
-        this.tableName = table.getNome();
-        this.tableDescription = table.getNomeDescritivo();
+        this.setTableName(table.getNome());
+        this.setTableDescription(table.getNomeDescritivo());
     }
     public ColumnField(String tableName, String tableDescription) {
-        this.tableName = tableName;
-        this.tableDescription = tableDescription;
+        this.setTableName(tableName);
+        this.setTableDescription(tableDescription);
     }
 
     public String getName() {
@@ -51,5 +51,9 @@ public class ColumnField implements Serializable {
 
     public String getKey() {
         return this.getTableName() + "." + this.getName();
+    }
+
+    public String toString() {
+        return this.getKey();
     }
 }

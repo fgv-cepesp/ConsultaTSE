@@ -41,8 +41,7 @@
             </div>
         </section>
 
-
-        <form id="formConsulta">
+        <form action="<c:url value="/resultados.csv"/>" method="post" enctype="multipart/form-data" novalidate>
 
             <!-- Filtros Obrigatorios -->
             <section id="filtrosObrigatorios" class="step" data-component="requiredFieldsFilter">
@@ -117,7 +116,6 @@
                         vários anos pode tornar a consulta bastante demorada.</p>
 
                     <div class="alert alert-block alert-warning fade in" data-component="anosDisponiveisAlert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="alert-heading">Você escolheu muitos anos!</h4>
                         <p>A consulta pode levar mais do que o esperado.</p>
                     </div>
@@ -184,72 +182,49 @@
                     <div class="form-group">
                         <label for="partidos">Partido político</label>
                         <input type="text" name="partidos" class="form-control"/>
+                        <div class="help-block" data-component="partidosInfoMessage"></div>
                     </div>
 
                     <div class="form-group">
                         <label for="candidados">Candidato</label>
-                        <input type="text" name="candidatos" class="form-control"/>
+                        <input type="text" name="candidatos" class="form-control" style="float: left; margin-bottom: 20px"/>
                     </div>
 
                     <h3>Região</h3>
-                    <h4>Tipo de região</h4>
+                    <h4>Tipo de Região</h4>
                     <div class="form-group">
-                        <select name="nivelFiltroRegional" class="form-control"></select>
+                        <select name="filtroNivelRegional" class="form-control">
+                            <option value="">Selecione uma Região</option>
+                            <c:forEach items="${nivelAgregacaoRegionalList}" var="nar" varStatus="s">
+                                <option value="${nar.getNivel()}">${nar.getNomeDescritivo()}</option>
+                            </c:forEach>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <div id="grupoFiltroRegional"></div>
+
+                    <div class="form-group" data-component="regioesComponent">
+                        <input type="text" name="regioes" class="form-control"/>
                     </div>
                 </div>
 
             </section>
 
-            <!-- Efetuar consulta -->
-            <section id=consulta>
-                <div class="page-header">
-                    <h1>Resultado</h1>
-                </div>
 
-                <p>
-                    O botão abaixo efetuará a consulta. Isto pode demorar de acordo com
-                    os filtros selecionados. O arquivo
-                    <strong>.csv</strong> pode ser aberto com editores de planilhas
-                    eletrônicas, como MS Excel ou OpenOffice Calc. O botão <a href="<c:url value='/ajuda' />">descrições
-                    das variáveis</a> exibirá as variáveis presentes no arquivo resultado.
-                </p>
+            <button class="btn btn-large btn-primary" type="submit" data-component="submit">Efetuar consulta</button>
+            <a class="btn" href="<c:url value='/ajuda' />" target="_blank">Descrições das Variáveis</a>
 
-                <div id="consultaInfo">
-                    <div class="alert alert-info">
-                        <strong>Nota:</strong> Alguns campos obrigatórios ainda não foram selecionados.
+            <div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="downloadModalLabel">Efetuando consulta...</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="help-block">Estamos efetuando a sua consulta, aguarde um momento.</div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="200" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div id="consultaForm" style="display: none;">
-                    <p>
-                        <button class="btn btn-large btn-primary" type="submit" id="butQuery"
-                                data-loading-text="Consultando...">Efetuar consulta
-                        </button>
-                        <button class="btn btn-large btn-warning" id="butLimpar"
-                                onclick="limparTudo();$.scrollTo($('#filtrosObrigatorios'), 800);return false;">Limpar
-                        </button>
-                        <a class="btn" href="<c:url value='/ajuda' />" target="_blank">Descrições das Variáveis</a>
-                    </p>
-                </div>
-
-
-            </section>
-
-            <!-- Modal -->
-            <div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="myModalLabel">Falha no download</h3>
-                </div>
-                <div class="modal-body" id="errorModalBody">
-
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
                 </div>
             </div>
 
@@ -261,8 +236,6 @@
                     <h3 id="myModalLabel">Divisão Regional</h3>
                 </div>
                 <div class="modal-body">
-
-
                     Com exce&ccedil;&atilde;o das Unidades da Federa&ccedil;&atilde;o (tamb&eacute;m conhecidas como
                     "Estados")
                     e os munic&iacute;pios que s&atilde;o classifica&ccedil;&otilde;es administrativas definidas pelos
@@ -302,14 +275,11 @@
                             as regi&otilde;es metropolitanas. A mesoregi&atilde;o &eacute; um agrupamento de microregi&otilde;es.
                         </li>
                     </ul>
-
-
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Fechar</button>
                 </div>
             </div>
-
         </form>
 
 </div>

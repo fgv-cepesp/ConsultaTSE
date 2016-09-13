@@ -153,20 +153,10 @@ public class ConsultaResultadosController {
 	}
 
 	@Get
-	@Path("/consulta/candidatos")
-	public void candidatosPorAno(String q, String ano) {
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Candidatos para o ano. Ano: " + ano + "; Filtro: " + q);
-		}
-		result.use(Results.json()).from(business.getCandidatos(q, ano))
-				.serialize();
-	}
-
-	@Get
 	@Path("/consulta/candidatosAnosCargo")
 	public void candidatosPorAno(String q, String[] anosList, String cargo) {
 		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Candidatos para o ano. Anos: " + Arrays.toString(anosList) + "; Filtro: " + q + "; Cargo: " + cargo);
+			LOGGER.debug("Candidatos para o ano. Anos: " + Arrays.toString(anosList) + "; Cargo: " + cargo);
 		}
 		result.use(Results.json()).from(business.getCandidatos(q, anosList, cargo))
 				.serialize();
@@ -183,26 +173,6 @@ public class ConsultaResultadosController {
 				business.getFiltroRegional(q, nivelRegional)).serialize();
 	}
 
-	@Post
-	@Path("/resultados.csv")
-	public Download resultadosCSVEntrada(List<String> anosEscolhidos, String filtroCargo,
-			String nivelAgregacaoRegional, String filtroTurno, String nivelAgregacaoPolitica,
-			List<String> camposOpcionais, String filtroNivelRegional, String regioes,
-			String candidatos, String partidos)
-			throws CepespDataException {
-
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Controller preparando para delegar criacao do CSV");
-		}
-
-		List<String> fr = trataLista(regioes);
-		List<String> fp = trataLista(partidos);
-		List<String> fc = trataLista(candidatos);
-
-		return resultadosCSV(anosEscolhidos, filtroCargo, filtroTurno, nivelAgregacaoRegional,
-				nivelAgregacaoPolitica, camposOpcionais, filtroNivelRegional,
-				fr, fp, fc);
-	}
 
 	private List<String> trataLista(String lista) {
 	    lista = lista == null ? "": lista;
@@ -218,9 +188,9 @@ public class ConsultaResultadosController {
 		return ret;
 	}
 
-	// @Post
-	// @Path("/resultados.csv")
-	public Download resultadosCSV(List<String> anosEscolhidos, String filtroCargo, String turno,
+	@Post
+	@Path("/resultados.csv")
+	public Download resultadosCSV(List<String> anos, String cargo, String turno,
 			String agregacaoRegional, String agregacaoPolitica,
 			List<String> camposOpcionais, String filtroRegional, List<String> regioes,
 		  	List<String> partidos, List<String> candidatos)
@@ -228,41 +198,55 @@ public class ConsultaResultadosController {
 
 		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug(">>> partidos " + partidos);
+			LOGGER.debug(">>> candidatos " + candidatos);
 			LOGGER.debug(">>> campos opcionais " + camposOpcionais);
 		}
 
-		Collections.sort(anosEscolhidos);
+		if (partidos == null) partidos = new ArrayList<String>();
+		if (regioes == null) regioes = new ArrayList<String>();
+		if (candidatos == null) candidatos = new ArrayList<String>();
+		if (camposOpcionais == null) camposOpcionais = new ArrayList<String>();
+
+		Collections.sort(anos);
 		AgregacaoPolitica nivelAgregacaoPolitica = AgregacaoPolitica.findByNivel(Integer.parseInt(agregacaoPolitica));
 		AgregacaoRegional nivelAgregacaoRegional = AgregacaoRegional.findByNivel(Integer.parseInt(agregacaoRegional));
 		AgregacaoRegional nivelFiltroRegional = AgregacaoRegional.findByNivel(Integer.parseInt(filtroRegional));
 		List<ColumnField> camposFixos = business.getCamposFixos(nivelAgregacaoRegional, nivelAgregacaoPolitica);
 
+		if(LOGGER.isDebugEnabled()) {
+			LOGGER.debug(">>> campos fixos " + camposFixos);
+		}
+
 		ArgumentosBusca args = new ArgumentosBusca();
+		args.setFiltroCargo(cargo);
 		args.setNivelAgrecacaoPolitica(nivelAgregacaoPolitica);
 		args.setNivelRegional(nivelAgregacaoRegional);
 		args.setFiltroNivelRegional(nivelFiltroRegional);
 
-		for (String ano : anosEscolhidos) args.addAnoEleicao(ano);
+		for (String ano : anos) args.addAnoEleicao(ano);
 		for (ColumnField campo : camposFixos) args.addCampoEscolhido(campo.getKey());
 		for (String campo : camposOpcionais) args.addCampoEscolhido(campo);
 		for (String codCandidato : candidatos) args.addCanditado(codCandidato);
 		for (String codPartido : partidos) args.addPartido(codPartido);
 		for (String codRegiao : regioes) args.addRegiao(codRegiao);
 
-		int fcint = Integer.parseInt(filtroCargo);
-		int t = Integer.parseInt(turno);
-		if(fcint == 1 || fcint == 3 || fcint == 11) {
-			// keep
-		} else {
-			t = 1;
+		int fcint = Integer.parseInt(cargo);
+		if (!(turno == null || turno == "")) {
+			int t = Integer.parseInt(turno);
+			if (fcint == 1 || fcint == 3 || fcint == 11) {
+				// keep
+			} else {
+				t = 1;
+			}
+			args.setTurno(t);
 		}
-		args.setTurno(t);
 
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Argumentos da busca: " + args.toString());
 		}
 
-		String nameFile = business.getSugestaoNomeArquivo(anosEscolhidos, nivelAgregacaoRegional, nivelAgregacaoPolitica, filtroCargo);
+		String nameFile = business.getSugestaoNomeArquivo(anos, nivelAgregacaoRegional, nivelAgregacaoPolitica, cargo);
 
 		if(LOGGER.isInfoEnabled()) {
 			LOGGER.info("Comecando consulta propriamente, tempo total (s): " + (System.currentTimeMillis() - start)/1000.0);

@@ -12,6 +12,8 @@ class ConsultaTSE.Partido
   setSigla: (sigla) -> this.sigla = sigla
   getSigla: -> this.sigla || ""
 
+  getSiglaIdentificador: -> this.getSigla() + " (" + this.getCod() + ")"
+
   @FromRemote: (remote) ->
     partido = new ConsultaTSE.Partido()
     partido.setCod(remote.cod)
@@ -20,3 +22,7 @@ class ConsultaTSE.Partido
     partido.setNome(remote.nome)
 
     return partido
+
+  @IdentifierNameToCod: (identifier) ->
+    matches = /\(([^)]+)\)/.exec(identifier)
+    if matches then matches[1] else 0

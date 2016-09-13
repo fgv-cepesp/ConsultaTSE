@@ -45,6 +45,7 @@ public class ArgumentosBusca {
 		this.partidos = new ArrayList<String>();
 		this.candidados = new ArrayList<String>();
 		this.regioes = new ArrayList<String>();
+		this.setTurno(1);
 	}
 
 	public void addAnoEleicao(String ano) {
@@ -60,7 +61,7 @@ public class ArgumentosBusca {
 	}
 
 	public void addCanditado(String codCandidato) {
-		this.partidos.add(codCandidato);
+		this.candidados.add(codCandidato);
 	}
 
 	public void addRegiao(String codRegiao) {
@@ -127,19 +128,19 @@ public class ArgumentosBusca {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ArgumentosBusca[\n")
 			.append( "  Filtros obrigatórios:")
-			.append( "\n    - cargo: " ).append( filtroCargo )
-			.append( "\n    - nivelRegional: " ).append( nivelRegional )
-			.append( "\n    - turno: " ).append( turno )
-			.append( "\n    - nivelAgrecacaoPolitica: " ).append( nivelAgrecacaoPolitica )
+			.append( "\n    - cargo: " ).append( getFiltroCargo() )
+			.append( "\n    - nivelRegional: " ).append( getNivelRegional() )
+			.append( "\n    - turno: " ).append( getTurno() )
+			.append( "\n    - nivelAgrecacaoPolitica: " ).append( getNivelAgrecacaoPolitica() )
 			.append( "\n Eleicoes: ")
-			.append( "\n    - anos: " ).append( anosEleicoes )
+			.append( "\n    - anos: " ).append( getAnosEleicoes() )
 			.append( "\n Colunas: ")
-			.append( "\n    - camposEscolhidos: " ).append( camposEscolhidos )
+			.append( "\n    - camposEscolhidos: " ).append( getCamposEscolhidos() )
 			.append( "\n Filtros: ")
-			.append( "\n    - partido: " ).append( partidos )
-			.append( "\n    - candidato: " ).append( candidados )
-			.append( "\n    - nivelRegional: " ).append( filtroNivelRegional.getNomeDescritivo() )
-			.append( "\n    - regiao: " ).append( regioes )
+			.append( "\n    - partidos: " ).append( getPartidos() )
+			.append( "\n    - candidatos: " ).append( getCandidados() )
+			.append( "\n    - nivelRegional: " ).append( getFiltroNivelRegional() )
+			.append( "\n    - regioes: " ).append( getRegioes() )
 			.append("]\n");
 
 		return sb.toString();
@@ -168,6 +169,11 @@ public class ArgumentosBusca {
     public void setFiltroNivelRegional(AgregacaoRegional filtroNivelRegional) {
         this.filtroNivelRegional = filtroNivelRegional;
     }
+
+	public AgregacaoRegional getFiltroNivelRegional() {
+		return this.filtroNivelRegional;
+	}
+
 	public void setFiltroNivelRegional(Integer filtroNivelRegional) {
 		this.filtroNivelRegional = AgregacaoRegional.findByNivel(filtroNivelRegional);
 	}

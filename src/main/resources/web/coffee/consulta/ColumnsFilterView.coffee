@@ -10,10 +10,12 @@ class ConsultaTSE.ColumnsFilterView extends ConsultaTSE.FilterView
     super()
     this.optionalColumnsComponent = this.findComponent('optionalColumnsComponent')
     this.fixedColumnsComponent = this.findComponent('fixedColumnsComponent')
+    this.optionalFieldsInputs = []
 
   reset: ->
     this.optionalColumnsComponent.html('')
     this.fixedColumnsComponent.html('')
+    this.query.clearOptionalFields()
     this.content.hide()
 
   enable: ->
@@ -24,9 +26,7 @@ class ConsultaTSE.ColumnsFilterView extends ConsultaTSE.FilterView
     regionalAggregation = this.query.getRegionalAggregation()
     politicalAggregationLevel = this.query.getPoliticalAggregationLevel()
     if regionalAggregation isnt 0 and politicalAggregationLevel isnt 0
-      request = jQuery.get(ConsultaTSE.EndPoints.CollumnsFilters, {
-        nivelAgregacaoRegional: regionalAggregation, nivelAgregacaoPolitica: politicalAggregationLevel
-      })
+      request = ConsultaTSE.EndPoints.GetCollumnsFilters(nivelAgregacaoRegional: regionalAggregation, nivelAgregacaoPolitica: politicalAggregationLevel)
       request.done (data) => this.onGetCollumnsFilters(data)
 
   onGetCollumnsFilters: (data) ->
@@ -43,7 +43,7 @@ class ConsultaTSE.ColumnsFilterView extends ConsultaTSE.FilterView
 
     this.content.slideDown()
 
-  isValid: -> true
+  isValid: -> this.query.getOptionalFields().length > 0
 
   getCategoryFor: (columnField, fixed) ->
     component = if fixed then this.fixedColumnsComponent else this.optionalColumnsComponent
@@ -64,11 +64,18 @@ class ConsultaTSE.ColumnsFilterView extends ConsultaTSE.FilterView
     view.find('input').on 'ifChanged', (event) => this.onOptionalFieldChange(jQuery(event.currentTarget))
     category = this.getCategoryFor(columnField, fixed)
     category.append(view)
+    this.query.addOptionalField(columnField.getKey())
     ConsultaTSE.Components.iCheck.Load(view.find('.icheck'))
 
   onOptionalFieldChange: (option) ->
-    checked = if option.is('checked') then 'Selecionado' : 'Deselecionado'
-    this.trackInputChange("Coluna Opcional (#{checked})", option.val())
+    field = option.val()
+    if option.prop('checked')
+      this.trackInputChange("Coluna Opcional (Selecionado)", field)
+      this.query.addOptionalField(field)
+    else
+      this.trackInputChange("Coluna Opcional (Deselecionado)", field)
+      this.query.removeOptionalField(field)
+
     this.checkValidity()
 
   buildCategory: (columnField) -> jQuery """

@@ -11,8 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="icheck/icheck.css" rel="stylesheet">
-    <link href="bootstrap-tokenfield/css/bootstrap-tokenfield.min.css" rel="stylesheet">
     <link href="bootstrap-tokenfield/css/tokenfield-typeahead.min.css" rel="stylesheet">
+    <link href="bootstrap-tokenfield/css/bootstrap-tokenfield.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
     <script type="text/javascript">

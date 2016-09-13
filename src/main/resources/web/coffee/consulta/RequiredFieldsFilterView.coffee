@@ -17,12 +17,13 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
     this.job.change () => this.onJobChange(this.job.find('option:selected'))
     this.regionalAggregation.change () => this.onRegionalAggregationChange(this.regionalAggregation.find('option:selected'))
     this.politicalAggregationLevel.change () => this.onPoliticalAggregationLevel(this.politicalAggregationLevel.find('option:selected'))
-    this.turn.change () => this.onTurnChange(this.turn.find('option:selected'))
+    this.turn.change () => this.onTurnChange(if this.turnContainer.is(':visible') then this.turn.find('option:selected') else null)
 
     this.updateTurnInput()
 
   setElectionsFilter: (filter) -> this.electionsFilter = filter
   setColumnsFilter: (filter) -> this.collumnsFilter = filter
+  setOptionalFilter: (filter) -> this.optionalFilter = filter
 
   updateTurnInput: ->
     if this.query.getJob() is null
@@ -35,6 +36,7 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
     this.query.setJob(parseInt(selected.val()))
     this.updateTurnInput()
     this.checkValidity()
+    this.query.setTurn(0)
 
     if selected.val() isnt "0"
       this.electionsFilter.enable()
@@ -42,13 +44,14 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
       this.electionsFilter.disable()
 
   onRegionalAggregationChange: (selected) ->
-    if selected.val() isnt ""
+    if selected isnt null and selected.val() isnt ""
       this.trackInputChange('AgregacaoRegional', selected.text())
       this.query.setRegionalAggregation(parseInt(selected.val()))
-      this.checkValidity()
       this.checkCollumnFieldsValidity()
     else
-      this.query.setTurn(0)
+      this.query.setRegionalAggregation(0)
+
+    this.checkValidity()
 
   onPoliticalAggregationLevel: (selected) ->
     if selected.val() isnt ""
@@ -70,6 +73,7 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
   checkCollumnFieldsValidity: ->
     if this.query.getPoliticalAggregationLevel() isnt 0 and this.query.getRegionalAggregation() isnt 0
       this.collumnsFilter.enable()
+      if this.optionalFilter? then this.optionalFilter.update()
     else
       this.collumnsFilter.disable()
 

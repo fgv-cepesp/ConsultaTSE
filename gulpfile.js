@@ -48,11 +48,12 @@ elixir(function (mix) {
             'consulta/FilterView.coffee',
             'consulta/ColumnField.coffee',
             'consulta/Partido.coffee',
+            'consulta/Candidato.coffee',
+            'consulta/Regiao.coffee',
             'consulta/RequiredFieldsFilterView.coffee',
             'consulta/ElectionsFilterView.coffee',
             'consulta/ColumnsFilterView.coffee',
             'consulta/OptionalFiltersView.coffee',
-            'consulta/ResultStepView.coffee',
         ], elixir.config.publicPath + '/js/consulta.js')
 
         .coffee('app.coffee');

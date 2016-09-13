@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.fgv.model.Candidato;
 import br.fgv.model.Partido;
 import org.hibernate.Session;
 import org.junit.BeforeClass;
@@ -217,7 +218,7 @@ public class ResultadosDAOTest {
 		List<Partido> l = dao.getPartidosPorAnoList("2010");
 		assertEquals(30,l.size());
 		Partido p = l.get(0);
-		assertTrue(String.valueOf(p.getCod()).matches("^\\d+$"));
+		assertNotEquals(p.getCod(), 0);
 		assertTrue(p.getSigla().matches("^\\w+ \\(\\d+\\)$"));
 	}
 
@@ -273,24 +274,22 @@ public class ResultadosDAOTest {
 
 	@Test
 	public void testCandidatosPorAnoList() {
-		List<Par> l = dao.getCandidatosPorAnoList("A", "2010");
+		List<Candidato> l = dao.getCandidatosPorAnoList("A", "2010");
 		assertTrue(l.size() > 20000);
 		assertTrue(l.size() < 22000);
-		Par p = l.get(0);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
-
+		Candidato p = l.get(0);
+		assertNotNull(p);
 
 		p = l.get(500);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
-		assertTrue(p.getValor().contains(p.getChave()));
+		assertTrue(p.getTitulo().matches("^\\d+$"));
+		assertTrue(p.getNome().matches("^.+$"));
+		assertTrue(p.getNomeIdentificador().contains(p.getTitulo()));
 	}
 
 	@Test
 	public void testCandidatosPorAnoListCargo() {
 		String[] anos = {"2002", "2006"};
-		List<Par> l = dao.getCandidatosPorAnoList("LUI", anos, "1");
+		List<Candidato> l = dao.getCandidatosPorAnoList("LUI", anos, "1");
 		assertTrue(l.size() == 1);
 	}
 
