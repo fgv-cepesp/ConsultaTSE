@@ -185,7 +185,7 @@
                         <div class="help-block" data-component="partidosInfoMessage"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" data-component="candidatosComponent">
                         <label for="candidados">Candidato</label>
                         <input type="text" name="candidatos" class="form-control" style="float: left; margin-bottom: 20px"/>
                     </div>

@@ -28,6 +28,7 @@ class ConsultaTSE.OptionalFiltersView extends ConsultaTSE.FilterView
     super()
     this.partidos = this.findInput('partidos')
     this.candidatos = this.findInput('candidatos')
+    this.candidatosComponent = this.findComponent('candidatosComponent')
     this.nivelRegional = this.findInput('filtroNivelRegional')
     this.regioes = this.findInput('regioes')
     this.partidosInfoMessage = this.findComponent('partidosInfoMessage')
@@ -135,7 +136,11 @@ class ConsultaTSE.OptionalFiltersView extends ConsultaTSE.FilterView
     this.partidosSuggestions.initialize(true)
 
   loadCandidatos: ->
-    this.candidatosSuggestions.initialize(true)
+    if this.query.getPoliticalAggregationLevel() is 2
+      this.candidatosComponent.show('slow')
+      this.candidatosSuggestions.initialize(true)
+    else
+      this.candidatosComponent.hide('slow')
 
   loadRegioes: ->
     for option in this.nivelRegional.find('option')
