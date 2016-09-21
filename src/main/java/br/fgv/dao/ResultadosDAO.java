@@ -142,9 +142,9 @@ public class ResultadosDAO {
 
 		String completeQuery = QueryBuilder.unionDistinct(queries) + _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
 
-		System.out.println(">> QUERY COMPLETA");
-		System.out.println(completeQuery);
-		System.out.println("<< QUERY COMPLETA");
+		LOGGER.info(">> QUERY COMPLETA");
+		LOGGER.info(completeQuery);
+		LOGGER.info("<< QUERY COMPLETA");
 
 		Map<String, String> pares = new HashMap<String, String>();
 
