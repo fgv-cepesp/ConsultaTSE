@@ -496,7 +496,7 @@ public class Tabela implements Comparable<Tabela>{
 
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");
-		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cod_cargo");
+		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cargo_cod");
 
 		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANO_CARGO_ANO);
