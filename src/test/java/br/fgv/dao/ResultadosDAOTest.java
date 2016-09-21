@@ -134,7 +134,7 @@ public class ResultadosDAOTest {
 				"sum(qnt_votos) as voto_total, " +
 				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo AND turno = 0 group by macro, partido, turno order by macro, partido, turno",
+				"WHERE cargo_cod = xxFiltroCargo AND turno = 0 group by macro, partido, turno order by macro, partido, turno",
 				dao.getStringQueryFato(args, "2010"));
 
 		args.setNivelRegional(AgregacaoRegional.findByNivel(2));
@@ -144,7 +144,7 @@ public class ResultadosDAOTest {
 				"sum(qnt_votos) as voto_total, " +
 				"sum(if( tipo_votavel = 4, qnt_votos, 0)) as voto_legenda " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by uf, partido, turno order by uf, partido, turno",
+				"WHERE cargo_cod = xxFiltroCargo group by uf, partido, turno order by uf, partido, turno",
 				dao.getStringQueryFato(args, "2010"));
 
 		args.setNivelAgrecacaoPolitica(AgregacaoPolitica.CANDIDATO);
@@ -152,13 +152,13 @@ public class ResultadosDAOTest {
 		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno",
+				"WHERE cargo_cod = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno",
 				dao.getStringQueryFato(args, "2010"));
 
 		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno",
+				"WHERE cargo_cod = xxFiltroCargo group by uf, candidato_sk, turno order by uf, candidato_sk, turno",
 				dao.getStringQueryFato(args, "2010"));
 
 		args.setCandidados(ef);
@@ -169,7 +169,7 @@ public class ResultadosDAOTest {
 		assertEquals(SELECT_ + "turno, uf, candidato_sk, " +
 				"sum(if( tipo_votavel = 1, qnt_votos, 0)) as voto_nominal, sum(qnt_votos) as voto_total " +
 				"FROM voto_mun_2010 " +
-				"WHERE cod_cargo = xxFiltroCargo " +
+				"WHERE cargo_cod = xxFiltroCargo " +
 				"AND micro in (aaa, bbb)  AND partido in (ccc, ddd)  " +
 				"group by uf, candidato_sk, turno order by uf, candidato_sk, turno",
 				dao.getStringQueryFato(args, "2010"));
