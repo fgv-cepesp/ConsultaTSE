@@ -160,8 +160,8 @@ public class BusinessImpl {
 		AgregacaoRegional regional = AgregacaoRegional.findByNivel(nivelAgregacaoRegional);
 		AgregacaoPolitica politica = AgregacaoPolitica.findByNivel(nivelAgregacaoPolitica);
 
-		System.out.println("regional: " + regional);
-		System.out.println("politica: " + politica);
+		LOGGER.info("regional: " + regional);
+		LOGGER.info("politica: " + politica);
 
 		List<ColumnField> optionalFieds = this.getCamposDisponiveis(regional, politica);
 		List<ColumnField> fixedFields = this.getCamposFixos(regional, politica);

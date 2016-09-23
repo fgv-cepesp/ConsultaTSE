@@ -242,9 +242,9 @@ public class Tabela implements Comparable<Tabela>{
 		CO_FACT_VOTOS_MUN_ANO = new Coluna("ano");
 //		CO_FACT_VOTOS_MUN_COLIGACAO_ID = new Coluna("coligacao_id");
 		CO_FACT_VOTOS_MUN_TURNO = new Coluna("turno");
-		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("cod_mun", "código do município");
+		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("mun_cod", "código do município");
 		CO_FACT_VOTOS_MUN_ZONA = new Coluna("zona");
-		CO_FACT_VOTOS_MUN_COD_CARGO = new Coluna("cod_cargo", "código do cargo");
+		CO_FACT_VOTOS_MUN_COD_CARGO = new Coluna("cargo_cod", "código do cargo");
 		CO_FACT_VOTOS_MUN_NR_VOTAVEL = new Coluna("nr_votavel", "número votável");
 		CO_FACT_VOTOS_MUN_TIPO_VOTAVEL = new Coluna("tipo_votavel", "tipo votável");
 		CO_FACT_VOTOS_MUN_QNT_VOTOS = new Coluna("qnt_votos", "quantidade de votos");
@@ -496,7 +496,7 @@ public class Tabela implements Comparable<Tabela>{
 
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");
-		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cod_cargo");
+		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cargo_cod");
 
 		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANO_CARGO_ANO);
