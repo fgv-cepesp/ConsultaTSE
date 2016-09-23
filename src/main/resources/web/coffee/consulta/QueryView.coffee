@@ -29,12 +29,13 @@ class ConsultaTSE.QueryView extends ConsultaTSE.View
     this.form.submit (e) => this.onFormSubmit(e)
     this.resetBtn.click (e) => this.onResetBtnClick(e)
 
-  onResetBtnClick: ->
+  onResetBtnClick: (e) ->
+    e.preventDefault()
     this.query.reset()
     this.requiredFieldsFilter.reset()
-    this.electionsFilter.reset()
-    this.collumnsFilter.reset()
-    this.optionalFields.reset()
+    this.electionsFilter.disable()
+    this.columnsFilter.disable()
+    this.optionalFilter.disable()
 
   trackInputChange: (inputName, inputValue) ->
     _gaq.push(['_trackEvent', 'ConsultaTSE.Consulta', inputName, inputValue]);
@@ -48,7 +49,6 @@ class ConsultaTSE.QueryView extends ConsultaTSE.View
       alert("Preencha todos os campos obrigatórios antes de continuar")
 
   downloadResult: ->
-    console.log('Iniciando consulta...')
     $.fileDownload(this.form.prop('action'), {
       httpMethod: this.form.prop('method'), data: this.query.getFormData(), dataType: 'text/csv'
       successCallback: (url) => this.onFormSubmitDone()
@@ -70,7 +70,6 @@ class ConsultaTSE.QueryView extends ConsultaTSE.View
     this.downloadModal.modal('hide')
 
   setDownloadingState: ->
-    console.log(this.query.getFormData())
     this.downloadModal.modal('show')
     this.startTime = new Date()
 

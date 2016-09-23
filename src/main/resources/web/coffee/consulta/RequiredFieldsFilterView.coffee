@@ -26,10 +26,10 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
   setOptionalFilter: (filter) -> this.optionalFilter = filter
 
   reset: ->
-    this.turn.val(1)
+    this.turn.val(0)
     this.job.val(0)
-    this.regionalAggregation.val(0)
-    this.politicalAggregationLevel.val(0)
+    this.regionalAggregation.val('')
+    this.politicalAggregationLevel.val('')
 
   updateTurnInput: ->
     if this.query.getJob() is null

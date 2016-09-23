@@ -25,7 +25,6 @@
 <link type="text/css" rel="stylesheet" href="css/autoSuggest.css"/>
 
 <div class="row">
-
     <section class="col-md-12" id="consultaWrapper">
 
 
@@ -280,8 +279,7 @@
                 </div>
             </div>
         </form>
-
-</div>
+    </section>
 </div>
 <!-- Page End -->
 

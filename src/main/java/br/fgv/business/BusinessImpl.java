@@ -109,12 +109,14 @@ public class BusinessImpl {
 		votoNominal.setDescription("Voto Nominal");
 		colunas.add(votoNominal);
 
-		if(AgregacaoPolitica.PARTIDO.equals(agregacao)) {
+		if(AgregacaoPolitica.PARTIDO.equals(agregacao) || AgregacaoPolitica.CANDIDATO.equals(agregacao)) {
 			ColumnField votoLegenda = new ColumnField("votos", "Resultado");
 			votoLegenda.setName("legenda");
 			votoLegenda.setDescription("Voto Legenda");
 			colunas.add(votoLegenda);
+		}
 
+		if(AgregacaoPolitica.PARTIDO.equals(agregacao)) {
 			ColumnField votoTotal = new ColumnField("votos", "Resultado");
 			votoTotal.setName("total");
 			votoTotal.setDescription("Voto Total");
@@ -136,6 +138,7 @@ public class BusinessImpl {
 		return turnos;
 	}
 
+	@Deprecated
 	public Map<String, String> getCargosPorAno(String ano) {
 		return daoFactory.getResultadosDAO().getCargosPorAnoList(ano);
 	}
