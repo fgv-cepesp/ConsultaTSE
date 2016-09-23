@@ -7,6 +7,7 @@ class ConsultaTSE.QueryView extends ConsultaTSE.View
 
   initializeComponents: ->
     this.startBtn = this.findComponent('startBtn')
+    this.resetBtn = this.findComponent('resetBtn')
     this.requiredFieldsFilter = new ConsultaTSE.RequiredFieldsFilterView(this.findComponent('requiredFieldsFilter'), this.query)
     this.electionsFilter = new ConsultaTSE.ElectionsFilterView(this.findComponent('electionsFilter'), this.query)
     this.columnsFilter = new ConsultaTSE.ColumnsFilterView(this.findComponent('columnsFilter'), this.query)
@@ -26,6 +27,14 @@ class ConsultaTSE.QueryView extends ConsultaTSE.View
     self = this
     this.asideItem.click (e) -> self.onAsideItemClick($(this), e)
     this.form.submit (e) => this.onFormSubmit(e)
+    this.resetBtn.click (e) => this.onResetBtnClick(e)
+
+  onResetBtnClick: ->
+    this.query.reset()
+    this.requiredFieldsFilter.reset()
+    this.electionsFilter.reset()
+    this.collumnsFilter.reset()
+    this.optionalFields.reset()
 
   trackInputChange: (inputName, inputValue) ->
     _gaq.push(['_trackEvent', 'ConsultaTSE.Consulta', inputName, inputValue]);

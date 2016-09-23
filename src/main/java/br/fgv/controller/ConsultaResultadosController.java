@@ -72,7 +72,7 @@ public class ConsultaResultadosController {
 	public void inicial() {
 		result.include("nivelAgregacaoRegionalList", TSEDadosAuxiliares.getNivelAgregacaoRegional());
 		result.include("nivelAgregacaoPoliticaList", TSEDadosAuxiliares.getNivelAgregacaoPolitica());
-		result.include("filtroCargoList", business.getCargosDisponiveis());
+		result.include("filtroCargoList", business.getCargos());
 		result.include("filtroTurnoList", business.getTurnosDisponiveis());
 	}
 
@@ -173,20 +173,6 @@ public class ConsultaResultadosController {
 				business.getFiltroRegional(q, nivelRegional)).serialize();
 	}
 
-
-	private List<String> trataLista(String lista) {
-	    lista = lista == null ? "": lista;
-		String[] tmp = lista.split(",");
-		List<String> ret = new ArrayList<String>();
-
-		for (int i = 0; i < tmp.length; i++) {
-			if (tmp[i].trim() != "") {
-				ret.add(tmp[i]);
-			}
-		}
-
-		return ret;
-	}
 
 	@Post
 	@Path("/resultados.csv")

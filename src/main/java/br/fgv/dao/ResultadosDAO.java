@@ -81,8 +81,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import br.fgv.model.Candidato;
-import br.fgv.model.Partido;
+import br.fgv.model.*;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -90,8 +89,6 @@ import org.hibernate.Session;
 import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
-import br.fgv.model.Coluna;
-import br.fgv.model.Tabela;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
@@ -111,7 +108,6 @@ public class ResultadosDAO {
 		return session;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Integer> getAnosDisponiveisList() {
 		List<Integer> list = null;
 
@@ -133,6 +129,7 @@ public class ResultadosDAO {
 		return list;
 	}
 
+	@Deprecated
 	public Map<String, String> getCargosList() {
 		List<Integer> anos = getAnosDisponiveisList();
 		List<String> queries = new ArrayList<String>();
@@ -162,7 +159,27 @@ public class ResultadosDAO {
 		return pares;
 	}
 
-	@SuppressWarnings("unchecked")
+	public List<Cargo> getCargos() {
+		List<Cargo> cargos = new ArrayList<Cargo>();
+		cargos.add(new Cargo(1, "Presidente"));
+		//cargos.add(new Cargo(2,	"Vice-Presidente"));
+		cargos.add(new Cargo(3,	"Governador"));
+		//cargos.add(new Cargo(4,	"Vice-Governador"));
+		//cargos.add(new Cargo(9,	"1º Suplente Senador"));
+		//cargos.add(new Cargo(10, "2º Suplente Senador"));
+		cargos.add(new Cargo(5,	"Senador"));
+		cargos.add(new Cargo(6,	"Deputado Federal"));
+		//cargos.add(new Cargo(7, "Deputado Estadual(Inclui DF)"));
+		cargos.add(new Cargo(7,	"Deputado Estadual"));
+		cargos.add(new Cargo(8,	"Deputado Distrital"));
+		cargos.add(new Cargo(11, "Prefeito"));
+		//cargos.add(new Cargo(12, "Vice-Prefeito"));
+		cargos.add(new Cargo(13, "Vereador"));
+
+		return cargos;
+	}
+
+	@Deprecated
 	public Map<String, String> getCargosPorAnoList(String ano) {
 		Map<String, String> pares = new HashMap<String, String>();
 
@@ -181,6 +198,7 @@ public class ResultadosDAO {
 		return pares;
 	}
 
+	@Deprecated
 	public String getQueryCargosPorAnoList(String ano) {
 		QueryBuilder qb = new QueryBuilder();
 

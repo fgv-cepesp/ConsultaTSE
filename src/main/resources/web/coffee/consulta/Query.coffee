@@ -80,3 +80,15 @@ class ConsultaTSE.Query
     if this.getTurn() isnt 0 then data.turno = this.getTurn()
 
     return data
+
+
+  reset: ->
+    this.clearYears()
+    this.clearOptionalFields()
+    this.clearPartidos()
+    this.clearRegioes()
+    this.setJob(0)
+    this.setRegionalAggregation(0)
+    this.setPoliticalAggregationLevel(0)
+    this.setTurn(1)
+    this.setFiltroRegional(0)

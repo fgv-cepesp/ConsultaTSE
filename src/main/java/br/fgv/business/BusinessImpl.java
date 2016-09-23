@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.fgv.model.Candidato;
+import br.fgv.model.Cargo;
 import br.fgv.model.Partido;
 import br.fgv.util.ColumnField;
 import com.google.common.base.Joiner;
@@ -143,8 +144,13 @@ public class BusinessImpl {
 		return daoFactory.getResultadosDAO().getAnosParaCargoList(cargo);
 	}
 
+	@Deprecated
 	public Map<String, String> getCargosDisponiveis() {
 		return daoFactory.getResultadosDAO().getCargosList();
+	}
+
+	public List<Cargo> getCargos() {
+		return daoFactory.getResultadosDAO().getCargos();
 	}
 
 	public CollumnFieldsCollection getCamposDisponiveis(String nivelAgregacaoRegional, String nivelAgregacaoPolitica) {

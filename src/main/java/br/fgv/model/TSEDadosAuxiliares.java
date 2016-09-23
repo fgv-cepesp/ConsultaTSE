@@ -41,8 +41,8 @@ public abstract class TSEDadosAuxiliares {
         NIVEL_AGREGACAO_REGIONAL.add(AgregacaoRegional.MUNICIPIO);
 
 		///////////////////////////////
-        NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.PARTIDO);
-        NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.CANDIDATO);
+		NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.CANDIDATO);
+		NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.PARTIDO);
 		NIVEL_AGREGACAO_POLITICA.add(AgregacaoPolitica.COLIGACAO);
 	}
 

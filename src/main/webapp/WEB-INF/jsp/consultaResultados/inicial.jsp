@@ -36,8 +36,6 @@
                     cargo eletivo. As consultas podem ser
                     também agregadas por partido e nível regional.</p>
                 <small><a href="<c:url value='/etl'/>"/>Notas sobre os dados</a></small>
-                <p><a class="btn btn-primary btn-large" data-component="startBtn"
-                      href="#filtrosObrigatorios">Começar &raquo;</a></p>
             </div>
         </section>
 
@@ -57,7 +55,7 @@
                             title="Cargo é um campo obrigatório.">
                         <option value="0">Selecione um Cargo</option>
                         <c:forEach items="${filtroCargoList}" var="cargo" varStatus="s">
-                            <option value="${cargo.key}">${cargo.value}</option>
+                            <option value="${cargo.id}">${cargo.nomeCargo}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -211,6 +209,7 @@
 
             <button class="btn btn-large btn-primary" type="submit" data-component="submit">Efetuar consulta</button>
             <a class="btn" href="<c:url value='/ajuda' />" target="_blank">Descrições das Variáveis</a>
+            <a class="btn" href="#" data-component="resetBtn" target="_blank">Reiniciar Busca</a>
 
             <div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalLabel">
                 <div class="modal-dialog" role="document">

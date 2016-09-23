@@ -52,7 +52,7 @@
 
 		 <h1>Informações sobre os dados</h1>
 
-		 <p>Os dados do CEPESPDATA são obtidos principalmente do <a href="http://www.tse.jus.br/hotSites/pesquisas-eleitorais/resultados.html">Repositório de Dados Eleitorais do TSE</a>.</p>
+		 <p>Os dados do CEPESPDATA são obtidos do <a href="http://www.tse.jus.br/hotSites/pesquisas-eleitorais/resultados.html">Repositório de Dados Eleitorais do TSE</a>.</p>
 
 		<h2>Carga de Candidatos</h2>
 

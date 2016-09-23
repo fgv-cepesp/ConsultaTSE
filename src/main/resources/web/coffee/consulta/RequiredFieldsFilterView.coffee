@@ -25,11 +25,21 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
   setColumnsFilter: (filter) -> this.collumnsFilter = filter
   setOptionalFilter: (filter) -> this.optionalFilter = filter
 
+  reset: ->
+    this.turn.val(1)
+    this.job.val(0)
+    this.regionalAggregation.val(0)
+    this.politicalAggregationLevel.val(0)
+
   updateTurnInput: ->
     if this.query.getJob() is null
-      this.turnContainer.hide()
+      this.turnContainer.hide('slow')
     else
-      this.query.getJob().toggleTurnInput(this.turnContainer)
+      if this.query.getPoliticalAggregationLevel() is 3 or not this.query.getJob().showTurnInput()
+        this.turnContainer.hide('slow')
+      else
+        this.turnContainer.show('slow')
+
 
   onJobChange: (selected) ->
     this.trackInputChange('Cargo', selected.text())
@@ -58,6 +68,7 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
       this.trackInputChange('AgregacaoPolitica', selected.text())
       this.query.setPoliticalAggregationLevel(parseInt(selected.val()))
       this.checkValidity()
+      this.updateTurnInput()
       this.checkCollumnFieldsValidity()
     else
       this.query.setPoliticalAggregationLevel(0)
@@ -78,7 +89,6 @@ class ConsultaTSE.RequiredFieldsFilterView extends ConsultaTSE.FilterView
       this.collumnsFilter.disable()
 
   isValid: ->
-    job = this.query.getJob()
     regionalAggregation = this.query.getRegionalAggregation()
     politicalAggregationLevel = this.query.getPoliticalAggregationLevel()
-    return job.isValid(this.turn)  and regionalAggregation isnt 0 and politicalAggregationLevel isnt 0
+    return regionalAggregation isnt 0 and politicalAggregationLevel isnt 0
