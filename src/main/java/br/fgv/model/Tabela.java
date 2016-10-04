@@ -338,7 +338,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Estado Civil", DISPONIVEL, "dim_estadocivil");
 		CO_DIM_CANDIDATOS_NACIONALIDADE_COD = new Coluna("nacionalidade_cod", "Nacionalidade", DISPONIVEL, "dim_nacionalidade");
 		CO_DIM_CANDIDATOS_NASC_UF = new Coluna("nasc_uf", "UF de Nascimento", DISPONIVEL);
-		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL, "dim_ibge");
+		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_mun_cod", "Código Município de Nascimento", DISPONIVEL, "dim_ibge");
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_DES = new Coluna("resultado_des", "Descrição Resultado", FIXO);
 //		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
