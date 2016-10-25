@@ -277,7 +277,7 @@ public class ResultadosDAO {
 
 			List<String> regioes = args.getRegioes();
 			List<String> partidos = args.getPartidos();
-			appendFiltroRegional(qb, args.getNivelRegional(), regioes.toArray(new String[regioes.size()]));
+			appendFiltroRegional(qb, args.getFiltroNivelRegional(), regioes.toArray(new String[regioes.size()]));
 			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, partidos.toArray(new String[partidos.size()]));
 			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 
