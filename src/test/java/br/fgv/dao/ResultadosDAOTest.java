@@ -224,7 +224,7 @@ public class ResultadosDAOTest {
 
 	@Test
 	public void testGetMacroRegiaoList() {
-		List<Par> l = dao.getMacroRegiaoList();
+		List<Par> l = dao.getMacroRegiaoList("%");
 		assertTrue(l.size() < 10);
 		assertTrue(l.size() >= 5);
 		Par p = l.get(0);
@@ -234,7 +234,7 @@ public class ResultadosDAOTest {
 
 	@Test
 	public void testGetEstadosList() {
-		List<Par> l = dao.getEstadosList();
+		List<Par> l = dao.getEstadosList("%");
 		assertTrue(l.size() > 20);
 		assertTrue(l.size() < 30);
 		Par p = l.get(0);

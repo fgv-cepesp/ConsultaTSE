@@ -298,8 +298,8 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_LEGENDAS_SURROGATEKEY = new Coluna("surrogatekey");
 
 		CO_DIM_LEGENDAS_TIPO_LEGENDA = new Coluna("tipo_legenda", "Tipo da Legenda", DISPONIVEL);
-		CO_DIM_LEGENDAS_COLIGACAO_SIG = new Coluna("coligacao_sig", "Sigla da Coligação", DISPONIVEL);
-		CO_DIM_LEGENDAS_COLIGACAO_NOME = new Coluna("coligacao_nome", "Nome da Coligação", DISPONIVEL);
+		CO_DIM_LEGENDAS_COLIGACAO_SIG = new Coluna("coligacao_sig", "Sigla da Coligação", OCULTA);
+		CO_DIM_LEGENDAS_COLIGACAO_NOME = new Coluna("coligacao_nome", "Nome da Coligação", OCULTA);
 		CO_DIM_LEGENDAS_COLIGACAO_COMPOSICAO = new Coluna("coligacao_composicao", "Composição da Coligação", DISPONIVEL);
 
 
