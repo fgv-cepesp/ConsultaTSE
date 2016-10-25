@@ -82,6 +82,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import br.fgv.model.*;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -89,6 +90,7 @@ import org.hibernate.Session;
 import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
+import br.fgv.business.BusinessImpl;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
@@ -262,9 +264,10 @@ public class ResultadosDAO {
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
 		qb.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
 
-		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
-			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
-		}
+		if(!BusinessImpl.isCargoMajoritario(Integer.parseInt(args.getFiltroCargo())));
+			if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
+				  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
+			}
 
 		qb._from_().tabela(TB_FACT_VOTOS_MUN);
 
@@ -574,22 +577,24 @@ public class ResultadosDAO {
 	}
 
 
-	public List<Par> getMacroRegiaoList() {
+	public List<Par> getMacroRegiaoList(String filtro) {
 		QueryBuilder qb = new QueryBuilder();
 
 		qb.select_().colunas(CO_DIM_MACROREGIAO_COD, CO_DIM_MACROREGIAO_NOME)
-			._from_().tabela(TB_DIM_MACROREGIAO);
+			._from_().tabela(TB_DIM_MACROREGIAO)
+			._where_().coluna(CO_DIM_MACROREGIAO_NOME).like(filtro);
 
 		Query query = getSession().createSQLQuery(qb.toString());
 
 		return getParList(query);
 	}
 
-	public List<Par> getEstadosList() {
+	public List<Par> getEstadosList(String filtro) {
 		QueryBuilder qb = new QueryBuilder();
 
 		qb.select_().colunas(CO_DIM_ESTADOS_ID, CO_DIM_ESTADOS_NOME)
-			._from_().tabela(TB_DIM_ESTADOS);
+			._from_().tabela(TB_DIM_ESTADOS)
+			._where_().coluna(CO_DIM_ESTADOS_NOME).like(filtro);
 
 		Query query = getSession().createSQLQuery(qb.toString());
 		return getParList(query);

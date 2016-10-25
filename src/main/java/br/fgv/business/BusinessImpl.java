@@ -29,14 +29,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.fgv.model.Candidato;
 import br.fgv.model.Cargo;
 import br.fgv.model.Partido;
 import br.fgv.util.ColumnField;
+
 import com.google.common.base.Joiner;
+
 import org.apache.log4j.Logger;
 
 import br.com.caelum.vraptor.ioc.Component;
@@ -243,9 +247,9 @@ public class BusinessImpl {
 		Integer nivel = Integer.valueOf(nivelRegional);
 		List<Par> ret = new ArrayList<Par>();
 		if (nivel == 1) {
-			ret = daoFactory.getResultadosDAO().getMacroRegiaoList();
+			ret = daoFactory.getResultadosDAO().getMacroRegiaoList(q);
         } else if (nivel == 2 || nivel == 3 ) {
-            ret = daoFactory.getResultadosDAO().getEstadosList();
+            ret = daoFactory.getResultadosDAO().getEstadosList(q);
 		} else if (nivel == 4) {
 			ret = daoFactory.getResultadosDAO().getMesoRegiaoList(q);
 		} else if (nivel == 5) {
@@ -313,5 +317,19 @@ public class BusinessImpl {
 	}
 
 	private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private static Set<Integer> _majoritarios = new HashSet<Integer>();
+	
+	static{
+		_majoritarios.add(1);
+		_majoritarios.add(3);
+		_majoritarios.add(5);
+		_majoritarios.add(11);
+	}
+	private static final Set<Integer> MAJORITARIO = Collections.unmodifiableSet(_majoritarios);
+	
+	public static boolean isCargoMajoritario(int cargo) {
+		return MAJORITARIO.contains(cargo);
+	}
 
 }
