@@ -57,12 +57,14 @@ public class BusinessImpl {
 
 	private static final Logger LOGGER = Logger.getLogger(BusinessImpl.class);
 
-	private static final Map<AgregacaoRegional, List<ColumnField>> CAMPOS_DISPONIVEIS_REGIONAL = new HashMap<AgregacaoRegional, List<ColumnField>>();
-	private static final Map<AgregacaoRegional, List<ColumnField>> CAMPOS_FIXOS_REGIONAL = new HashMap<AgregacaoRegional, List<ColumnField>>();
+	private static final Map<AgregacaoRegional, List<ColumnField>> _CAMPOS_DISPONIVEIS_REGIONAL = new HashMap<AgregacaoRegional, List<ColumnField>>();
+	private static final Map<AgregacaoRegional, List<ColumnField>> _CAMPOS_FIXOS_REGIONAL = new HashMap<AgregacaoRegional, List<ColumnField>>();
 
-	private static final Map<AgregacaoPolitica, List<ColumnField>> CAMPOS_DISPONIVEIS_POLITICO = new HashMap<AgregacaoPolitica, List<ColumnField>>();
-	private static final Map<AgregacaoPolitica, List<ColumnField>> CAMPOS_FIXOS_POLITICO = new HashMap<AgregacaoPolitica, List<ColumnField>>();
-
+	private static final Map<AgregacaoPolitica, List<ColumnField>> _CAMPOS_DISPONIVEIS_POLITICO = new HashMap<AgregacaoPolitica, List<ColumnField>>();
+	private static final Map<AgregacaoPolitica, List<ColumnField>> _CAMPOS_FIXOS_POLITICO = new HashMap<AgregacaoPolitica, List<ColumnField>>();
+	
+	private static final List<Cargo> cargos = new ArrayList<Cargo>();
+	
 	private final DaoFactory daoFactory;
 
 	static {
@@ -70,39 +72,62 @@ public class BusinessImpl {
 		/**
 		 * Campos Regionais Disponiveis
 		 */
-        CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MACRO_REGIAO, Tabela.TB_DIM_MACROREGIAO.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.UF, Tabela.TB_DIM_ESTADOS.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.UF_ZONA, Tabela.TB_DIM_ESTADOS.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MESO_REGIAO, Tabela.TB_DIM_MESOREGIAO.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MICRO_REGIAO, Tabela.TB_DIM_MICROREGIAO.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MUNICIPIO, Tabela.TB_DIM_MUNICIPIO.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MACRO_REGIAO, Tabela.TB_DIM_MACROREGIAO.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.UF, Tabela.TB_DIM_ESTADOS.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.UF_ZONA, Tabela.TB_DIM_ESTADOS.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MESO_REGIAO, Tabela.TB_DIM_MESOREGIAO.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MICRO_REGIAO, Tabela.TB_DIM_MICROREGIAO.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_REGIONAL.put(AgregacaoRegional.MUNICIPIO, Tabela.TB_DIM_MUNICIPIO.getColunas(DISPONIVEL));
 
 
 		/**
 		 * Campos Regionais Fixos
 		 */
-        CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MACRO_REGIAO, Tabela.TB_DIM_MACROREGIAO.getColunas(FIXO));
-        CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.UF, Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
-        CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.UF_ZONA, Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
-        CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MESO_REGIAO, Tabela.TB_DIM_MESOREGIAO.getColunas(FIXO));
-        CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MICRO_REGIAO, Tabela.TB_DIM_MICROREGIAO.getColunas(FIXO));
-        CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MUNICIPIO, Tabela.TB_DIM_MUNICIPIO.getColunas(FIXO));
+        _CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MACRO_REGIAO, Tabela.TB_DIM_MACROREGIAO.getColunas(FIXO));
+        _CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.UF, Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
+        _CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.UF_ZONA, Tabela.TB_DIM_ESTADOS.getColunas(FIXO));
+        _CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MESO_REGIAO, Tabela.TB_DIM_MESOREGIAO.getColunas(FIXO));
+        _CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MICRO_REGIAO, Tabela.TB_DIM_MICROREGIAO.getColunas(FIXO));
+        _CAMPOS_FIXOS_REGIONAL.put(AgregacaoRegional.MUNICIPIO, Tabela.TB_DIM_MUNICIPIO.getColunas(FIXO));
 
 		/**
 		 * Campos Politicos Disponiveis
 		 */
-        CAMPOS_DISPONIVEIS_POLITICO.put(AgregacaoPolitica.PARTIDO, Tabela.TB_DIM_PARTIDOS.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_POLITICO.put(AgregacaoPolitica.CANDIDATO, Tabela.TB_DIM_CANDIDATOS.getColunas(DISPONIVEL));
-        CAMPOS_DISPONIVEIS_POLITICO.put(AgregacaoPolitica.COLIGACAO, Tabela.TB_DIM_LEGENDAS.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_POLITICO.put(AgregacaoPolitica.PARTIDO, Tabela.TB_DIM_PARTIDOS.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_POLITICO.put(AgregacaoPolitica.CANDIDATO, Tabela.TB_DIM_CANDIDATOS.getColunas(DISPONIVEL));
+        _CAMPOS_DISPONIVEIS_POLITICO.put(AgregacaoPolitica.COLIGACAO, Tabela.TB_DIM_LEGENDAS.getColunas(DISPONIVEL));
 
 		/**
 		 * Campos Politicos Disponiveis
 		 */
-        CAMPOS_FIXOS_POLITICO.put(AgregacaoPolitica.PARTIDO, incluiVotos(AgregacaoPolitica.PARTIDO, Tabela.TB_DIM_PARTIDOS.getColunas(FIXO)));
-        CAMPOS_FIXOS_POLITICO.put(AgregacaoPolitica.CANDIDATO, incluiVotos(AgregacaoPolitica.CANDIDATO, Tabela.TB_DIM_CANDIDATOS.getColunas(FIXO)));
-        CAMPOS_FIXOS_POLITICO.put(AgregacaoPolitica.COLIGACAO, incluiVotos(AgregacaoPolitica.COLIGACAO, Tabela.TB_DIM_LEGENDAS.getColunas(FIXO)));
+        _CAMPOS_FIXOS_POLITICO.put(AgregacaoPolitica.PARTIDO, incluiVotos(AgregacaoPolitica.PARTIDO, Tabela.TB_DIM_PARTIDOS.getColunas(FIXO)));
+        _CAMPOS_FIXOS_POLITICO.put(AgregacaoPolitica.CANDIDATO, incluiVotos(AgregacaoPolitica.CANDIDATO, Tabela.TB_DIM_CANDIDATOS.getColunas(FIXO)));
+        _CAMPOS_FIXOS_POLITICO.put(AgregacaoPolitica.COLIGACAO, incluiVotos(AgregacaoPolitica.COLIGACAO, Tabela.TB_DIM_LEGENDAS.getColunas(FIXO)));
+		
+		cargos.add(new Cargo(1, "Presidente"));
+		//cargos.add(new Cargo(2,	"Vice-Presidente"));
+		cargos.add(new Cargo(3,	"Governador"));
+		//cargos.add(new Cargo(4,	"Vice-Governador"));
+		//cargos.add(new Cargo(9,	"1º Suplente Senador"));
+		//cargos.add(new Cargo(10, "2º Suplente Senador"));
+		cargos.add(new Cargo(5,	"Senador"));
+		cargos.add(new Cargo(6,	"Deputado Federal"));
+		//cargos.add(new Cargo(7, "Deputado Estadual(Inclui DF)"));
+		cargos.add(new Cargo(7,	"Deputado Estadual"));
+		cargos.add(new Cargo(8,	"Deputado Distrital"));
+		cargos.add(new Cargo(11, "Prefeito"));
+		//cargos.add(new Cargo(12, "Vice-Prefeito"));
+		cargos.add(new Cargo(13, "Vereador"));
 	}
+	
+	private static final Map<AgregacaoRegional, List<ColumnField>> CAMPOS_DISPONIVEIS_REGIONAL = Collections.unmodifiableMap(_CAMPOS_DISPONIVEIS_REGIONAL);
+	private static final Map<AgregacaoRegional, List<ColumnField>> CAMPOS_FIXOS_REGIONAL = Collections.unmodifiableMap(_CAMPOS_FIXOS_REGIONAL);
 
+	private static final Map<AgregacaoPolitica, List<ColumnField>> CAMPOS_DISPONIVEIS_POLITICO = Collections.unmodifiableMap(_CAMPOS_DISPONIVEIS_POLITICO);
+	private static final Map<AgregacaoPolitica, List<ColumnField>> CAMPOS_FIXOS_POLITICO = Collections.unmodifiableMap(_CAMPOS_FIXOS_POLITICO);
+
+	private static final List<Cargo> CARGOS = Collections.unmodifiableList(cargos);
+	
 	public BusinessImpl(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
 	}
@@ -157,7 +182,7 @@ public class BusinessImpl {
 	}
 
 	public List<Cargo> getCargos() {
-		return daoFactory.getResultadosDAO().getCargos();
+		return CARGOS;
 	}
 
 	public CollumnFieldsCollection getCamposDisponiveis(String nivelAgregacaoRegional, String nivelAgregacaoPolitica) {
@@ -321,10 +346,10 @@ public class BusinessImpl {
 	private static Set<Integer> _majoritarios = new HashSet<Integer>();
 	
 	static{
-		_majoritarios.add(1);
-		_majoritarios.add(3);
-		_majoritarios.add(5);
-		_majoritarios.add(11);
+		_majoritarios.add(1); // Presidente
+		_majoritarios.add(3); // Governador
+		_majoritarios.add(5); // Senador
+		_majoritarios.add(11); // Prefeito
 	}
 	private static final Set<Integer> MAJORITARIO = Collections.unmodifiableSet(_majoritarios);
 	

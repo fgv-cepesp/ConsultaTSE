@@ -161,26 +161,6 @@ public class ResultadosDAO {
 		return pares;
 	}
 
-	public List<Cargo> getCargos() {
-		List<Cargo> cargos = new ArrayList<Cargo>();
-		cargos.add(new Cargo(1, "Presidente"));
-		//cargos.add(new Cargo(2,	"Vice-Presidente"));
-		cargos.add(new Cargo(3,	"Governador"));
-		//cargos.add(new Cargo(4,	"Vice-Governador"));
-		//cargos.add(new Cargo(9,	"1º Suplente Senador"));
-		//cargos.add(new Cargo(10, "2º Suplente Senador"));
-		cargos.add(new Cargo(5,	"Senador"));
-		cargos.add(new Cargo(6,	"Deputado Federal"));
-		//cargos.add(new Cargo(7, "Deputado Estadual(Inclui DF)"));
-		cargos.add(new Cargo(7,	"Deputado Estadual"));
-		cargos.add(new Cargo(8,	"Deputado Distrital"));
-		cargos.add(new Cargo(11, "Prefeito"));
-		//cargos.add(new Cargo(12, "Vice-Prefeito"));
-		cargos.add(new Cargo(13, "Vereador"));
-
-		return cargos;
-	}
-
 	@Deprecated
 	public Map<String, String> getCargosPorAnoList(String ano) {
 		Map<String, String> pares = new HashMap<String, String>();
