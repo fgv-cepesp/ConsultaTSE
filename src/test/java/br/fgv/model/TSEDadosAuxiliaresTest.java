@@ -23,28 +23,27 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import br.fgv.business.AgregacaoPolitica;
+import br.fgv.business.AgregacaoRegional;
 import org.junit.Test;
 
 import br.fgv.util.Par;
 
 public class TSEDadosAuxiliaresTest {
 
-
 	@Test
 	public void testGetNivelAgregacaoPolitica() {
-		List<Par> l = TSEDadosAuxiliares.getNivelAgregacaoPolitica();
+		List<AgregacaoPolitica> l = TSEDadosAuxiliares.getNivelAgregacaoPolitica();
 		assertEquals(3, l.size());
-		Par p = l.get(1);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
+		AgregacaoPolitica partido = l.get(0);
+		assertEquals(AgregacaoPolitica.PARTIDO, partido);
 	}
 
 	@Test
 	public void testGetNivelAgregacaoRegional() {
-		List<Par> l = TSEDadosAuxiliares.getNivelAgregacaoRegional();
-		assertEquals(7, l.size());
-		Par p = l.get(1);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
+		List<AgregacaoRegional> l = TSEDadosAuxiliares.getNivelAgregacaoRegional();
+		assertEquals(6, l.size());
+        AgregacaoRegional macroRegiao = l.get(0);
+		assertEquals(AgregacaoRegional.MACRO_REGIAO, macroRegiao);
 	}
 }

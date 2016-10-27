@@ -1,0 +1,51 @@
+.step {
+
+  &.status-valid {
+    h1 {
+      color: @green;
+
+      &::before {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .control-year {
+    padding: 20px;
+    font-size: 30px;
+  }
+
+  .control-column {
+    font-size: 14px;
+    display: block;
+  }
+
+}
+
+#colunas {
+  ul {
+    display: inline-block;
+    vertical-align: top;
+
+    li {
+      font-size: 16px;
+
+      &.header {
+        list-style: none;
+        size: 20px;
+        color: @blue;
+        margin-left: -20px;
+        margin-bottom: 10px;
+      }
+    }
+
+  }
+}
+
+.form-control.tokenfield {
+  height: auto;
+  min-height: 34px;
+
+  .token {  float: left;  }
+  .tt-input { width: auto !important; min-width: 200px !important; float: left; }
+}

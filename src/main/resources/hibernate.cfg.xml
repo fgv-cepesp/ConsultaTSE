@@ -27,7 +27,8 @@
 		<!-- DESENVOLVIMENTO -->
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/consultatse?autoReconnect=true</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
-		<property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>
+		<!--<property name="hibernate.connection.driver_class">org.gjt.mm.mysql.Driver</property>-->
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
 
 		<!-- Para configurar isto, use o settings.xml do maven -->
@@ -46,7 +47,7 @@
 		
 
 		<property name="hibernate.show_sql">false</property>
-		<property name="hibernate.hbm2ddl.auto">none</property>
+		<property name="hibernate.hbm2ddl.auto">null</property>
 		<property name="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</property>
 
 	</session-factory>

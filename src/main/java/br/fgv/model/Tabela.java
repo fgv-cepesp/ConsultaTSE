@@ -40,13 +40,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import br.fgv.util.ColumnField;
 import org.apache.log4j.Logger;
 
 import br.fgv.CepespDataException;
 import br.fgv.model.AjudaTabela.ItemAjuda;
 import br.fgv.model.Coluna.Disponibilidade;
 import br.fgv.util.CSVBuilder;
-import br.fgv.util.Par;
 
 import com.google.common.io.ByteStreams;
 
@@ -242,9 +242,9 @@ public class Tabela implements Comparable<Tabela>{
 		CO_FACT_VOTOS_MUN_ANO = new Coluna("ano");
 //		CO_FACT_VOTOS_MUN_COLIGACAO_ID = new Coluna("coligacao_id");
 		CO_FACT_VOTOS_MUN_TURNO = new Coluna("turno");
-		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("cod_mun", "código do município");
+		CO_FACT_VOTOS_MUN_COD_MUN = new Coluna("mun_cod", "código do município");
 		CO_FACT_VOTOS_MUN_ZONA = new Coluna("zona");
-		CO_FACT_VOTOS_MUN_COD_CARGO = new Coluna("cod_cargo", "código do cargo");
+		CO_FACT_VOTOS_MUN_COD_CARGO = new Coluna("cargo_cod", "código do cargo");
 		CO_FACT_VOTOS_MUN_NR_VOTAVEL = new Coluna("nr_votavel", "número votável");
 		CO_FACT_VOTOS_MUN_TIPO_VOTAVEL = new Coluna("tipo_votavel", "tipo votável");
 		CO_FACT_VOTOS_MUN_QNT_VOTOS = new Coluna("qnt_votos", "quantidade de votos");
@@ -298,8 +298,8 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_LEGENDAS_SURROGATEKEY = new Coluna("surrogatekey");
 
 		CO_DIM_LEGENDAS_TIPO_LEGENDA = new Coluna("tipo_legenda", "Tipo da Legenda", DISPONIVEL);
-		CO_DIM_LEGENDAS_COLIGACAO_SIG = new Coluna("coligacao_sig", "Sigla da Coligação", DISPONIVEL);
-		CO_DIM_LEGENDAS_COLIGACAO_NOME = new Coluna("coligacao_nome", "Nome da Coligação", DISPONIVEL);
+		CO_DIM_LEGENDAS_COLIGACAO_SIG = new Coluna("coligacao_sig", "Sigla da Coligação", OCULTA);
+		CO_DIM_LEGENDAS_COLIGACAO_NOME = new Coluna("coligacao_nome", "Nome da Coligação", OCULTA);
 		CO_DIM_LEGENDAS_COLIGACAO_COMPOSICAO = new Coluna("coligacao_composicao", "Composição da Coligação", DISPONIVEL);
 
 
@@ -338,7 +338,7 @@ public class Tabela implements Comparable<Tabela>{
 		CO_DIM_CANDIDATOS_EST_CIVIL_COD = new Coluna("est_civil_cod", "Estado Civil", DISPONIVEL, "dim_estadocivil");
 		CO_DIM_CANDIDATOS_NACIONALIDADE_COD = new Coluna("nacionalidade_cod", "Nacionalidade", DISPONIVEL, "dim_nacionalidade");
 		CO_DIM_CANDIDATOS_NASC_UF = new Coluna("nasc_uf", "UF de Nascimento", DISPONIVEL);
-		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_cod_mun", "Código Município de Nascimento", DISPONIVEL, "dim_ibge");
+		CO_DIM_CANDIDATOS_NASC_COD_MUN = new Coluna("nasc_mun_cod", "Código Município de Nascimento", DISPONIVEL, "dim_ibge");
 		CO_DIM_CANDIDATOS_RESULTADO_COD = new Coluna("resultado_cod", "Código Resultado", DISPONIVEL);
 		CO_DIM_CANDIDATOS_RESULTADO_DES = new Coluna("resultado_des", "Descrição Resultado", FIXO);
 //		CO_DIM_CANDIDATOS_RESULTADO_COD_OLD = new Coluna("resultado_cod_old", OCULTA);
@@ -496,7 +496,7 @@ public class Tabela implements Comparable<Tabela>{
 
 		/* Colunas da tabela SIS ANO CARGO */
 		CO_SIS_ANO_CARGO_ANO = new Coluna("ano");
-		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cod_cargo");
+		CO_SIS_ANO_CARGO_COD_CARGO = new Coluna("cargo_cod");
 
 		c = new ArrayList<Coluna>();
 		c.add(CO_SIS_ANO_CARGO_ANO);
@@ -662,17 +662,19 @@ public class Tabela implements Comparable<Tabela>{
 		return getNome();
 	}
 
-	public List<Par> getColunas(Disponibilidade disponibilidade) {
-		List<Par> l = new ArrayList<Par>();
-		String prefixo = getNome() + ".";
-		String prefixoDescritivo = getNomeDescritivo() + ": ";
+	public List<ColumnField> getColunas(Disponibilidade disponibilidade) {
+		List<ColumnField> l = new ArrayList<ColumnField>();
+
 		for (Coluna c : getColunas()) {
-			if(disponibilidade.equals(c.getDisponibilidade()))
-				l.add(new Par(prefixo + c.getNome(), prefixoDescritivo
-					+ c.getNomeDescritivo()));
+			if(disponibilidade.equals(c.getDisponibilidade())) {
+				ColumnField field = new ColumnField(this);
+				field.setName(c.getNome());
+				field.setDescription(c.getNomeDescritivo());
+				l.add(field);
+			}
 		}
 
-		return Collections.unmodifiableList(l);
+		return l;
 	}
 
 	public static Tabela byName(String nome) {

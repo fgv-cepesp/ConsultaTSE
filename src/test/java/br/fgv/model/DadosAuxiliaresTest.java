@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -32,41 +33,36 @@ public class DadosAuxiliaresTest {
 
 	@Test
 	public void testGetMeses() {
-		List<Par> l = DadosAuxiliares.getMeses();
-		assertEquals(13, l.size());
-		Par p = l.get(1);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
+		Map<Integer, String> l = DadosAuxiliares.getMeses();
+		assertEquals(12, l.size());
+		String janeiro = l.get(1);
+		assertEquals(janeiro, "Janeiro");
 	}
-
 
 	@Test
 	public void testGetEscolaridade() {
-		List<Par> l = DadosAuxiliares.getEscolaridade();
-		assertEquals(11, l.size());
-		Par p = l.get(1);
-		assertTrue(p.getChave().matches("^\\d+$"));
-		assertTrue(p.getValor().matches("^.+$"));
+		Map<Integer, String> l = DadosAuxiliares.getEscolaridade();
+		assertEquals(10, l.size());
+		String primeiroCompleto = l.get(1);
+		assertEquals("Primeiro Incompleto", primeiroCompleto);
 	}
 
 
 	@Test
 	public void testGetCargoPolitico() {
-		List<Par> l = DadosAuxiliares.getCargoPolitico();
-		assertEquals(6, l.size());
-		Par p = l.get(1);
-		assertTrue(p.getChave().matches("^.+$"));
-		assertTrue(p.getValor().matches("^.+$"));
+		Map<String, String> l = DadosAuxiliares.getCargoPolitico();
+		assertEquals(5, l.size());
+		String veread = l.get("veread");
+		assertEquals("Vereador(a)", veread);
 	}
 
 
 	@Test
 	public void testGetEstados() {
-		List<Par> l = DadosAuxiliares.getEstados();
-		assertEquals(28, l.size());
-		Par p = l.get(1);
-		assertTrue(p.getChave().matches("^\\w\\w$"));
-		assertTrue(p.getValor().matches("^.+$"));
+		Map<String, String> l = DadosAuxiliares.getEstados();
+		assertEquals(27, l.size());
+		String ac = l.get("AC");
+		assertEquals("Acre", ac);
 	}
 
 }

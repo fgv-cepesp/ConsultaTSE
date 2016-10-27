@@ -39,21 +39,18 @@ public enum AgregacaoRegional {
 		this.nomeDescritivo = nomeDescritivo;
 		this.nivel = nivel;
 	}
-	
-	public static AgregacaoRegional fromInt(Integer nivel) {
-		if(nivel == null)
-			return null;
+
+	public static AgregacaoRegional findByNivel(String nivel) {
+		return findByNivel(Integer.parseInt(nivel));
+	}
+
+
+	public static AgregacaoRegional findByNivel(Integer nivel) {
 		for (AgregacaoRegional e : AgregacaoRegional.values()) {
 			if(e.getNivel() == nivel) {
 				return e;
 			}
 		}
-		return null;
-	}
-	
-	public static AgregacaoRegional fromInt(String nivel) {
-		if(nivel != null)
-			return fromInt(Integer.parseInt(nivel));
 		return null;
 	}
 

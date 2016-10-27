@@ -27,21 +27,20 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 
-
-<div class="hero-unit">
-	<h1 align="center">Bem-vindo ao CEPESPDATA</h1>
+<div class="jumbotron">
+	<h1 class="text-center">Bem-vindo ao CEPESPDATA</h1>
 	<p>O Centro de Política e Economia do Setor Público (<a href="http://cepesp.fgv.br" target="_blank">CEPESP</a>) da
 		Fundação Getulio Vargas (<a href="http://wwww.fgv.br" target="_blank">FGV</a>) disponibiliza uma série
 		de bases de dados pesquisáveis. Veja abaixo as bases atuais.</p>
 </div>
 
 <div class="row">
-	<div class="span4">
+	<div class="col-md-4">
 		<h2>Eleições por cargo</h2>
 		<p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um cargo eletivo. As consultas podem ser
 		       também agregadas por partido e nível regional.</p>
 		<p>
-			<a class="btn btn-info" href="consultaResultados">Consultar &raquo;</a>
+			<a class="btn btn-primary" href="<c:url value="/consultaResultados"/>">Consultar &raquo;</a>
 		</p>
 	</div>
 	<!-- <div class="span4">

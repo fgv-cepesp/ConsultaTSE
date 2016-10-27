@@ -17,8 +17,9 @@
     		<id>cepesp-dev</id>
 			<properties>
 				<cepesp.server.url>http://localhost:8080/manager</cepesp.server.url>
-				<cepesp.db.user>usuario do banco</cepesp.db.user>
-				<cepesp.db.passwd>senha do banco</cepesp.db.passwd>
+                <cepesp.db.driver>com.mysql.jdbc.Driver</cepesp.db.driver>
+                <cepesp.db.user>root</cepesp.db.user>
+				<cepesp.db.passwd>1234</cepesp.db.passwd>
 				<cepespdata.analytics>UA-39540607-2</cepespdata.analytics>
 			</properties>
 		</profile>

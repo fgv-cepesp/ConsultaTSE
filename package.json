@@ -1,0 +1,29 @@
+{
+  "name": "consulta-tse",
+  "version": "1.0.0",
+  "description": "Consulta TSE",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fgv-cepesp/ConsultaTSE.git"
+  },
+  "author": "Urbbox",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fgv-cepesp/ConsultaTSE/issues"
+  },
+  "homepage": "https://github.com/fgv-cepesp/ConsultaTSE#readme",
+  "devDependencies": {
+    "bootstrap": "^3.3.7",
+    "bootstrap-tokenfield": "^0.12.0",
+    "gulp": "^3.9.1",
+    "icheck": "^1.0.2",
+    "jquery": "^3.1.0",
+    "laravel-elixir": "^6.0.0-10",
+    "laravel-elixir-coffeescript": "^1.0.2",
+    "typeahead.js": "^0.11.1"
+  }
+}

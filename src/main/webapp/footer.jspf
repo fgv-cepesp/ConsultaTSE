@@ -1,45 +1,47 @@
-      <hr>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<hr/>
+        <footer>
+          <div class="row">
+              <div class="col-md-3">
+                  <p>&copy; FGV CEPESP 2013</p>
+              </div>
+              <div class="col-md-6 text-center">
+                  <img src="images/logoFapesp.jpg" alt=""/>
+              </div>
+              <div class="col-md-3">
+                  <p><small>Vers&atilde;o: ${appData.version} <br/>
+                      Publicado em <fmt:formatDate type="both" dateStyle="long" value="${appData.dataPublicacao}" /></small><br/>
+                      <a href="https://github.com/fgv-cepesp/ConsultaTSE" target="_blank">C&oacute;digo fonte no GitHub</a></p>
+              </div>
+          </div>
+        </footer>
 
     </div> <!-- /container -->
-    <div class="container">
-      <div class="footer">
-      	<div class="row">
-      		<div class="offset1 span3">
-      			<p>&copy; FGV CEPESP 2013</p>
-      		</div>
-      		<div class="span3">
-      			<img src="images/logoFapesp.jpg">
-      		</div>
-      		<div class="span3">
-      			<p><small>Versão: ${appData.version} <br/>
-				Publicado em <fmt:formatDate type="both" dateStyle="long" value="${appData.dataPublicacao}" /></small><br/>
-      			<a href="https://github.com/fgv-cepesp/ConsultaTSE" target="_blank">Código fonte no GitHub</a></p>
-      		</div>
-      	</div>
-      </div>
-     </div>
+
   </body>
-  
-    <script type="text/javascript">
-  	/* To activate dropdown menus */
-  	function stripTrailingSlash(str) {
-	    if(str.substr(-1) == '/') {
-	      return str.substr(0, str.length - 1);
-	    }
-	    return str;
-	  }
 
-	  var url = window.location.pathname;  
-	  var activePage = stripTrailingSlash(url);
-
-	  $('#topmenu li a').each(function(){  
-	    var currentPage = stripTrailingSlash($(this).attr('href'));
-
-	    if (activePage == currentPage) {
-	      $(this).parent().addClass('active'); 
-	      $(this).parent().parent().parent().addClass('active'); 
-	    } 
-	  });
-  
+  <script src="<c:url value='/js/jquery.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/js/jquery.fileDownload.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/bootstrap/js/bootstrap.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/icheck/icheck.min.js'/>"></script>
+  <script src="<c:url value='/bootstrap-tokenfield/js/bootstrap-tokenfield.min.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/js/typeahead.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/js/app.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/js/framework.js'/>" type="text/javascript"></script>
+  <script src="<c:url value='/js/consulta.js'/>" type="text/javascript"></script>
+  <script>
+	  var config = {
+		  mixpanel: { project_token: "df90b45e3ba3bfafb115fb7e397d3782" },
+		  endpoints: {
+		      yearsForJob: '<c:url value="/consulta/anos"/>',
+              collumnsFilters: '<c:url value="/consulta/camposDisponiveis"/>',
+              partidosAnos: '<c:url value="/consulta/partidosAnos"/>',
+              candidatosAnosCargo: '<c:url value="/consulta/candidatosAnosCargo"/>',
+              filtroRegionalQuery: '<c:url value="/consulta/filtroRegionalQuery"/>',
+          }
+	  };
+	  ConsultaTSE.InitializeServices(config);
+      new ConsultaTSE.QueryView(jQuery('#consultaWrapper'))
   </script>
 </html>

@@ -81,6 +81,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import br.fgv.model.*;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -88,8 +90,7 @@ import org.hibernate.Session;
 import br.fgv.CepespDataException;
 import br.fgv.business.AgregacaoPolitica;
 import br.fgv.business.AgregacaoRegional;
-import br.fgv.model.Coluna;
-import br.fgv.model.Tabela;
+import br.fgv.business.BusinessImpl;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.CSVBuilder;
 import br.fgv.util.Par;
@@ -109,8 +110,7 @@ public class ResultadosDAO {
 		return session;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<Integer> getAnosDisponiveis() {
+	public List<Integer> getAnosDisponiveisList() {
 		List<Integer> list = null;
 
 		try {
@@ -131,53 +131,29 @@ public class ResultadosDAO {
 		return list;
 	}
 
-
-
-	public List<Par> getAnosDisponiveisList() {
-		List<Par> pares = new ArrayList<Par>();
-		List<Integer> list = null;
-
-		list = getAnosDisponiveis();
-
-		for (Integer item : list) {
-			String i = String.valueOf(item);
-			pares.add(new Par(i, i));
-		}
-
-		return pares;
-	}
-
-	public List<Par> getCargosList() {
-		List<Integer> anos = getAnosDisponiveis();
-
+	@Deprecated
+	public Map<String, String> getCargosList() {
+		List<Integer> anos = getAnosDisponiveisList();
 		List<String> queries = new ArrayList<String>();
 
-		for (Integer ano : anos) {
+		for (Integer ano : anos)
 			queries.add(getQueryCargosPorAnoList(Integer.toString(ano)));
-		}
 
-		String completeQuery = QueryBuilder.unionDistinct(queries)
-				+ _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
+		String completeQuery = QueryBuilder.unionDistinct(queries) + _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
 
-		System.out.println(">> QUERY COMPLETA");
-		System.out.println(completeQuery);
-		System.out.println("<< QUERY COMPLETA");
+		LOGGER.info(">> QUERY COMPLETA");
+		LOGGER.info(completeQuery);
+		LOGGER.info("<< QUERY COMPLETA");
 
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
+		Map<String, String> pares = new HashMap<String, String>();
 
 		try {
-
 			Query query = getSession().createSQLQuery(completeQuery);
+			List<Object[]> list = (List<Object[]>) query.list();
 
-			list = (List<Object[]>) query.list();
+			for (Object[] item : list)
+				pares.put(String.valueOf(item[0]), String.valueOf(item[1]));
 
-			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1]);
-
-				pares.add(new Par(chave, valor));
-			}
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter cargos disponiveis.", e);
 		}
@@ -185,24 +161,17 @@ public class ResultadosDAO {
 		return pares;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Par> getCargosPorAnoList(String ano) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
+	@Deprecated
+	public Map<String, String> getCargosPorAnoList(String ano) {
+		Map<String, String> pares = new HashMap<String, String>();
 
 		try {
 			String queryString = getQueryCargosPorAnoList(ano);
-
 			Query query = getSession().createSQLQuery(queryString);
+			List<Object[]> list = (List<Object[]>) query.list();
 
-			list = (List<Object[]>) query.list();
-
-			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1]);
-
-				pares.add(new Par(chave, valor));
-			}
+			for (Object[] item : list)
+				pares.put(String.valueOf(item[0]), String.valueOf(item[1]));
 
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter cargos disponiveis por ano.", e);
@@ -211,6 +180,7 @@ public class ResultadosDAO {
 		return pares;
 	}
 
+	@Deprecated
 	public String getQueryCargosPorAnoList(String ano) {
 		QueryBuilder qb = new QueryBuilder();
 
@@ -222,10 +192,7 @@ public class ResultadosDAO {
 		return qb.toString();
 	}
 
-	public List<Par> getAnosParaCargoList(String cargo) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Integer> list = null;
-
+	public List<Integer> getAnosParaCargoList(String cargo) {
 		try {
 			QueryBuilder qb = new QueryBuilder();
 
@@ -234,31 +201,18 @@ public class ResultadosDAO {
 				._where_().coluna(CO_SIS_ANO_CARGO_COD_CARGO)._eq_().valor(cargo)
 				._order_by_().coluna(CO_SIS_ANO_CARGO_ANO);
 
-
 			Query query = getSession().createSQLQuery(qb.toString());
 
-			list = (List<Integer>) query.list();
-
-			for (Integer item : list) {
-				String chave = String.valueOf(item);
-				String valor = String.valueOf(item);
-
-				pares.add(new Par(chave, valor));
-			}
-
+			return (List<Integer>) query.list();
 		} catch (RuntimeException e) {
 			LOGGER.error("Falhou ao tentar obter cargos disponiveis por ano.", e);
+			throw e;
 		}
-
-		return pares;
 	}
 
-	QueryBuilder appendFiltroPolitico(QueryBuilder query, AgregacaoPolitica agregacaoPolitica,
-			String[] filtroPolitico) {
-
+	QueryBuilder appendFiltroPolitico(QueryBuilder query, AgregacaoPolitica agregacaoPolitica, String[] filtroPolitico) {
 		// nesses casos o nivel é fora do intervalo...
-		if (agregacaoPolitica == null || filtroPolitico == null
-				|| filtroPolitico.length == 0) {
+		if (agregacaoPolitica == null || filtroPolitico.length == 0) {
 			// do nothing
 		} else {
 			query._and_().valor(agregacaoPolitica.getNome()).in(filtroPolitico);
@@ -268,8 +222,7 @@ public class ResultadosDAO {
 	}
 
 	QueryBuilder appendFiltroRegional(QueryBuilder query, AgregacaoRegional agregacaoRegional, String[] filtroRegional) {
-
-		if(agregacaoRegional == null || filtroRegional == null || filtroRegional.length == 0){
+		if(agregacaoRegional == null || filtroRegional.length == 0){
 			// do nothing
 		} else {
 			query._and_().valor(agregacaoRegional.getCamposAgregar()).in(filtroRegional);
@@ -291,9 +244,10 @@ public class ResultadosDAO {
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
 		qb.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
 
-		if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
-			  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
-		}
+		if(!BusinessImpl.isCargoMajoritario(Integer.parseInt(args.getFiltroCargo())));
+			if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
+				  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
+			}
 
 		qb._from_().tabela(TB_FACT_VOTOS_MUN);
 
@@ -301,8 +255,10 @@ public class ResultadosDAO {
 		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo())
 			._and_().eq(CO_FACT_VOTOS_MUN_TURNO, args.getTurno());
 
-			appendFiltroRegional(qb, args.getNivelFiltroRegional(), args.getFiltroRegional());
-			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, args.getFiltroPartido());
+			List<String> regioes = args.getRegioes();
+			List<String> partidos = args.getPartidos();
+			appendFiltroRegional(qb, args.getFiltroNivelRegional(), regioes.toArray(new String[regioes.size()]));
+			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, partidos.toArray(new String[partidos.size()]));
 			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
 
 		// GROUP BY
@@ -416,15 +372,13 @@ public class ResultadosDAO {
 	}
 
 	public ResultSetWork queryFato(ArgumentosBusca args) {
-
-		String[] anos = args.getAnoEleicao();
-
 		List<String> queries = new ArrayList<String>();
+		List<String> listCamposEscolhidos = args.getCamposEscolhidos();
+		String[] camposEscolhidos = listCamposEscolhidos.toArray(new String[listCamposEscolhidos.size()]);
 
-		for (String ano : anos) {
+		for (String ano : args.getAnosEleicoes()) {
 		    String queryFato = getStringQueryFato(args, ano);
-			String queryTotal = getStringQueryDim(queryFato, ano,
-					args.getCamposEscolhidos(), args.getNivelAgrecacaoPolitica());
+			String queryTotal = getStringQueryDim(queryFato, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
 			String queryFinal = aplicarFiltros(queryTotal, args);
 
 			queries.add(queryFinal);
@@ -451,8 +405,8 @@ public class ResultadosDAO {
 		// por agora, apenas filtro de candidato... os outros podem ser feito
 		// direto na fato.
 		QueryBuilder qb = new QueryBuilder();
-		String[] filtroCandidato = args.getFiltroCandidato();
-		if(filtroCandidato != null && filtroCandidato.length > 0) {
+		List<String> filtroCandidato = args.getCandidados();
+		if(filtroCandidato.size() > 0) {
 			qb.select_()._star_()._from_().declareRef(queryTotal, "T")
 				._where_().ref(CO_DIM_CANDIDATOS_TITULO, "T").in(filtroCandidato);
 		} else {
@@ -507,29 +461,22 @@ public class ResultadosDAO {
 				._where_().ref(CO_DIM_CARGO_CD, a)._eq_().valor(codCargo);
 
 			Query query = getSession().createSQLQuery(qb.toString());
-
 			ret = (String) query.uniqueResult();
-			if(ret == null || ret.isEmpty()) {
-				LOGGER.error("Nao pude obter cargo para id: " + codCargo);
-			}
 
 		} catch (RuntimeException e) {
 			LOGGER.error("Exception ao tentar obter cargo para id: " + codCargo, e);
+			throw e;
 		}
 
 		return ret;
 	}
 
-	public List<Par> getPartidosPorAnoList(String ano) {
-		String[] anos = {ano};
-		return getPartidosPorAnoList(anos);
+	public List<Partido> getPartidosPorAnoList(String s) {
+		return getPartidosPorAnoList(new String[] {s});
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Par> getPartidosPorAnoList(String[] anosList) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
-
+	public List<Partido> getPartidosPorAnoList(String[] anosList) {
+		List<Partido> partidos = new ArrayList<Partido>();
 		List<String> partialQueries = new ArrayList<String>(anosList.length);
 
 		for (String ano : anosList) {
@@ -546,23 +493,22 @@ public class ResultadosDAO {
 
 		try {
 
-
 			Query query = getSession().createSQLQuery(queryStr);
-
-			list = (List<Object[]>) query.list();
+			List<Object[]> list = (List<Object[]>) query.list();
 
 			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1] + " (" + item[0] + ")");
+				Partido p = new Partido();
+				p.setCod((Integer) item[0]);
+				p.setSigla(String.valueOf(item[1]));
 
-				pares.add(new Par(chave, valor));
+				partidos.add(p);
 			}
 
 		} catch (RuntimeException e) {
 			LOGGER.error("Exception ao tentar obter partidos por: " + Arrays.toString(anosList), e);
 		}
 
-		return pares;
+		return partidos;
 	}
 
 
@@ -611,22 +557,24 @@ public class ResultadosDAO {
 	}
 
 
-	public List<Par> getMacroRegiaoList() {
+	public List<Par> getMacroRegiaoList(String filtro) {
 		QueryBuilder qb = new QueryBuilder();
 
 		qb.select_().colunas(CO_DIM_MACROREGIAO_COD, CO_DIM_MACROREGIAO_NOME)
-			._from_().tabela(TB_DIM_MACROREGIAO);
+			._from_().tabela(TB_DIM_MACROREGIAO)
+			._where_().coluna(CO_DIM_MACROREGIAO_NOME).like(filtro);
 
 		Query query = getSession().createSQLQuery(qb.toString());
 
 		return getParList(query);
 	}
 
-	public List<Par> getEstadosList() {
+	public List<Par> getEstadosList(String filtro) {
 		QueryBuilder qb = new QueryBuilder();
 
 		qb.select_().colunas(CO_DIM_ESTADOS_ID, CO_DIM_ESTADOS_NOME)
-			._from_().tabela(TB_DIM_ESTADOS);
+			._from_().tabela(TB_DIM_ESTADOS)
+			._where_().coluna(CO_DIM_ESTADOS_NOME).like(filtro);
 
 		Query query = getSession().createSQLQuery(qb.toString());
 		return getParList(query);
@@ -680,13 +628,15 @@ public class ResultadosDAO {
 //		return getParList(query);
 //	}
 
-	public List<Par> getCandidatosPorAnoList(String filtro, String ano) {
+	public List<Candidato> getCandidatosPorAnoList(String filtro, String ano) {
 		String[] anos = {ano};
 		return getCandidatosPorAnoList(filtro, anos, null);
 	}
 
-	public List<Par> getCandidatosPorAnoList(String filtro, String[] anos, String codCargo) {
 
+	public List<Candidato> getCandidatosPorAnoList(String filtro, String[] anos, String codCargo)
+	{
+		List<Candidato> candidatos = new ArrayList<Candidato>();
 		List<String> partialQueries = new ArrayList<String>(anos.length);
 
 		for (String ano : anos) {
@@ -694,19 +644,26 @@ public class ResultadosDAO {
 
 			qb.select_()._distinct_().colunas(CO_DIM_CANDIDATOS_TITULO, CO_DIM_CANDIDATOS_NOME)
 				._from_().tabela(TB_DIM_CANDIDATOS)
-				._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro);
-			if(codCargo != null && codCargo.length() > 0) {
-				qb._and_().coluna(CO_DIM_CANDIDATOS_CARGO_COD)._eq_().valor(codCargo);
-			}
+				._where_().coluna(CO_DIM_CANDIDATOS_NOME).like(filtro)
+                ._and_().coluna(CO_DIM_CANDIDATOS_CARGO_COD)._eq_().valor(codCargo);
+
 			partialQueries.add(qb.toString(ano));
 		}
 
 
 		String queryStr = QueryBuilder.unionDistinct(partialQueries);
 
-
 		Query query = getSession().createSQLQuery(queryStr);
-		return getParChaveList(query);
+		List<Object[]> datas = (List<Object[]>) query.list();
+
+		for (Object[] row : datas) {
+			Candidato c = new Candidato();
+			c.setTitulo(String.valueOf(row[0]));
+			c.setNome(String.valueOf(row[1]));
+			candidatos.add(c);
+		}
+
+		return candidatos;
 	}
 
 	public List<Date> getDataCarga() {
@@ -742,4 +699,6 @@ public class ResultadosDAO {
 
 		return datas.get(0);
 	}
+
+
 }

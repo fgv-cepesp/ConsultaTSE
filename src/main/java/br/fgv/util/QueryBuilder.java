@@ -233,6 +233,11 @@ public class QueryBuilder {
 		query.append(" in (").append(COMMA_JOINER.join(values)).append(") ");
 		return this;
 	}
+
+	public QueryBuilder in(List<String> values) {
+		query.append(" in (").append(COMMA_JOINER.join(values)).append(") ");
+		return this;
+	}
 	
 	public static String SUM(Object... values) {
 		return "sum(" + COMMA_JOINER.join(values) + ")";

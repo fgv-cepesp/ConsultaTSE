@@ -89,7 +89,7 @@ public class TabelaTest {
 				"aux_estados.id = r.uf",
 				Tabela.TB_DIM_ESTADOS.getRelacao());
 		assertEquals(
-				"aux_municipio.cod = r.cod_mun",
+				"aux_municipio.cod = r.cargo_cod",
 				Tabela.TB_DIM_MUNICIPIO.getRelacao());
 	}
 
