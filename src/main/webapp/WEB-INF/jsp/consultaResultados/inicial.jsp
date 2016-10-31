@@ -34,7 +34,7 @@
                 <p>Este formulário permite efetuar consultas às bases de dados relativas as eleições especificando um
                     cargo eletivo. As consultas podem ser
                     também agregadas por partido e nível regional.</p>
-                <small><a href="<c:url value='/etl'/>"/>Notas sobre os dados</a></small>
+<%--                 <small><a href="<c:url value='/etl'/>"/>Notas sobre os dados</a></small> --%>
             </div>
         </section>
 
