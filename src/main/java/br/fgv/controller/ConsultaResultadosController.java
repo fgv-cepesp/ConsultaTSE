@@ -66,11 +66,6 @@ public class ConsultaResultadosController {
 		this.business = business;
 		this.response = response;
 	}
-	
-	@Get
-	@Path(priority = 1, value = "/")
-	public void index() {
-	}
 
 	@Get
 	@Path(priority = 1, value = "/consultaResultados")

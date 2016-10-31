@@ -32,10 +32,11 @@ public class IndexController {
 		this.result = result;
 	}
 
+
+	
 	@Get
-	@Path("/")
+	@Path(priority = 1, value = "/")
 	public void index() {
-		//result.;
 	}
 
 
