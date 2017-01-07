@@ -138,12 +138,12 @@ public class BusinessImpl {
 		votoNominal.setDescription("Voto Nominal");
 		colunas.add(votoNominal);
 
-		if(AgregacaoPolitica.PARTIDO.equals(agregacao) || AgregacaoPolitica.CANDIDATO.equals(agregacao)) {
+		//if(AgregacaoPolitica.PARTIDO.equals(agregacao) || AgregacaoPolitica.CANDIDATO.equals(agregacao)) {
 			ColumnField votoLegenda = new ColumnField("votos", "Resultado");
 			votoLegenda.setName("legenda");
 			votoLegenda.setDescription("Voto Legenda");
 			colunas.add(votoLegenda);
-		}
+		//}
 
 		if(AgregacaoPolitica.PARTIDO.equals(agregacao)) {
 			ColumnField votoTotal = new ColumnField("votos", "Resultado");
