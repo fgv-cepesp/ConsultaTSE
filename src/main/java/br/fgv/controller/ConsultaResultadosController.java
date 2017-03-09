@@ -179,7 +179,7 @@ public class ConsultaResultadosController {
 	public Download resultadosCSV(List<String> anos, String cargo, String turno,
 			String agregacaoRegional, String agregacaoPolitica,
 			List<String> camposOpcionais, String filtroRegional, List<String> regioes,
-		  	List<String> partidos, List<String> candidatos)
+		  	List<String> partidos, List<String> candidatos, List<String> consolidados)
 			throws CepespDataException {
 
 		long start = System.currentTimeMillis();
@@ -193,6 +193,8 @@ public class ConsultaResultadosController {
 		if (regioes == null) regioes = new ArrayList<String>();
 		if (candidatos == null) candidatos = new ArrayList<String>();
 		if (camposOpcionais == null) camposOpcionais = new ArrayList<String>();
+		if (consolidados == null) consolidados = new ArrayList<String>();
+		if (filtroRegional == null) filtroRegional = "0";
 
 		Collections.sort(anos);
 		AgregacaoPolitica nivelAgregacaoPolitica = AgregacaoPolitica.findByNivel(Integer.parseInt(agregacaoPolitica));
@@ -216,6 +218,7 @@ public class ConsultaResultadosController {
 		for (String codCandidato : candidatos) args.addCanditado(codCandidato);
 		for (String codPartido : partidos) args.addPartido(codPartido);
 		for (String codRegiao : regioes) args.addRegiao(codRegiao);
+		for (String consolidado : consolidados) args.addConsolidado(consolidado);
 
 		int fcint = Integer.parseInt(cargo);
 		if (!(turno == null || turno == "")) {

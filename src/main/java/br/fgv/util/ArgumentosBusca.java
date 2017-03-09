@@ -38,6 +38,7 @@ public class ArgumentosBusca {
 	private List<String> regioes;
 	private int turno;
 	private AgregacaoRegional filtroNivelRegional;
+	private List<String> consolidados;
 
 	public ArgumentosBusca() {
 		this.anosEleicoes = new ArrayList<String>();
@@ -45,8 +46,13 @@ public class ArgumentosBusca {
 		this.partidos = new ArrayList<String>();
 		this.candidados = new ArrayList<String>();
 		this.regioes = new ArrayList<String>();
+		this.consolidados = new ArrayList<String>();
+
 		this.setTurno(1);
 	}
+
+	public void addConsolidado(String consolidado) { this.consolidados.add(consolidado); }
+	public List<String> getConsolidados() { return Collections.unmodifiableList(this.consolidados); }
 
 	public void addAnoEleicao(String ano) {
 		this.anosEleicoes.add(ano);

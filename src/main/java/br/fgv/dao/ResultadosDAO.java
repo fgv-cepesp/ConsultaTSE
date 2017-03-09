@@ -101,6 +101,7 @@ public class ResultadosDAO {
 	private static final Logger LOGGER = Logger.getLogger(ResultadosDAO.class);
 
 	private final Session session;
+	private ArgumentosBusca args = null;
 
 	public ResultadosDAO(Session session) {
 		this.session = session;
@@ -244,6 +245,16 @@ public class ResultadosDAO {
 		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
 		qb.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
 
+		//extra sums
+		for (String consolidado : args.getConsolidados())
+			qb.comma_().sum(consolidado)._as_().valor(consolidado);
+
+		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_VALIDOS)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_VALIDOS.getNome());
+		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_TOTAIS_CONSOLIDADO)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_TOTAIS_CONSOLIDADO.getNome());
+		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_BRANCOS)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_BRANCOS.getNome());
+		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_NULOS)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_NULOS.getNome());
+
+
 		if(!BusinessImpl.isCargoMajoritario(Integer.parseInt(args.getFiltroCargo())));
 			if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
 				  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
@@ -341,9 +352,15 @@ public class ResultadosDAO {
 		
 
 		QueryBuilder qb = new QueryBuilder();
-		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ").
-			valor(CO_FACT_VOTOS_MUN_TURNO + " AS \"turno\", ").commaWithTrailing(camposFiltrados.toArray()).comma(agregacaoPolitica.getColunas())
-			._from_().par(queryFato)._as_().valor(REF_FACT);
+		qb.select_().valor(anoEleicao + " AS \"anoEleicao\", ")
+				.valor(CO_FACT_VOTOS_MUN_TURNO + " AS \"turno\", ")
+				.commaWithTrailing(camposFiltrados.toArray())
+				.comma(agregacaoPolitica.getColunas());
+
+		for (String consolidado : args.getConsolidados())
+			qb.valor(", " + consolidado + " ");
+
+		qb._from_().par(queryFato)._as_().valor(REF_FACT);
 
 		for (String nomeTabela : tabelasARelacionar) {
 			Tabela tabela = Tabela.byName(nomeTabela);
@@ -418,6 +435,7 @@ public class ResultadosDAO {
 
 	public InputStream doWorkResult(ArgumentosBusca args) throws CepespDataException {
 
+		this.args = args;
 		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug(">>> doWorkResult");

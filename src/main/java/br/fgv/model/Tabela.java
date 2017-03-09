@@ -274,7 +274,7 @@ public class Tabela implements Comparable<Tabela>{
 		c.add(CO_FACT_VOTOS_MUN_CANDIDATO_SK);
 		c.add(CO_FACT_VOTOS_MUN_LEGENDA_SK);
 
-		TB_FACT_VOTOS_MUN = new Tabela("voto_mun_" + HOLDER_ANO_ELEICAO, c);
+		TB_FACT_VOTOS_MUN = new Tabela("voto_mun_consolidado_" + HOLDER_ANO_ELEICAO, c);
 
 		/* Colunas da tabela DIM PARTIDOS */
 		CO_DIM_PARTIDOS_ANO = new Coluna("ano");
