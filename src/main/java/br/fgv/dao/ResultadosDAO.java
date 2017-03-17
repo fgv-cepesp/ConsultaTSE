@@ -101,7 +101,6 @@ public class ResultadosDAO {
 	private static final Logger LOGGER = Logger.getLogger(ResultadosDAO.class);
 
 	private final Session session;
-	private ArgumentosBusca args = null;
 
 	public ResultadosDAO(Session session) {
 		this.session = session;
@@ -278,7 +277,7 @@ public class ResultadosDAO {
 		return qb.toString(ano);
 	}
 
-	String getStringQueryDim(String queryFato, String anoEleicao,
+	String getStringQueryDim(ArgumentosBusca args, String queryFato, String anoEleicao,
 			String[] camposEscolhidos, AgregacaoPolitica agregacaoPolitica) {
 
 		SortedSet<String> tabelasARelacionar = new TreeSet<String>(new Comparator<String>() {
@@ -374,8 +373,6 @@ public class ResultadosDAO {
 		}
 
 		String ret = qb.toString(anoEleicao);
-		
-		
 
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Query DIM:\t" + ret);
@@ -395,7 +392,7 @@ public class ResultadosDAO {
 
 		for (String ano : args.getAnosEleicoes()) {
 		    String queryFato = getStringQueryFato(args, ano);
-			String queryTotal = getStringQueryDim(queryFato, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
+			String queryTotal = getStringQueryDim(args, queryFato, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
 			String queryFinal = aplicarFiltros(queryTotal, args);
 
 			queries.add(queryFinal);
@@ -435,7 +432,6 @@ public class ResultadosDAO {
 
 	public InputStream doWorkResult(ArgumentosBusca args) throws CepespDataException {
 
-		this.args = args;
 		long start = System.currentTimeMillis();
 		if(LOGGER.isDebugEnabled()) {
 			LOGGER.debug(">>> doWorkResult");

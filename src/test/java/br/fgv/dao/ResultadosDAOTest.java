@@ -180,10 +180,10 @@ public class ResultadosDAOTest {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 
-		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.PARTIDO));
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", voto_nominal, voto_legenda, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim(new ArgumentosBusca(), "xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.PARTIDO));
 		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", dim_partidos.sigla_Partido, voto_nominal, voto_legenda, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
-				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.PARTIDO));
+				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim(new ArgumentosBusca(), "xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.PARTIDO));
 	}
 
 	@Test
@@ -191,10 +191,10 @@ public class ResultadosDAOTest {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
 
-		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", voto_nominal, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.CANDIDATO));
+		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", voto_nominal, voto_total FROM ( xxQueryFato ) as r",dao.getStringQueryDim(new ArgumentosBusca(), "xxQueryFato", "xxAnoEleicao", empty, AgregacaoPolitica.CANDIDATO));
 		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", dim_partidos.sigla_Partido, voto_nominal, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
-				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.CANDIDATO));
+				"left join dim_partidos on dim_partidos.cod_Partido = r.partido AND dim_partidos.ano = 'xxAnoEleicao'", dao.getStringQueryDim(new ArgumentosBusca(), "xxQueryFato", "xxAnoEleicao", ab, AgregacaoPolitica.CANDIDATO));
 		
 	}
 	
@@ -205,7 +205,7 @@ public class ResultadosDAOTest {
 		
 		assertEquals("SELECT xxAnoEleicao AS \"anoEleicao\", turno AS \"turno\", aux_candidatos_xxAnoEleicao.ocupacao_cod, voto_nominal, voto_total " +
 				"FROM ( xxQueryFato ) as r " +
-				"left join aux_candidatos_xxAnoEleicao on aux_candidatos_xxAnoEleicao.surrogatekey = r.candidato_sk", dao.getStringQueryDim("xxQueryFato", "xxAnoEleicao", ocup, AgregacaoPolitica.CANDIDATO));
+				"left join aux_candidatos_xxAnoEleicao on aux_candidatos_xxAnoEleicao.surrogatekey = r.candidato_sk", dao.getStringQueryDim(new ArgumentosBusca(), "xxQueryFato", "xxAnoEleicao", ocup, AgregacaoPolitica.CANDIDATO));
 	}
 
 	@Test
