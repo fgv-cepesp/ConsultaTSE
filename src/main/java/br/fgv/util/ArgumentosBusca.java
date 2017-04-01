@@ -85,6 +85,7 @@ public class ArgumentosBusca {
 	public List<String> getPartidos() {
 		return Collections.unmodifiableList(partidos);
 	}
+	public boolean hasPartidos() { return getPartidos().size() > 0; }
 
 	public List<String> getCandidados() {
 		return Collections.unmodifiableList(candidados);
@@ -179,6 +180,7 @@ public class ArgumentosBusca {
 	public AgregacaoRegional getFiltroNivelRegional() {
 		return this.filtroNivelRegional;
 	}
+	public boolean hasFiltroNivelRegional() { return getFiltroNivelRegional() != null && this.getRegioes().size() > 0; }
 
 	public void setFiltroNivelRegional(Integer filtroNivelRegional) {
 		this.filtroNivelRegional = AgregacaoRegional.findByNivel(filtroNivelRegional);

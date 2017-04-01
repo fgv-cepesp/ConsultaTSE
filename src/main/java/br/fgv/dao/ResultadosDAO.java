@@ -210,73 +210,6 @@ public class ResultadosDAO {
 		}
 	}
 
-	QueryBuilder appendFiltroPolitico(QueryBuilder query, AgregacaoPolitica agregacaoPolitica, String[] filtroPolitico) {
-		// nesses casos o nivel é fora do intervalo...
-		if (agregacaoPolitica == null || filtroPolitico.length == 0) {
-			// do nothing
-		} else {
-			query._and_().valor(agregacaoPolitica.getNome()).in(filtroPolitico);
-		}
-
-		return query;
-	}
-
-	QueryBuilder appendFiltroRegional(QueryBuilder query, AgregacaoRegional agregacaoRegional, String[] filtroRegional) {
-		if(agregacaoRegional == null || filtroRegional.length == 0){
-			// do nothing
-		} else {
-			query._and_().valor(agregacaoRegional.getCamposAgregar()).in(filtroRegional);
-		}
-
-		return query;
-	}
-
-
-	String getStringQueryFato(ArgumentosBusca args, String ano) {
-
-		String reg = args.getNivelRegional().getCamposAgregar();
-		String pol = args.getNivelAgrecacaoPolitica().getNome();
-
-		QueryBuilder qb = new QueryBuilder();
-
-		// SELECT
-		qb.select_().comma(CO_FACT_VOTOS_MUN_TURNO, reg, pol);
-		qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_NOMINAL_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_NOMINAL);
-		qb.comma_().sum(CO_FACT_VOTOS_MUN_QNT_VOTOS)._as_().valor(VOTO_TOTAL);
-
-		//extra sums
-		for (String consolidado : args.getConsolidados())
-			qb.comma_().sum(consolidado)._as_().valor(consolidado);
-
-		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_VALIDOS)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_VALIDOS.getNome());
-		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_TOTAIS_CONSOLIDADO)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_TOTAIS_CONSOLIDADO.getNome());
-		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_BRANCOS)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_BRANCOS.getNome());
-		//qb.comma_().sum(CO_FACT_VOTOS_MUN_VOTOS_NULOS)._as_().valor(CO_FACT_VOTOS_MUN_VOTOS_NULOS.getNome());
-
-
-		if(!BusinessImpl.isCargoMajoritario(Integer.parseInt(args.getFiltroCargo())));
-			if(AgregacaoPolitica.PARTIDO.equals(args.getNivelAgrecacaoPolitica()) || AgregacaoPolitica.COLIGACAO.equals(args.getNivelAgrecacaoPolitica())) {
-				  qb.comma_().sum(IFF( EQ(CO_FACT_VOTOS_MUN_TIPO_VOTAVEL, VOTO_LEGENDA_COD), CO_FACT_VOTOS_MUN_QNT_VOTOS, 0))._as_().valor(VOTO_LEGENDA);
-			}
-
-		qb._from_().tabela(TB_FACT_VOTOS_MUN);
-
-		// WHERE
-		qb._where_().eq(CO_FACT_VOTOS_MUN_COD_CARGO, args.getFiltroCargo())
-			._and_().eq(CO_FACT_VOTOS_MUN_TURNO, args.getTurno());
-
-			List<String> regioes = args.getRegioes();
-			List<String> partidos = args.getPartidos();
-			appendFiltroRegional(qb, args.getFiltroNivelRegional(), regioes.toArray(new String[regioes.size()]));
-			appendFiltroPolitico(qb, AgregacaoPolitica.PARTIDO, partidos.toArray(new String[partidos.size()]));
-			// filtro candidato agora é feito na tabela resultado. Veja metodo aplicarFiltros
-
-		// GROUP BY
-		qb._group_by_().comma(reg, pol, CO_FACT_VOTOS_MUN_TURNO)._order_by_().comma(reg, pol, CO_FACT_VOTOS_MUN_TURNO);
-
-		return qb.toString(ano);
-	}
-
 	String getStringQueryDim(ArgumentosBusca args, String queryFato, String anoEleicao,
 			String[] camposEscolhidos, AgregacaoPolitica agregacaoPolitica) {
 
@@ -391,15 +324,20 @@ public class ResultadosDAO {
 		String[] camposEscolhidos = listCamposEscolhidos.toArray(new String[listCamposEscolhidos.size()]);
 
 		for (String ano : args.getAnosEleicoes()) {
-		    String queryFato = getStringQueryFato(args, ano);
-			String queryTotal = getStringQueryDim(args, queryFato, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
+			QueryFatoBuilder fb = new QueryFatoBuilder(args, ano);
+		    QueryConsolidadoBuilder cb = new QueryConsolidadoBuilder(args, ano);
+			QueryFatoConsolidadoBuilder fbc = new QueryFatoConsolidadoBuilder(args, ano, fb.build(), cb.build());
+
+			String queryFatoConsolidado = fbc.build();
+
+			String queryTotal = getStringQueryDim(args, queryFatoConsolidado, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
 			String queryFinal = aplicarFiltros(queryTotal, args);
 
 			queries.add(queryFinal);
 
 			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Query para ano:\t" + ano);
-				LOGGER.debug("Query fato:\t" + queryFato);
+				LOGGER.debug("Query fato:\t" + queryFatoConsolidado);
 				LOGGER.debug("Query total:\t" + queryTotal);
 				LOGGER.debug("Query total:\t" + queryFinal);
 			}
