@@ -1,5 +1,6 @@
 package br.fgv.dao;
 
+import br.fgv.business.AgregacaoRegional;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.QueryBuilder;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
@@ -18,6 +19,7 @@ public class QueryConsolidadoBuilder {
 
     public String build() {
         String reg = args.getNivelRegional().getCamposAgregar();
+        if (args.getNivelRegional().equals(AgregacaoRegional.MUNICIPIO)) reg = "cod"; //Instead of mun_cod
 
         qb.select_()
                 .comma("m." + reg, "mc.cargo")
