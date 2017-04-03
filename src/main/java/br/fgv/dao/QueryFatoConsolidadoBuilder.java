@@ -22,14 +22,17 @@ public class QueryFatoConsolidadoBuilder {
 
     public String build() {
         String reg = args.getNivelRegional().getCamposAgregar();
-        if (args.getNivelRegional().equals(AgregacaoRegional.MUNICIPIO)) reg = "cod"; //Instead of mun_cod
+        String reg_c = reg;
+
+        if (args.getNivelRegional().equals(AgregacaoRegional.MUNICIPIO))
+            reg_c = "cod"; //Instead of mun_cod
 
         queryBuilder
                 .select_().comma("mun.*", "c.eleitores_aptos", "c.votos_validos", "c.votos_totais_consolidado", "c.votos_brancos", "c.votos_nulos")
                 ._from_().par(queryFato)._as_().valor("mun")
                 ._left_join_().par(queryConsolidado)._as_().valor("c")
                 ._on_()
-                    .eq("c." + reg, "mun." + reg)
+                    .eq("c." + reg_c, "mun." + reg)
                     ._and_()
                     .eq("c.cargo", args.getFiltroCargo());
 
