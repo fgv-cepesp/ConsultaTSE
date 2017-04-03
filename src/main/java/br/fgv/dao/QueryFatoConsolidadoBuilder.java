@@ -1,5 +1,6 @@
 package br.fgv.dao;
 
+import br.fgv.business.AgregacaoRegional;
 import br.fgv.util.ArgumentosBusca;
 import br.fgv.util.QueryBuilder;
 
@@ -21,6 +22,7 @@ public class QueryFatoConsolidadoBuilder {
 
     public String build() {
         String reg = args.getNivelRegional().getCamposAgregar();
+        if (args.getNivelRegional().equals(AgregacaoRegional.MUNICIPIO)) reg = "cod"; //Instead of mun_cod
 
         queryBuilder
                 .select_().comma("mun.*", "c.eleitores_aptos", "c.votos_validos", "c.votos_totais_consolidado", "c.votos_brancos", "c.votos_nulos")
