@@ -190,4 +190,8 @@ public class ArgumentosBusca {
 		for (String campo : campos)
 			this.addCampoEscolhido(campo);
 	}
+
+    public boolean hasConsolidados() {
+		return getConsolidados().size() > 0;
+    }
 }

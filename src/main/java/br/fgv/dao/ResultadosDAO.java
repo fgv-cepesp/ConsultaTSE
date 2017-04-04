@@ -131,67 +131,6 @@ public class ResultadosDAO {
 		return list;
 	}
 
-	@Deprecated
-	public Map<String, String> getCargosList() {
-		List<Integer> anos = getAnosDisponiveisList();
-		List<String> queries = new ArrayList<String>();
-
-		for (Integer ano : anos)
-			queries.add(getQueryCargosPorAnoList(Integer.toString(ano)));
-
-		String completeQuery = QueryBuilder.unionDistinct(queries) + _ORDER_BY_ + CO_SIS_ANO_CARGO_COD_CARGO;
-
-		LOGGER.info(">> QUERY COMPLETA");
-		LOGGER.info(completeQuery);
-		LOGGER.info("<< QUERY COMPLETA");
-
-		Map<String, String> pares = new HashMap<String, String>();
-
-		try {
-			Query query = getSession().createSQLQuery(completeQuery);
-			List<Object[]> list = (List<Object[]>) query.list();
-
-			for (Object[] item : list)
-				pares.put(String.valueOf(item[0]), String.valueOf(item[1]));
-
-		} catch (RuntimeException e) {
-			LOGGER.error("Falhou ao tentar obter cargos disponiveis.", e);
-		}
-
-		return pares;
-	}
-
-	@Deprecated
-	public Map<String, String> getCargosPorAnoList(String ano) {
-		Map<String, String> pares = new HashMap<String, String>();
-
-		try {
-			String queryString = getQueryCargosPorAnoList(ano);
-			Query query = getSession().createSQLQuery(queryString);
-			List<Object[]> list = (List<Object[]>) query.list();
-
-			for (Object[] item : list)
-				pares.put(String.valueOf(item[0]), String.valueOf(item[1]));
-
-		} catch (RuntimeException e) {
-			LOGGER.error("Falhou ao tentar obter cargos disponiveis por ano.", e);
-		}
-
-		return pares;
-	}
-
-	@Deprecated
-	public String getQueryCargosPorAnoList(String ano) {
-		QueryBuilder qb = new QueryBuilder();
-
-		qb.select_().colunas(CO_SIS_ANO_CARGO_COD_CARGO, CO_DIM_CARGO_DS)
-			._from_().declareRef(TB_SIS_ANO_CARGO, s).comma_().declareRef(TB_DIM_CARGO, a)
-			._where_().ref(CO_SIS_ANO_CARGO_COD_CARGO, s)._eq_().ref(CO_DIM_CARGO_CD, a)
-				._and_().ref(CO_SIS_ANO_CARGO_ANO, s)._eq_().valor(ano);
-
-		return qb.toString();
-	}
-
 	public List<Integer> getAnosParaCargoList(String cargo) {
 		try {
 			QueryBuilder qb = new QueryBuilder();
@@ -325,19 +264,22 @@ public class ResultadosDAO {
 
 		for (String ano : args.getAnosEleicoes()) {
 			QueryFatoBuilder fb = new QueryFatoBuilder(args, ano);
-		    QueryConsolidadoBuilder cb = new QueryConsolidadoBuilder(args, ano);
-			QueryFatoConsolidadoBuilder fbc = new QueryFatoConsolidadoBuilder(args, ano, fb.build(), cb.build());
+			String fato = fb.build();
 
-			String queryFatoConsolidado = fbc.build();
+			if (args.hasConsolidados()) {
+				QueryConsolidadoBuilder cb = new QueryConsolidadoBuilder(args, ano);
+				QueryFatoConsolidadoBuilder fbc = new QueryFatoConsolidadoBuilder(args, ano, fato, cb.build());
+				fato = fbc.build();
+			}
 
-			String queryTotal = getStringQueryDim(args, queryFatoConsolidado, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
+			String queryTotal = getStringQueryDim(args, fato, ano, camposEscolhidos, args.getNivelAgrecacaoPolitica());
 			String queryFinal = aplicarFiltros(queryTotal, args);
 
 			queries.add(queryFinal);
 
 			if(LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Query para ano:\t" + ano);
-				LOGGER.debug("Query fato:\t" + queryFatoConsolidado);
+				LOGGER.debug("Query fato:\t" + fato);
 				LOGGER.debug("Query total:\t" + queryTotal);
 				LOGGER.debug("Query total:\t" + queryFinal);
 			}

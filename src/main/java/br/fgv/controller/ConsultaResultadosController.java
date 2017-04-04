@@ -114,16 +114,6 @@ public class ConsultaResultadosController {
 	}
 
 	@Get
-	@Path("/consulta/cargos")
-	public void cargosPorAno(String ano) {
-		if(LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Cargos para o ano.: " + ano);
-		}
-		result.use(Results.json()).from(business.getCargosPorAno(ano))
-				.serialize();
-	}
-
-	@Get
 	@Path("/consulta/anos")
 	public void anosParaCargo(String cargo) {
 		if(LOGGER.isDebugEnabled()) LOGGER.debug("Anos para o cargo: " + cargo);

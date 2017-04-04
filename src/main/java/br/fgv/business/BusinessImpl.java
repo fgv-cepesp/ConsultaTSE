@@ -167,18 +167,8 @@ public class BusinessImpl {
 		return turnos;
 	}
 
-	@Deprecated
-	public Map<String, String> getCargosPorAno(String ano) {
-		return daoFactory.getResultadosDAO().getCargosPorAnoList(ano);
-	}
-
 	public List<Integer> getAnosParaCargo(String cargo) {
 		return daoFactory.getResultadosDAO().getAnosParaCargoList(cargo);
-	}
-
-	@Deprecated
-	public Map<String, String> getCargosDisponiveis() {
-		return daoFactory.getResultadosDAO().getCargosList();
 	}
 
 	public List<Cargo> getCargos() {

@@ -73,15 +73,6 @@ public class ResultadosDAOTest {
 	}
 
 	@Test
-	public void testCargosDisponiveisList() {
-		Map<String, String> l = dao.getCargosPorAnoList("2010");
-		assertEquals(5, l.size());
-
-		l = dao.getCargosPorAnoList("2008");
-		assertEquals(2, l.size());
-	}
-
-	@Test
 	public void testGetStringQueryDimPartido() {
 		String[] empty = new String[0];
 		String[] ab = {TB_DIM_PARTIDOS.getNome() + "." + CO_DIM_PARTIDOS_SIGLA};
@@ -208,11 +199,6 @@ public class ResultadosDAOTest {
 		String[] filtroCandidato = {"c1", "c2"};
 		args.setCandidados(filtroCandidato);
 		assertEquals("SELECT  *  FROM (abc) T WHERE T.titulo in (c1, c2) ", dao.aplicarFiltros("abc", args));
-	}
-
-	@Test
-	public void testGetCargosPorAnoList() {
-		assertTrue(dao.getCargosPorAnoList("2010").size() > 4);
 	}
 
 	@Test
