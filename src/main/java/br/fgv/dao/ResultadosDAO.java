@@ -406,7 +406,6 @@ public class ResultadosDAO {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	private List<Par> getParList(Query query) {
 		List<Par> pares = new ArrayList<Par>();
 		List<Object[]> list = null;
@@ -427,29 +426,6 @@ public class ResultadosDAO {
 
 		return pares;
 	}
-
-	@SuppressWarnings("unchecked")
-	private List<Par> getParChaveList(Query query) {
-		List<Par> pares = new ArrayList<Par>();
-		List<Object[]> list = null;
-
-		try {
-			list = (List<Object[]>) query.list();
-
-			for (Object[] item : list) {
-				String chave = String.valueOf(item[0]);
-				String valor = String.valueOf(item[1]);
-
-				pares.add(new Par(chave, valor + " (" + chave + ")"));
-			}
-
-		} catch (RuntimeException e) {
-			LOGGER.error("Exception ao tentar executar query!", e);
-		}
-
-		return pares;
-	}
-
 
 	public List<Par> getMacroRegiaoList(String filtro) {
 		QueryBuilder qb = new QueryBuilder();
